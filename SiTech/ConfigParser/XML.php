@@ -1,4 +1,14 @@
 <?php
+/**
+ * XML support for SiTech_ConfigParser
+ *
+ * @author Eric Gach <eric.gach@gmail.com>
+ * @package SiTech_ConfigParser
+ */
+
+/**
+ * SiTech include.
+ */
 require_once('SiTech.php');
 SiTech::loadClass('SiTech_ConfigParser_Base');
 

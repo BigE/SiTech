@@ -1,7 +1,24 @@
 <?php
+/**
+ * SiTech Database class
+ *
+ * @package SiTech_DB
+ */
+
+/**
+ * Get SiTech base.
+ */
 require_once('SiTech.php');
 SiTech::loadInterface('SiTech_DB_Interface');
 
+/**
+ * SiTech Database Base class. All base database functionality that is not
+ * database specific is defined here.
+ *
+ * @author Eric Gach <eric.gach@gmail.com>
+ * @name SiTech_DB_Base
+ * @package SiTech_DB
+ */
 abstract class SiTech_DB_Base implements SiTech_DB_Interface
 {
     /**

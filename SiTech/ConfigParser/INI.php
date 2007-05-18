@@ -1,7 +1,25 @@
 <?php
+/**
+ * INI support for SiTech_ConfigParser
+ *
+ * @author Eric Gach <eric.gach@gmail.com>
+ * @package SiTech_ConfigParser
+ */
+
+/**
+ * SiTech include.
+ */
 require_once('SiTech.php');
 SiTech::loadClass('SiTech_ConfigParser_Base');
 
+/**
+ * This class supports INI formatted configuration files. Base functionality
+ * is just to read and write them.
+ *
+ * @author Eric Gach <eric.gach@gmail.com>
+ * @name SiTech_ConfigParser_XML
+ * @package SiTech_ConfigParser
+ */
 class SiTech_ConfigParser_INI extends SiTech_ConfigParser_Base
 {
 	/**
@@ -14,7 +32,7 @@ class SiTech_ConfigParser_INI extends SiTech_ConfigParser_Base
 	{
 		/* parse it into sections because that's how our configuration is setup. */
 		$this->_config = parse_ini_file($file, true);
-		
+
 		/* Now get our arrays back to a useable format */
 		foreach ($this->_config as $section => $options) {
 			foreach ($options as $opt => $val) {
@@ -43,7 +61,7 @@ class SiTech_ConfigParser_INI extends SiTech_ConfigParser_Base
 				if (is_array($val)) {
 					$val = str_replace('"', '\'', serialize($val));
 				}
-				
+
 				fwrite($fp, "$key = \"$val\"\n");
 			}
 

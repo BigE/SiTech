@@ -11,6 +11,13 @@
 require_once('SiTech.php');
 SiTech::loadInterface('SiTech_DB_Statement_Interface');
 
+/**
+ * Base statement functionality. Anything that isn't database specific is defined here.
+ *
+ * @author Eric Gach <eric.gach@gmail.com>
+ * @name SiTech_DB_Statement_Base
+ * @package SiTech_DB
+ */
 abstract class SiTech_DB_Statement_Base implements SiTech_DB_Statement_Interface
 {
     /**

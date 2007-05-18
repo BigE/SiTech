@@ -2,7 +2,7 @@
 /**
  * SiTech Session Base
  *
- * @pacakage SiTech_Session
+ * @package SiTech_Session
  */
 
 /**
@@ -26,13 +26,13 @@ abstract class SiTech_Session_Base implements SiTech_Session_Interface
 		'path'		=> '/',
 		'time'		=> 0 /* this defaults to close when the browser closes */
 	);
-	
+
 	protected $_id;
-	
+
 	protected $_name;
-	
+
 	protected $_remember = false;
-	
+
 	protected $_strict = false;
 
 	/**
@@ -62,15 +62,15 @@ abstract class SiTech_Session_Base implements SiTech_Session_Interface
 			case 'id':
 				return($this->_id);
 				break;
-				
+
 			case 'name':
 				return($this->_name);
 				break;
-				
+
 			case 'remember':
 				return($this->_remember);
 				break;
-				
+
 			default:
 				return($this->$var);
 				break;
@@ -90,12 +90,12 @@ abstract class SiTech_Session_Base implements SiTech_Session_Interface
 			case 'remember':
 				$this->setRemember($val);
 				break;
-				
+
 			default:
 				break;
 		}
 	}
-	
+
 	/**
 	 * Close a session. This will store the data saved in the session.
 	 *
@@ -105,7 +105,7 @@ abstract class SiTech_Session_Base implements SiTech_Session_Interface
 	{
 		session_write_close();
 	}
-	
+
 	/**
 	 * Destroy the current session. This removes all session data from existance.
 	 *

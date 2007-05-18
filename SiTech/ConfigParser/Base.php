@@ -1,7 +1,25 @@
 <?php
+/**
+ * Base support for SiTech_ConfigParser
+ *
+ * @author Eric Gach <eric.gach@gmail.com>
+ * @package SiTech_ConfigParser
+ */
+
+/**
+ * SiTech include.
+ */
 require_once('SiTech.php');
 SiTech::loadInterface('SiTech_ConfigParser_Interface');
 
+/**
+ * Base class for all config parsing types. Here base functionality is
+ * created for all classes to use.
+ *
+ * @author Eric Gach <eric.gach@gmail.com>
+ * @name SiTech_ConfigParser_Base
+ * @package SiTech_ConfigParser
+ */
 abstract class SiTech_ConfigParser_Base implements SiTech_ConfigParser_Interface
 {
 	protected $_config = array();
