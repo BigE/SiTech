@@ -2,7 +2,7 @@
 /**
  * SiTech Session DB support.
  *
- * @pacakage SiTech_Session
+ * @package SiTech_Session
  */
 
 /**
@@ -16,7 +16,7 @@ SiTech::loadClass('SiTech_Session_Base');
  *
  * @author Eric Gach <eric.gach@gmail.com>
  * @name SiTech_Session_DB
- * @pacakage SiTech_Session
+ * @package SiTech_Session
  */
 class SiTech_Session_DB extends SiTech_Session_Base
 {
