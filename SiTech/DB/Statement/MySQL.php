@@ -95,7 +95,7 @@ class SiTech_DB_Statement_MySQL extends SiTech_DB_Statement_Base
 	public function rowCount()
 	{
 		$count = 0;
-		if (($count = @mysql_affected_rows($this->_result)) === false) {
+		if (($count = @mysql_affected_rows($this->_conn)) === false) {
 			$count = @mysql_num_rows($this->_result);
 		}
 
