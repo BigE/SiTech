@@ -23,7 +23,7 @@ class SiTech_Gallery_Type_Movie extends SiTech_Galery_Type
 			$destHeight = ($destWidth / $this->_size[0]) * $this->_size[1];
 		}
 
-		switch ($srcInfo[2]) {
+		switch ($this->_size[2]) {
 			case 2:
 				$src = ImageCreateFromJpeg($this->_fullPath);
 				break;
@@ -34,7 +34,7 @@ class SiTech_Gallery_Type_Movie extends SiTech_Galery_Type
 		}
 
 		$dest = ImageCreateTrueColor($destWidth, $destHeight);
-		ImageCopyResampled($dest, $src, 0, 0, 0, 0, $destWidth, $destHeight, $srcInfo[0], $srcInfo[1]);
+		ImageCopyResampled($dest, $src, 0, 0, 0, 0, $destWidth, $destHeight, $this->_size[0], $this->_size[1]);
 		ImageJpeg($dest, $this->_thumbPath);
 	}
 

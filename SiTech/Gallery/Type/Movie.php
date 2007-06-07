@@ -12,7 +12,7 @@ class SiTech_Gallery_Type_Movie extends SiTech_Galery_Type
 		$subFrames = $frames / 4;
 
 		$frame = array();
-		for ($i = 1; $i <= 4 $i++) {
+		for ($i = 1; $i <= 4; $i++) {
 			$frame = $this->movie->getFrameNumber(mt_rand(floor(($i - 1) * $subFrames), floor($i * $subFrames)));
 			
 			if (empty($this->_thumbSize[1]) && !empty($this->_thumbSize[0])) {
@@ -43,7 +43,7 @@ class SiTech_Gallery_Type_Movie extends SiTech_Galery_Type
 			throw new SiTech_Gallery_Exception('ffmpeg-php extension not loaded. Unable to parse movie files.');
 		}
 
-		$this->movie = new ffmpeg_movie($this->_baseDir.'/'.$file, false)
+		$this->movie = new ffmpeg_movie($this->_baseDir.'/'.$this->movie, false);
 	}
 }
 ?>
