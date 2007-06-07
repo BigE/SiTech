@@ -437,6 +437,11 @@ abstract class SiTech_DB_Statement_Base implements SiTech_DB_Statement_Interface
 		/* easy enough for now.. sprintf! */
 		if (!empty($this->_params)) {
 			foreach ($this->_params as $field => $param) {
+				if (!ctype_digit($param)) {
+					$param = "'$param'";					
+				}
+
+				$this->_sql = str_replace($field, $param, $this->_sql);
 			}
 		}
 
