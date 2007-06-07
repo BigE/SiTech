@@ -72,11 +72,12 @@ class SiTech_DB_Statement_MySQL extends SiTech_DB_Statement_Base
 			throw new SiTech_DB_Statement_Exception('The connection to the database is not currently open.');
 		}
 
-		if (($this->_result = @mysql_query($this->_sql)) === false) {
-			SiTech::loadClass('SiTech_DB_Statement_Exception');
-			throw new SiTech_DB_Statement_Exception('The query to the database failed.%sMySQL reported: (%d) %s', array("\n", mysql_errno(), mysql_error()));
-		}
-	}
+        $this->_prepareSql();
+        if (($this->_result = mysql_query($this->_sql)) === false) {
+            SiTech::loadClass('SiTech_DB_Statement_Exception');
+            throw new SiTech_DB_Statement_Exception('The query to the database failed.%sMySQL reported: (%d) %s', array("\n", mysql_errno(), mysql_error()));
+        }
+    }
 
 	/**
 	 * Not implemented.

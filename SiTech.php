@@ -117,13 +117,8 @@ class SiTech
 		self::loadFile($file);
 
 		if (!interface_exists($interface)) {
-			if ($class !== 'SiTech_Exception') {
-				SiTech::loadClass('SiTech_Exception');
-				throw new SiTech_Exception('Could not load interface "%s" from include path: %s', array($class, get_include_path()));
-			} else {
-				/* fallback to make sure we always have an exception handler */
-				throw new Exception(vsprintf('Could not load interface "%s" from include path: %s', array($class, get_include_path())));
-			}
+			SiTech::loadClass('SiTech_Exception');
+			throw new SiTech_Exception('Could not load interface "%s" from include path: %s', array($interface, get_include_path()));
 		}
 	}
 }
