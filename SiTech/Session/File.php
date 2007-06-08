@@ -3,6 +3,7 @@
  * SiTech Session File support.
  *
  * @package SiTech_Session
+ * @version $Id$
  */
 
 /**
@@ -27,7 +28,7 @@ class SiTech_Session_File extends SiTech_Session_Base
 	 * much to check, just return true.
 	 *
 	 * @return bool
-	 */	
+	 */
 	public function _close()
 	{
 		return(true);
@@ -67,7 +68,7 @@ class SiTech_Session_File extends SiTech_Session_Base
 				}
 			}
 		}
-		
+
 		return(true);
 	}
 
@@ -97,23 +98,23 @@ class SiTech_Session_File extends SiTech_Session_Base
 	{
 		$file = 'sess_'.$this->_id;
 		$file = realpath($this->_savePath.'/'.$file);
-		
+
 		if (file_exists($file)) {
 			$data = @file_get_contents($file);
 			list($r, $s, $data) = explode("\n", $data, 3);
-			
+
 			if ($r == '1') {
 				$this->setRemember(true);
 			} else {
 				$this->setRemember(false);
 			}
-			
+
 			if ($s == '1') {
 				$this->setStrict(true);
 			} else {
 				$this->setStrict(false);
 			}
-			
+
 			return((string)$data);
 		} else {
 			return('');
@@ -132,23 +133,23 @@ class SiTech_Session_File extends SiTech_Session_Base
 	{
 		$file = 'sess_'.$this->_id;
 		$file = realpath($this->_savePath.'/'.$file);
-		
+
 		if ($this->_strict) {
 			$data = "1\n$data";
 		} else {
 			$data = "0\n$data";
 		}
-		
+
 		if ($this->_remember) {
 			$data = "1\n$data";
 		} else {
 			$data = "0\n$data";
 		}
-		
+
 		if (!file_exists($file)) {
 			touch($file);
 		}
-		
+
 		if (is_writeable($file)) {
 			@file_put_contents($file, $data);
 		} else {

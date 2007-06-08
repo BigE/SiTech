@@ -3,6 +3,7 @@
  * SiTech Factory class
  *
  * @package SiTech
+ * @version $Id$
  */
 
 /**

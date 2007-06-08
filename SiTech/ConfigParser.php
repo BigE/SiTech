@@ -1,8 +1,9 @@
 <?php
 /**
  * SiTech ConfigParser class
- * 
+ *
  * @package SiTech_ConfigParser
+ * @version $Id$
  */
 
 /**
@@ -29,7 +30,7 @@ class SiTech_ConfigParser extends SiTech_Factory
 	 * Class constant for XML style configuration.
 	 */
 	const TYPE_XML = 'SiTech_ConfigParser_XML';
-	
+
 	/**
 	 * Class constructor. The argument we take here will setup our child class
 	 * to the specified type. All methods within the child class will be available

@@ -1,8 +1,9 @@
 <?php
 /**
  * SiTech Template class.
- * 
+ *
  * @package SiTech_Template
+ * @version $Id$
  */
 
 /**
@@ -20,13 +21,13 @@ SiTech::loadClass('SiTech_Factory');
  * @name SiTech_Template
  * @package SiTech_Template
  */
-class SiTech_Template extends SiTech_Factory 
+class SiTech_Template extends SiTech_Factory
 {
 	/**
 	 * Class constant for PHP style templates.
 	 */
 	const TYPE_PHP = 'SiTech_Template_PHP';
-	
+
 	/**
 	 * Basic constructor. This passes the template file name into the backend class
 	 * specified by $type

@@ -3,6 +3,7 @@
  * PHP template class.
  *
  * @package SiTech_Template
+ * @version $Id$
  */
 
 /**
@@ -30,7 +31,7 @@ class SiTech_Template_PHP extends SiTech_Template_Base
 		$incPath = set_include_path($this->_path);
 		extract($this->_vars, EXTR_OVERWRITE);
 		$errReporting = error_reporting(E_ALL);
-		
+
 		if (!SiTech::isReadable($this->_file)) {
 			set_include_path($incPath);
 			error_reporting($errReporting);

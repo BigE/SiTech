@@ -1,8 +1,9 @@
 <?php
 /**
  * SiTech Session class.
- * 
+ *
  * @package SiTech_Session
+ * @version $Id$
  */
 
 /**
@@ -28,7 +29,7 @@ class SiTech_Session extends SiTech_Factory
 	 * Class constant for database based sessions.
 	 */
 	const TYPE_DB	= 'SiTech_Session_DB';
-	
+
 	/**
 	 * Constructor for session support.
 	 *
@@ -40,7 +41,7 @@ class SiTech_Session extends SiTech_Factory
 		if (is_null($type)) {
 			$type = self::TYPE_FILE;
 		}
-		
+
 		SiTech::loadClass($type);
 		$this->_backend = new $type();
 	}

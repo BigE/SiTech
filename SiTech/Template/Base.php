@@ -3,6 +3,7 @@
  * Base template class.
  *
  * @package SiTech_Template
+ * @version $Id$
  */
 
 /**
@@ -19,7 +20,7 @@ SiTech::loadInterface('SiTech_Template_Interface');
  * @name SiTech_Template_Base
  * @package SiTech_Template
  */
-abstract class SiTech_Template_Base implements SiTech_Template_Interface 
+abstract class SiTech_Template_Base implements SiTech_Template_Interface
 {
 	/**
 	 * Template file name to load when displaying.
@@ -27,7 +28,7 @@ abstract class SiTech_Template_Base implements SiTech_Template_Interface
 	 * @var string
 	 */
 	protected $_file;
-	
+
 	/**
 	 * Template file path to load files from. If SITECH_TEMPLATE_PATH is
 	 * defined and this is null, its value will be taken as the base path
@@ -36,7 +37,7 @@ abstract class SiTech_Template_Base implements SiTech_Template_Interface
 	 * @var string
 	 */
 	protected $_path;
-	
+
 	/**
 	 * Set strict rules for templates. This will turn on notices (disabled
 	 * by default) and disallow re-assigning of template variables.
@@ -44,14 +45,14 @@ abstract class SiTech_Template_Base implements SiTech_Template_Interface
 	 * @var bool
 	 */
 	protected $_strict = false;
-	
+
 	/**
 	 * Array of variables set for the template.
 	 *
 	 * @var array
 	 */
 	protected $_vars = array();
-	
+
 	/**
 	 * Constructor.
 	 *
@@ -63,7 +64,7 @@ abstract class SiTech_Template_Base implements SiTech_Template_Interface
 		$this->_file = $file;
 		$this->_path = $path;
 	}
-	
+
 	/**
 	 * Assign a variable to the template.
 	 *
@@ -77,7 +78,7 @@ abstract class SiTech_Template_Base implements SiTech_Template_Interface
 			SiTech::loadClass('SiTech_Template_Exception');
 			throw new SiTech_Template_Exception('Strict standards are in effect, cannot re-assign "%s" until it is unassigned.', array($variable));
 		}
-		
+
 		$this->_vars[$variable] = $value;
 	}
 
@@ -88,7 +89,7 @@ abstract class SiTech_Template_Base implements SiTech_Template_Interface
 	{
 		echo $this->render();
 	}
-	
+
 	/**
 	 * Set strict rules for templates. This will turn on notices (disabled
 	 * by default) and disallow re-assigning of template variables without
@@ -100,7 +101,7 @@ abstract class SiTech_Template_Base implements SiTech_Template_Interface
 	{
 		$this->_strict = (bool)$bool;
 	}
-	
+
 	/**
 	 * Set the template path to load template files from.
 	 *
@@ -110,7 +111,7 @@ abstract class SiTech_Template_Base implements SiTech_Template_Interface
 	{
 		$this->_path = $path;
 	}
-	
+
 	/**
 	 * Remove a variable from the template.
 	 *

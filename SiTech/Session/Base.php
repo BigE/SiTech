@@ -3,6 +3,7 @@
  * SiTech Session Base
  *
  * @package SiTech_Session
+ * @version $Id$
  */
 
 /**

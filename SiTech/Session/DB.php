@@ -3,6 +3,7 @@
  * SiTech Session DB support.
  *
  * @package SiTech_Session
+ * @version $Id$
  */
 
 /**

@@ -3,6 +3,7 @@
  * SiTech Exception class
  *
  * @package SiTech_Exception
+ * @version $Id$
  */
 
 /**
