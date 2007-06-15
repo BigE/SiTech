@@ -8,27 +8,25 @@ abstract class SiTech_Gallery_Type implements SiTech_Gallery_Type_Interface
 
 	protected $_file;
 
-	public function __construct($baseDir, $file, $thumbSize)
+	public function __construct($baseDir, $thumbSize, $obj)
 	{
 		$this->_baseDir = $baseDir;
-		$this->_file = $file;
-		$this->_fullPath = realpath($baseDir.PATH_SEPERATOR.$file);
-		$this->_thumbPath = realpath($this->_baseDir.PATH_SEPERATOR.'thumbs'.PATH_SEPERATOR.$file);
 		$this->_thumbSize = $thumbSize;
 
-		$this->_initalize();
+		$this->_initalize($obj);
 	}
 
-	public function showThumbnail()
+	public function showThumbnail($file)
 	{
-		if (!file_exists($this->_thumbPath)) {
-			$this->saveThumbnail();
+		$thumbFile = $this->_baseDir.$file;
+		if (!file_exists($thumbFile)) {
+			$this->saveThumbnail($file);
 		}
 
-		$size = getimagesize($this->_thumbPath);
+		$size = getimagesize($thumbFile);
 		header('Content-Type: '.$size['mime']);
-		header('Content-Length: '.filesize($this->_thumbPath));
-		readfile($this->_thumbPath);
+		header('Content-Length: '.filesize($thumbFile));
+		readfile($thumbFile);
 	}
 }
 ?>

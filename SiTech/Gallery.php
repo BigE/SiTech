@@ -58,8 +58,25 @@ class SiTech_Gallery
 
 	public function addExtensionHandler($handler, $extensions)
 	{
-		foreach ($extensions as $ext) {
+		if (is_array($extensions)) {
+			foreach ($extensions as $ext) {
+				$this->_allowed[$ext] = $handler;
+			}
+		} else {
 			$this->_allowed[$ext] = $handler;
+		}
+	}
+
+	public function getExt($file)
+	{
+		return(substr($file, strrpos($file, '.')));
+	}
+
+	public function loadHandler($type)
+	{
+		if (!isset($this->_obj[$type])) {
+			SiTech::loadClass($type);
+			$this->_obj[$type] = new $type($this->_dir, array($this->_thumbWidth, $this->_thumbHeight), $this);
 		}
 	}
 
@@ -68,6 +85,66 @@ class SiTech_Gallery
 			header('WWW-Authenticate: Basic realm="My Gallery"');
 			header('HTTP/1.0 401 Unauthorized');
 			echo 'You are not authorized to view this gallery.';
+			exit;
+		}
+	}
+
+	public function handleRequest()
+	{
+		$ext = $this->getExt($_SERVER['PATH_INFO']);
+
+		if (isset($this->_allowed[$ext])) {
+			if (isset($_GET['thumb'])) {
+				$this->_allowed[$ext]->showThumbnail($_SERVER['PATH_INFO']);
+				exit;
+			}
+		} elseif (isset($_GET['dirThumb'])) {
+			$dirThumb = $this->_dir.DIRECTORY_SEPERATOR.substr($_SERVER['PATH_INFO'], 1).DIRECTORY_SEPERATOR.'thumbs'.DIRECTORY_SEPERATOR.'gDirThumb.jpg';
+			if (file_exists($dirThumb))	{
+				$this->_allowed['jpg']->show($dirThumb);
+			} else {
+				/* get an array of all files */
+				$dir = new DirectryIterator($this->_dir.DIRECTORY_SEPERATOR.substr($_SERVER['PATH_INFO'], 1));
+				$files = array();
+				foreach ($dir as $file) {
+					$ext = $this->getExt($file->getFilename());
+					if (!$file->isDir() && isset($this->_allowed[$ext)) {
+						$files[] = $file;
+					}
+				}
+
+				if (sizeof($files) > 0) {
+					$dirThumbImg = ImageCreateTrueColor();
+					for ($i = 0; $i < 4; $i++)  {
+						$file = $files[mt_rand(0, sizeof($files))];
+						$ext = $this->getExt($file);
+						if (!file_exists($this->_dir.DIRECTORY_SEPERATOR.substr($_SERVER['PATH_INFO'], 1).DIRECTORY_SEPERATOR.'thumbs'.DIRECTORY_SEPERATOR.$file)) {
+							$this->_allowed[$ext]->saveThumbnail(substr($_SERVER['PATH_INFO'], 1).DIRECTORY_SEPERATOR.$file);
+						}
+
+						$thumb = getimagesize($this->_dir.DIRECTORY_SEPERATOR.substr($_SERVER['PATH_INFO'], 1).DIRECTORY_SEPERATOR.'thumbs'.DIRECTORY_SEPERATOR.$file);
+						swich ($i) {
+							case 0:
+								$dstX = 0;
+								$dstY = 0;
+								break;
+
+							case 1:
+								
+								break;
+
+							case 2:
+								break;
+
+							case 3:
+								break;
+						}
+						$thumbImg = ImageCreateFromJpeg($this->_dir.DIRECTORY_SEPERATOR.substr($_SERVER['PATH_INFO'], 1).DIRECTORY_SEPERATOR.'thumbs'.DIRECTORY_SEPERATOR.$file);
+						ImageCopyResampled($dirThumbImg, $thumbImg, $dstX, $dstY, 0, 0, $dstW, $dstH, $thumb[0], $thumb[1]);
+					}
+				} else {
+				}
+			}
 			exit;
 		}
 	}

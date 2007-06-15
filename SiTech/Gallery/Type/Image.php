@@ -24,11 +24,11 @@ class SiTech_Gallery_Type_Movie extends SiTech_Galery_Type
 		}
 
 		switch ($this->_size[2]) {
-			case 2:
+			case IMAGETYPE_JPEG:
 				$src = ImageCreateFromJpeg($this->_fullPath);
 				break;
 
-			case 3:
+			case IMAGETYPE_PNG:
 				$src = ImageCreateFromPng($this->_fullPath);
 				break;
 		}
@@ -38,13 +38,18 @@ class SiTech_Gallery_Type_Movie extends SiTech_Galery_Type
 		ImageJpeg($dest, $this->_thumbPath);
 	}
 
-	public function show()
+	public function show($file)
 	{
+		$file = $this->_baseDir.$file;
+		$size = getImageSize($file);
+		header('Content-Type: '.$size['mime']);
+		header('Content-Length: '.filesize($file));
+	    readfile($file)
 	}
 
-	protected function _initalize()
+	protected function _initalize($obj)
 	{
-		$this->size = getimagesize($this->_fullPath);
+		$obj->addExtensionHandler($this, array('jpeg', 'jpg', 'png'));
 	}
 }
 ?>
