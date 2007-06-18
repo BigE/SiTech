@@ -3,6 +3,7 @@
  * SiTech Database MySQL class
  *
  * @package SiTech_DB
+ * @version $Id$
  */
 
 /**

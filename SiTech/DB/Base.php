@@ -3,12 +3,17 @@
  * SiTech Database class
  *
  * @package SiTech_DB
+ * @version $Id$
  */
 
 /**
  * Get SiTech base.
+ * @see SiTech
  */
 require_once('SiTech.php');
+/**
+ * @see SiTech_DB_Interface
+ */
 SiTech::loadInterface('SiTech_DB_Interface');
 
 /**
