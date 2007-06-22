@@ -121,6 +121,8 @@ class SiTech_DB extends SiTech_Factory
 			throw new SiTech_DB_Exception('%s::%s() expects first argument to be string', array(__CLASS__, __METHOD__));
 		}
 
+		$this->_dsn = self::parseDsn($dsn);
+
 		self::$_interface = $this;
 		$class = 'SiTech_DB_';
 

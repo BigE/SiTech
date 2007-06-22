@@ -89,7 +89,7 @@ abstract class SiTech_DB_Base implements SiTech_DB_Interface
      * @param int $mode Fetch mode for statement
      * @param mixed $arg1 Depending on the fetch mode, this should be set to the specified value
      * @param mixed $arg2 Also dependant uppon the fetch mode
-     * @return mixed
+     * @return SiTech_DB_Statement
      */
     public function query($sql, $mode=null, $arg1=null, $arg2=null)
     {

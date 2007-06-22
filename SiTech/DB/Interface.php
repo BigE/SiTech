@@ -122,7 +122,7 @@ interface SiTech_DB_Interface
     /**
      * Begin a SELECT statement by returning a SiTech_DB_Select object.
      *
-     * @return object
+     * @return SiTech_DB_Select
      */
     public function select();
 

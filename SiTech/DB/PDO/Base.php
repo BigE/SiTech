@@ -65,6 +65,12 @@ abstract class SiTech_DB_PDO_Base extends SiTech_DB_Base
 		return($stmnt->rowCount());
 	}
 
+	/**
+	 * Set an attribute on the current database connection.
+	 *
+	 * @param int $attr SiTech_DB::ATTR_* constant
+	 * @return bool
+	 */
 	public function getAttribute($attr)
 	{
 		return($this->_conn->getAttribute());
@@ -99,6 +105,12 @@ abstract class SiTech_DB_PDO_Base extends SiTech_DB_Base
     	$this->_conn->rollBack();
     }
 
+    /**
+     * Set an attribute on the current connection.
+     *
+     * @param int $attr SiTech_DB::ATTR_* constant
+     * @param mixed $value Value to set attribute
+     */
     public function setAttribute($attr, $value)
     {
     	$this->_conn->setAttribute($attr, $value);
