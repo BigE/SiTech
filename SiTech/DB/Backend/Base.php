@@ -124,12 +124,12 @@ abstract class SiTech_DB_Backend_Base implements SiTech_DB_Backend_Interface
      * @param array $values An array where the key is the field name.
      * @return int
      */
-    public function insert($table, array $values)
+    public function insert($table, array $data)
     {
     	$cols = array();
     	$vars = array();
 
-    	foreach ($fields as $field => $value) {
+    	foreach ($data as $field => $value) {
     		$cols[] = $field;
     		$vars[] = $value;
     	}

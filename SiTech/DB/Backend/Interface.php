@@ -73,7 +73,7 @@ interface SiTech_DB_Backend_Interface
      * @param array $data Array of data to insert.
      * @return int
      */
-    public function insert($table, $data);
+    public function insert($table, array $data);
 
     /**
      * Grab the ID of the last row inserted into a table.
@@ -88,7 +88,7 @@ interface SiTech_DB_Backend_Interface
      *
      * @param mixed $sql SiTech_DB_Select object or SQL string.
      * @param array $args Array of arguments to be interpolated in the SQL.
-     * @return SiTech_DB_Statement
+     * @return SiTech_DB_Statement_Interface
      */
     public function prepare($sql, $args=array());
 
@@ -99,7 +99,7 @@ interface SiTech_DB_Backend_Interface
      * @param int $mode Fetch mode for SiTech_DB_Statement.
      * @param midex $arg1
      * @param mixed $arg2
-     * @return SiTech_DB_Statement
+     * @return SiTech_DB_Statement_Interface
      */
     public function query($sql, $mode=null, $arg1=null, $arg2=null);
 
@@ -122,7 +122,7 @@ interface SiTech_DB_Backend_Interface
     /**
      * Begin a SELECT statement by returning a SiTech_DB_Select object.
      *
-     * @return SiTech_DB_Select
+     * @return SiTech_DB_Select_Interface
      */
     public function select();
 
