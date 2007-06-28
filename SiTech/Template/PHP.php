@@ -28,7 +28,14 @@ class SiTech_Template_PHP extends SiTech_Template_Base
 	 */
 	public function render()
 	{
-		$incPath = set_include_path($this->_path);
+		$incPath = get_include_path();
+		$ps = PATH_SEPARATOR;
+		if (preg_match("#$ps([^$ps]*SiTech[^$ps]*)$ps#", $incPath, $matches)) {
+			$incPath = set_include_path($this->_path.PATH_SEPARATOR.$matches[1]);
+		} else {
+			$incPath = set_include_path($this->_path);
+		}
+
 		extract($this->_vars, EXTR_OVERWRITE);
 		$errReporting = error_reporting(E_ALL);
 
