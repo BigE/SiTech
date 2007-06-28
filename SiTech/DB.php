@@ -124,7 +124,7 @@ class SiTech_DB extends SiTech_Factory
 		$this->_dsn = self::parseDsn($dsn);
 
 		self::$_interface = $this;
-		$class = 'SiTech_DB_';
+		$class = 'SiTech_DB_Backend_';
 
 		switch (strtolower($this->_dsn['type'])) {
 			case 'mysql':
@@ -144,7 +144,7 @@ class SiTech_DB extends SiTech_Factory
 				break;
 
 			default:
-				$class .= $this->_dsn['type'];
+				$class = $this->_dsn['type'];
 				break;
 		}
 
