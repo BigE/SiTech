@@ -143,5 +143,15 @@ interface SiTech_DB_Interface
      * @param mixed $arg2 Optional second argument for fetch mode.
      */
     public function setFetchMode($mode, $arg1=null, $arg2=null);
+
+    /**
+     * Enter description here...
+     *
+     * @param string $table Table name to update rows
+     * @param array $set Column/value pairs
+     * @param unknown_type $where Where clause for update
+     * @return int Number of affected rows
+     */
+    public function update($table, array $set, $where='');
 }
 ?>

@@ -9,6 +9,7 @@
  * Require SiTech base.
  */
 require_once('SiTech.php');
+SiTech::loadClass('SiTech_DB');
 SiTech::loadInterface('SiTech_DB_Statement_Interface');
 
 /**
@@ -20,71 +21,11 @@ SiTech::loadInterface('SiTech_DB_Statement_Interface');
  */
 abstract class SiTech_DB_Statement_Base implements SiTech_DB_Statement_Interface
 {
-	/**
-	 * Returns a standard object for each row with the columns as object parameters.
-	 */
-	const FETCH_LAZY = 1;
-
-	/**
-	 * An array will be returned for each row containting only the named indexes for each
-	 * column in the row.
-	 */
-	const FETCH_ASSOC = 2;
-
-	/**
-	 * An array will be returned for each column containing an index for each row from
-	 * the rowset.
-	 */
-	const FETCH_NAMED = 3;
-
-	/**
-	 * An array will be returned for each row containing only the indexes for each column
-	 * in the row.
-	 */
-	const FETCH_NUM = 4;
-
-	/**
-	 * An array will be returned for each row containing a named and indexes for each
-	 * column in the row.
-	 */
-	const FETCH_BOTH = 5;
-
-	/**
-	 * Returns each row as the object specified and maps all values to parameters within
-	 * the object.
-	 */
-	const FETCH_OBJ = 6;
-
-	/**
-	 * Fetches the columns from the row into the variables that were used with
-	 * self::bindColumn()
-	 */
-	const FETCH_BOUND = 7;
-
-	/**
-	 * Only return a single specified column from the row.
-	 */
-	const FETCH_COLUMN = 8;
-
-	/**
-	 * Creates a new object of the specified class and maps all values to parameters within
-	 * the class.
-	 */
-	const FETCH_CLASS = 9;
-
-	/**
-	 * Fetches the row into an existing object of the class and updates the values.
-	 */
-	const FETCH_INTO = 10;
-
-	/**
-	 * Use a function as a callback when the row is fetched.
-	 */
-	const FETCH_FUNC = 11;
-
 	protected $_args = array();
 
 	protected $_columns = array();
+
+	protected $_fetchMode = array('mode' => SiTech_DB::FETCH_ASSOC);
 
 	protected $_params = array();
 
@@ -441,7 +382,16 @@ abstract class SiTech_DB_Statement_Base implements SiTech_DB_Statement_Interface
 		}
 
 		if (!empty($this->_args)) {
-			$this->_sql = vsprintf($this->_sql, $this->_args);
+			//$this->_sql = vsprintf($this->_sql, $this->_args);
+			foreach ($this->_args as $key => $arg) {
+				if (is_numeric($key)) {
+					$this->_sql = preg_replace('#[?]{1}#', $arg, $this->_sql);
+				} elseif ($key[0] == ':') {
+					$this->_sql = str_replace($key, $arg, $this->_sql);
+				} else {
+					/* invalid argument? */
+				}
+			}
 		}
 	}
 
