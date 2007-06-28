@@ -12,19 +12,19 @@
  */
 require_once('SiTech.php');
 /**
- * @see SiTech_DB_Base
+ * @see SiTech_DB_Backend_Base
  */
-SiTech::loadClass('SiTech_DB_Base');
+SiTech::loadClass('SiTech_DB_Backend_Base');
 
 /**
  * Database backend that extends PDO to add some extra functionality not currently found
  * in the PDO classes.
  *
  * @author Eric Gach <eric.gach@gmail.com>
- * @name SiTech_DB_PDO_Base
+ * @name SiTech_DB_Backend_PDO_Base
  * @package SiTech_DB
  */
-abstract class SiTech_DB_PDO_Base extends SiTech_DB_Base
+abstract class SiTech_DB_Backend_PDO_Base extends SiTech_DB_Backend_Base
 {
 	/**
 	 * This will automatically turn off autocommit mode so any changes made to the database

@@ -10,16 +10,16 @@
  * Get SiTech base.
  */
 require_once('SiTech.php');
-SiTech::loadClass('SiTech_DB_Base');
+SiTech::loadClass('SiTech_DB_Backend_Base');
 
 /**
  * SiTech Database MySQL class.
  *
  * @author Eric Gach <eric.gach@gmail.com>
- * @name SiTech_DB_MySQL
+ * @name SiTech_DB_Backend_MySQL
  * @package SiTech_DB
  */
-class SiTech_DB_MySQL extends SiTech_DB_Base
+class SiTech_DB_Backend_MySQL extends SiTech_DB_Backend_Base
 {
 	/**
 	 * Begin a SQL transaction.

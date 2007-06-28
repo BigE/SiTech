@@ -12,19 +12,23 @@
  */
 require_once('SiTech.php');
 /**
+ * @see SiTech_DB
+ */
+SiTech::loadClass('SiTech_DB');
+/**
  * @see SiTech_DB_Interface
  */
-SiTech::loadInterface('SiTech_DB_Interface');
+SiTech::loadInterface('SiTech_DB_Backend_Interface');
 
 /**
  * SiTech Database Base class. All base database functionality that is not
  * database specific is defined here.
  *
  * @author Eric Gach <eric.gach@gmail.com>
- * @name SiTech_DB_Base
+ * @name SiTech_DB_Backend_Base
  * @package SiTech_DB
  */
-abstract class SiTech_DB_Base implements SiTech_DB_Interface
+abstract class SiTech_DB_Backend_Base implements SiTech_DB_Backend_Interface
 {
     /**
      * Connection resource

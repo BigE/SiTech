@@ -1,5 +1,5 @@
 <?php
-interface SiTech_DB_Interface
+interface SiTech_DB_Backend_Interface
 {
 	/**
 	 * Begin a transaction with the database. Any queries that are executed
