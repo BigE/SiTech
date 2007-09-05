@@ -31,8 +31,12 @@ SiTech::loadInterface('SiTech_DB_Backend_Interface');
  */
 abstract class SiTech_DB_Driver_Base implements SiTech_DB_Driver_Interface
 {
-	protected $_attributes = array();
+	protected $_attributes = array(
+		SiTech_DB::ATTR_ERRMODE => SiTech_DB::ERRMODE_EXCEPTION
+	);
+
 	protected $_config = array();
+
 	protected $_conn;
 
 	public function __construct(array $config)
@@ -47,6 +51,7 @@ abstract class SiTech_DB_Driver_Base implements SiTech_DB_Driver_Interface
 	 * @param string $table Table name of where to delete rows from.
 	 * @param array $where Array of criteria.
 	 * @return int Returns number of rows deleted.
+	 * @todo Write WHERE clause
 	 */
 	public function delete($table, array $where=array())
 	{
@@ -184,6 +189,8 @@ abstract class SiTech_DB_Driver_Base implements SiTech_DB_Driver_Interface
 	 * @param string $table
 	 * @param array $values Field=>Value array of values.
 	 * @param array $where
+	 * @return int Returns false on failure.
+	 * @todo Implement WHERE clause
 	 */
 	public function update($table, array $values, array $where=array())
 	{

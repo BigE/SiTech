@@ -23,7 +23,7 @@ SiTech::loadInterface('SiTech_DB_Statement_Interface');
  * @name SiTech_DB_Statement_Base
  * @package SiTech_DB
  */
-class SiTech_DB_Statement_Base implements SiTech_DB_Statement_Interface
+abstract class SiTech_DB_Statement_Base implements SiTech_DB_Statement_Interface
 {
 	/**
 	 * Current attributes set for this statement.
@@ -68,11 +68,18 @@ class SiTech_DB_Statement_Base implements SiTech_DB_Statement_Interface
 	protected $_result;
 
 	/**
-	 * SQL string command.
+	 * SQL string without bound parameters.
 	 *
 	 * @var string
 	 */
 	protected $_sql;
+
+	/**
+	 * SQL Params found in SQL string.
+	 *
+	 * @var array
+	 */
+	protected $_sqlParams = array();
 
 	/**
 	 * Class constructor
@@ -82,7 +89,12 @@ class SiTech_DB_Statement_Base implements SiTech_DB_Statement_Interface
 	 */
 	public function __construct($sql, $conn, $driverOptions=array())
 	{
-		$this->_sql = $this->_prepareSql($sql);
+		if ($sql instanceof SiTech_DB_Select) {
+			$sql = $sql->__toString();
+		}
+
+		$this->_prepareSql($sql);
+		$this->_parseParams($sql);
 		$this->_conn = $conn;
 		$this->_attributes = $driverOptions;
 	}
@@ -98,11 +110,11 @@ class SiTech_DB_Statement_Base implements SiTech_DB_Statement_Interface
 	public function bindColumn($column, &$var, $type)
 	{
 		$this->_boundColumns[$column] = array(
-			'variable' => $var,
+			'variable' => &$var,
 			'type' => $type
 		);
 
-		return(true);
+		return($this->_bindColumn($column, $var, $type));
 	}
 
 	/**
@@ -118,14 +130,47 @@ class SiTech_DB_Statement_Base implements SiTech_DB_Statement_Interface
 	 */
 	public function bindParam($parameter, &$var, $type=SiTech_DB::PARAM_STR, $length=null, array $driverOptions=array())
 	{
-		$this->_boundParams[$param] = array(
+		if (!is_int($parameter) && !is_string($parameter)) {
+			require_once('SiTech/DB/Exception.php');
+			throw new SiTech_DB_Exception();
+		}
+
+		$position = null;
+		if (($intval = intval($parameter)) > 0 && $intval <= sizeof($this->_boundParams)) {
+			$position = $intval;
+		} else {
+			if ($parameter[0] != ':') {
+				$parameter = ':'.$parameter;
+			}
+
+			if (in_array($parameter, $this->_sqlParams)) {
+				$position = $parameter;
+			}
+		}
+
+		if ($position === null) {
+			switch ($this->getAttribute(SiTech_DB::ATTR_ERRMODE)) {
+				case SiTech_DB::ERRMODE_EXCEPTION:
+					require_once('SiTech/DB/Exception.php');
+					throw new SiTech_DB_Exception();
+					break;
+
+				case SiTech_DB::ERRMODE_WARNING:
+					trigger_error('', E_USER_WARNING);
+					break;
+			}
+
+			return(false);
+		}
+
+		$this->_boundParams[$position] = array(
 			'value' => $var,
 			'type' => $type,
 			'length' => $length,
 			'driverOptions' => $driverOptions
 		);
 
-		return(true);
+		return($this->_bindParam($var, $type, $length, $driverOptions));
 	}
 
 	/**
@@ -139,14 +184,19 @@ class SiTech_DB_Statement_Base implements SiTech_DB_Statement_Interface
 	 */
 	public function bindValue($parameter, $value, $type=SiTech_DB::PARAM_STR)
 	{
-		$this->_boundParams[$param] = array(
-			'value' => $value,
-			'type' => $type,
-			'length' => null,
-			'driverOptions' => array()
-		);
+		return($this->bindParam($parameter, $value, $type));
+	}
 
-		return(true);
+	/**
+	 * Execute the prepared statement.
+	 *
+	 * @param array $params Values to assign to parameters in the SQL.
+	 * @return bool
+	 * @todo Use parameters in SQL
+	 */
+	public function execute(array $params=array())
+	{
+		return($this->_execute($params));
 	}
 
 	/**
@@ -164,12 +214,12 @@ class SiTech_DB_Statement_Base implements SiTech_DB_Statement_Interface
 		try {
 			$this->setFetchMode($fetchMode);
 
-			switch ($this->_fetchMode['mode']) {
+			switch ($this->_fetchMode['Mode']) {
 				case SiTech_DB::FETCH_ASSOC:
 				case SiTech_DB::FETCH_BOTH:
 				case SiTech_DB::FETCH_NUM:
 				case SiTech_DB::FETCH_OBJ:
-					$row = $this->_fetch($this->_fetchMode['mode']);
+					$row = $this->_fetch($this->_fetchMode['Mode']);
 					break;
 
 				case SiTech_DB::FETCH_BOUND:
@@ -179,11 +229,11 @@ class SiTech_DB_Statement_Base implements SiTech_DB_Statement_Interface
 					break;
 
 				case SiTech_DB::FETCH_CLASS:
-					if (!class_exists($this->_fetchMode['arg1'])) {
+					if (!class_exists($this->_fetchMode['Arg1'])) {
 						/* not sure what to do here yet... */
 						$row = false;
 					} else {
-						$row = $this->_fetch(SiTech_DB::FETCH_CLASS, $arg1, $arg2);
+						$row = $this->_fetch(SiTech_DB::FETCH_CLASS, $this->_fetchMode['Arg1'], $this->_fetchMode['Arg2']);
 					}
 					break;
 
@@ -192,11 +242,11 @@ class SiTech_DB_Statement_Base implements SiTech_DB_Statement_Interface
 					break;
 
 				case SiTech_DB::FETCH_COLUMN:
-					$row = $this->_fetch($this->_fetchMode['mode'], $this->_fetchMode['arg1']);
+					$row = $this->_fetch($this->_fetchMode['Mode'], $this->_fetchMode['Arg1']);
 					break;
 
 				case SiTech_DB::FETCH_FUNC:
-					$row = call_user_func_array($this->_fetchMode['mode'], $this->_fetch(SiTech_DB::FETCH_NUM));
+					$row = call_user_func_array($this->_fetchMode['Arg1'], $this->_fetch(SiTech_DB::FETCH_NUM));
 					break;
 
 				case SiTech_DB::FETCH_GROUP:
@@ -205,7 +255,7 @@ class SiTech_DB_Statement_Base implements SiTech_DB_Statement_Interface
 
 				case SiTech_DB::FETCH_INTO:
 					$tmpRow = $this->_fetch(SiTech_DB::FETCH_ASSOC);
-					$row = $this->_fetchMode['arg1'];
+					$row = $this->_fetchMode['Arg1'];
 					foreach ($tmpRow as $field => $value) {
 						$row->$field = $value;
 					}
@@ -240,7 +290,7 @@ class SiTech_DB_Statement_Base implements SiTech_DB_Statement_Interface
 					break;
 
 				default:
-					throw new SiTech_DB_Exception('Unknown fetch mode %s', array($this->_fetchMode['mode']));
+					throw new SiTech_DB_Exception('Unknown fetch mode %s', array($this->_fetchMode['Mode']));
 					break;
 			}
 		} catch (Exception $e) {
@@ -268,7 +318,7 @@ class SiTech_DB_Statement_Base implements SiTech_DB_Statement_Interface
 
 		try {
 			while ($row = $this->fetch()) {
-				if ($this->_fetchMode['mode'] == SiTech_DB::FETCH_NAMED) {
+				if ($this->_fetchMode['Mode'] == SiTech_DB::FETCH_NAMED) {
 					$keys = array_keys($row);
 					foreach ($keys as $key) {
 						if (!isset($array[$key])) {
@@ -369,26 +419,28 @@ class SiTech_DB_Statement_Base implements SiTech_DB_Statement_Interface
 	{
 		/* TODO: Parse each fetch mode and check arguments. */
 		$this->_fetchMode = array(
-			'mode' => $mode,
-			'arg1' => $arg1,
-			'arg2' => $arg2
+			'Mode' => $mode,
+			'Arg1' => $arg1,
+			'Arg2' => $arg2
 		);
 		return(true);
 	}
 
 	/**
-	 * Prepare SQL string/object to get it ready for execution.
+	 * Parse parameters out of SQL string.
 	 *
 	 * @param mixed $sql
-	 * @return string
-	 * @todo Complete parsing of SQL.
 	 */
-	protected function _preapareSql($sql)
+	protected function _parseParams($sql)
 	{
-		/* TODO: Complete parsing of SQL. */
-		return((string)$sql);
-	}
+		$this->_sql = $sql;
+		$sqlSplit = preg_split('#(\?|\:[a-z0-9_]+)#i', $sql, null,PREG_SPLIT_DELIM_CAPTURE|PREG_SPLIT_NO_EMPTY|PREG_SPLIT_OFFSET_CAPTURE);
 
-	protected function _fetch($mode, $arg1=null, $arg2=null);
+		foreach ($sqlSplit as $var) {
+			if ($var == '?' || $var[0] == ':') {
+				$this->_sqlParams[] = $var;
+			}
+		}
+	}
 }
 ?>

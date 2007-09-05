@@ -26,7 +26,9 @@ SiTech::loadClass('SiTech_DB_Driver_Base');
 class SiTech_DB_Driver_MySQL extends SiTech_DB_Driver_Base
 {
 	/**
-	 * Begin a SQL transaction.
+	 * Begin a SQL transaction. This will not work on MyISAM
+	 * databases, but only database types that support transactions. Please
+	 * see http://dev.mysql.com/doc/refman/5.1/en/transactional-commands.html
 	 *
 	 * @return bool Returns false if there was an error.
 	 */
@@ -36,7 +38,9 @@ class SiTech_DB_Driver_MySQL extends SiTech_DB_Driver_Base
 	}
 
 	/**
-	 * Commit current transaction set.
+	 * Commit current transaction set. This will not work on MyISAM
+	 * databases, but only database types that support transactions. Please
+	 * see http://dev.mysql.com/doc/refman/5.1/en/transactional-commands.html
 	 *
 	 * @return bool Returns false if there was an error.
 	 */
@@ -118,7 +122,9 @@ class SiTech_DB_Driver_MySQL extends SiTech_DB_Driver_Base
 	}
 
 	/**
-	 * Rollback changes made to the database.
+	 * Rollback changes made to the database. This will not work on MyISAM
+	 * databases, but only database types that support transactions. Please
+	 * see http://dev.mysql.com/doc/refman/5.1/en/transactional-commands.html
 	 *
 	 * @return bool Returns false if an error occured.
 	 */
@@ -130,11 +136,13 @@ class SiTech_DB_Driver_MySQL extends SiTech_DB_Driver_Base
 	protected function _connect()
 	{
 		if (($this->_conn = @mysql_connect($this->_config['host'], $this->_config['user'], $this->_config['pass'])) === false) {
-			/* TODO: Throw an exception */
+			require_once('SiTech/DB/Exception.php');
+			throw new SiTech_DB_Exception('', mysql_errno(), mysql_error());
 		}
 
 		if (@mysql_select_db($this->_config['db'], $this->_conn) === false) {
-			/* TODO: Throw an exception */
+			require_once('SiTech/DB/Exception.php');
+			throw new SiTech_DB_Exception('', mysql_errno(), mysql_error());
 		}
 	}
 

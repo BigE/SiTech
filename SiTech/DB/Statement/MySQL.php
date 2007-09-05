@@ -69,23 +69,6 @@ class SiTech_DB_Statement_MySQL extends SiTech_DB_Statement_Base
 	}
 
 	/**
-	 * Execute the prepared statement.
-	 *
-	 * @param array $params Values to assign to parameters in the SQL.
-	 * @return bool
-	 */
-	public function execute(array $params=array())
-	{
-		if (($result = mysql_query($this->_sql, $this->_conn)) === false) {
-			/* TODO: Throw a new exception */
-			return(false);
-		}
-
-		$this->_result = $result;
-		return(true);
-	}
-
-	/**
 	 * Returns information about the column specified in the result set.
 	 *
 	 * @param int $column Column to get information about.
@@ -149,6 +132,39 @@ class SiTech_DB_Statement_MySQL extends SiTech_DB_Statement_Base
 		}
 	}
 
+	protected function _bindColumn($column, &$var, $type)
+	{
+		return(true);
+	}
+
+	protected function _bindParam($parameter, &$var, $type, $length, $driverOptions)
+	{
+		return(true);
+	}
+
+	/**
+	 * Execute the prepared statement.
+	 *
+	 * @return bool
+	 */
+	protected function _execute(array $params=array())
+	{
+		if (($result = mysql_query($sql, $this->_conn)) === false) {
+			$errMode = $this->getAttribute(SiTech_DB::ATTR_ERRMODE);
+			if ($errMode === SiTech_DB::ERRMODE_EXCEPTION) {
+				require_once('SiTech/DB/Exception.php');
+				throw new SiTech_DB_Exception('', mysql_errno(), mysql_error());
+			} elseif ($errMode === SiTech_DB::ERRMODE_WARNING) {
+				trigger_error(sprintf('(%d) %s', mysql_errno(), mysql_error()), E_USER_WARNING);
+			}
+
+			return(false);
+		}
+
+		$this->_result = $result;
+		return(true);
+	}
+
 	protected function _fetch($mode, $arg1=null, $arg2=null)
 	{
 		switch ($mode) {
@@ -161,7 +177,7 @@ class SiTech_DB_Statement_MySQL extends SiTech_DB_Statement_Base
 				break;
 
 			case SiTech_DB::FETCH_COLUMN:
-				$row = mysql_fetch_field($this->_result, $column);
+				$row = mysql_fetch_field($this->_result, $arg1);
 				break;
 
 			case SiTech_DB::FETCH_NUM:
@@ -174,6 +190,16 @@ class SiTech_DB_Statement_MySQL extends SiTech_DB_Statement_Base
 		}
 
 		return($row);
+	}
+
+	/**
+	 * Prepare SQL for execution.
+	 *
+	 * @param string $sql
+	 */
+	public function _prepareSql($sql)
+	{
+		/* nothing to do? */
 	}
 }
 ?>
