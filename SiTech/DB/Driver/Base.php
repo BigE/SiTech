@@ -128,6 +128,8 @@ abstract class SiTech_DB_Driver_Base implements SiTech_DB_Driver_Interface
 		$sql .= ') VALUES(';
 		$sql .= implode(',', $values);
 		$sql .= ')';
+		
+		return($this->exec($sql));
 	}
 
 	/**

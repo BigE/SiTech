@@ -44,7 +44,7 @@ class SiTech_DB_Statement_MySQL extends SiTech_DB_Statement_Base
 	}
 
 	/**
-	 * Return the SQLSTATE of the las operation executed.
+	 * Return the SQLSTATE of the last operation executed.
 	 *
 	 * @return string
 	 * @todo Find a way to implement this with MySQL
@@ -134,11 +134,13 @@ class SiTech_DB_Statement_MySQL extends SiTech_DB_Statement_Base
 
 	protected function _bindColumn($column, &$var, $type)
 	{
+		/* Nothing specific to do for this driver */
 		return(true);
 	}
 
 	protected function _bindParam($parameter, &$var, $type, $length, $driverOptions)
 	{
+		/* Nothing specific to do for this driver */
 		return(true);
 	}
 
