@@ -34,6 +34,7 @@ class SiTech_ConfigParser extends SiTech_Factory
 			$type = self::TYPE_INI;
 		}
 		
+		SiTech::loadClass($type);
 		$this->_objBackend = new $type($options);
 	}
 }

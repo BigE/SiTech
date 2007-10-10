@@ -113,6 +113,7 @@ class SiTech_DB extends SiTech_Factory
 	 */
 	public function __construct($driver, array $config, array $options=array())
 	{
+		SiTech::loadClass($driver);
 		$this->_objBackend = new $driver($config);
 	}
 }
