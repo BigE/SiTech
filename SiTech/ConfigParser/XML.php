@@ -69,7 +69,7 @@ class SiTech_ConfigParser_XML extends SiTech_ConfigParser_Base
 			@fwrite($fp, "\t<$section>\n");
 			
 			foreach ($options as $option => $val) {
-				fwrite($fp, "\t\t<$key>\n");
+				fwrite($fp, "\t\t<$option>\n");
 				if (is_array($val)) {
 					$this->_walkArray($val, 3, $fp);
 				} elseif (is_object($val)) {
@@ -79,7 +79,7 @@ class SiTech_ConfigParser_XML extends SiTech_ConfigParser_Base
 					@fwrite($fp, "\t\t\t$val\n");
 				}
 				
-				@fwrite($fp, "\t\t</$key>\n");
+				@fwrite($fp, "\t\t</$option>\n");
 			}
 			
 			@fwrite($fp, "\t<$section>\n");
@@ -87,6 +87,8 @@ class SiTech_ConfigParser_XML extends SiTech_ConfigParser_Base
 		
 		@fwrite($fp, '</config>');
 		@fclose($fp);
+		
+		return(true);
 	}
 	
 	private function _charData($parser, $data)
@@ -163,7 +165,7 @@ class SiTech_ConfigParser_XML extends SiTech_ConfigParser_Base
 			@fwrite($fp, str_repeat("\t", $depth)."<item key=\"$key\">\n");
 			
 			if (is_array($val)) {
-				$this->_walkArray($val, $dept + 1, $fp);
+				$this->_walkArray($val, $depth + 1, $fp);
 			} else {
 				@fwrite($fp, str_repeat("\t", $depth + 1)."$val\n");
 			}

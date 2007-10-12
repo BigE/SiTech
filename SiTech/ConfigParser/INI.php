@@ -30,7 +30,7 @@ class SiTech_ConfigParser_INI extends SiTech_ConfigParser_Base
 		foreach ($this->_config as $section => $options) {
 			foreach ($options as $option => $value) {
 				if (preg_match('^a:\d+:{|^o:\d+:&quot;', $value)) {
-					$this->_config = unserialize(str_replace('&quot;', '"', $value));
+					$this->_config[$section][$option] = unserialize(str_replace('&quot;', '"', $value));
 				}
 			}
 		}
