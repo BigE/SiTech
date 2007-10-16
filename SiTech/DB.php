@@ -98,6 +98,8 @@ class SiTech_DB extends SiTech_Factory
 	const MYSQL_ATTR_READ_DEFAULT_GROUP = 1004;
 	const MYSQL_ATTR_MAX_BUFFER_SIZE = 1005;
 	const MYSQL_ATTR_DIRECT_QUERY = 1006;
+	const TYPE_STRING = 0;
+	const TYPE_TABLE = 1;
 
 	/**
 	 * Use SiTech_DB_Backend_MySQL
@@ -114,7 +116,7 @@ class SiTech_DB extends SiTech_Factory
 	public function __construct($driver, array $config, array $options=array())
 	{
 		SiTech::loadClass($driver);
-		$this->_objBackend = new $driver($config);
+		$this->_objBackend = new $driver($config, $options);
 	}
 }
 ?>

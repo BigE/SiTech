@@ -154,11 +154,5 @@ interface SiTech_DB_Statement_Interface
 	 * @return bool
 	 */
 	public function setFetchMode($mode, $arg1=null, $arg2=null);
-
-	protected function _bindColumn($column, &$var, $type=null);
-	protected function _bindParam($parameter, &$var, $type, $length, array $driverOptions);
-	protected function _execute();
-	protected function _fetch($mode, $arg1=null, $arg2=null);
-	protected function _prepareSql($sql);
 }
 ?>

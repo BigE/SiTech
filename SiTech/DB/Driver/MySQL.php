@@ -54,7 +54,7 @@ class SiTech_DB_Driver_MySQL extends SiTech_DB_Driver_Base
 	 *
 	 * @return string
 	 */
-	public function errorCode()
+	public function getErrno()
 	{
 		return(mysql_errno($this->_conn));
 	}
@@ -64,7 +64,7 @@ class SiTech_DB_Driver_MySQL extends SiTech_DB_Driver_Base
 	 *
 	 * @return array Array containing error string and number.
 	 */
-	public function errorInfo()
+	public function getError()
 	{
 		return(
 			array(
@@ -80,7 +80,7 @@ class SiTech_DB_Driver_MySQL extends SiTech_DB_Driver_Base
 	 *
 	 * @param string $name Field name to grab ID from.
 	 */
-	public function lastInsertId($name=null)
+	public function getLastInsertId($name=null)
 	{
 		if (empty($name)) {
 			return(mysql_insert_id($this->_conn));
@@ -112,6 +112,10 @@ class SiTech_DB_Driver_MySQL extends SiTech_DB_Driver_Base
 	public function quote($string, $paramType=SiTech_DB::TYPE_STRING)
 	{
 		switch ($paramType) {
+			case SiTech_DB::TYPE_TABLE:
+				$string = "`$string`";
+				break;
+				
 			case SiTech_DB::TYPE_STRING:
 			default:
 				$string = mysql_real_escape_string($string, $this->_conn);
@@ -130,19 +134,17 @@ class SiTech_DB_Driver_MySQL extends SiTech_DB_Driver_Base
 	 */
 	public function rollBack()
 	{
-		return($this->exec('ROLLBACK'));
+		return((bool)$this->exec('ROLLBACK'));
 	}
 
 	protected function _connect()
 	{
 		if (($this->_conn = @mysql_connect($this->_config['host'], $this->_config['user'], $this->_config['pass'])) === false) {
-			require_once('SiTech/DB/Exception.php');
-			throw new SiTech_DB_Exception('', mysql_errno(), mysql_error());
+			$this->_handleError('', mysql_errno(), mysql_error());
 		}
 
 		if (@mysql_select_db($this->_config['db'], $this->_conn) === false) {
-			require_once('SiTech/DB/Exception.php');
-			throw new SiTech_DB_Exception('', mysql_errno(), mysql_error());
+			$this->_handleError('', mysql_errno($this->_conn), mysql_error($this->_conn));
 		}
 	}
 

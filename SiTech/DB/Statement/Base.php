@@ -92,9 +92,9 @@ abstract class SiTech_DB_Statement_Base implements SiTech_DB_Statement_Interface
 		if ($sql instanceof SiTech_DB_Select) {
 			$sql = $sql->__toString();
 		}
-
-		$this->_prepareSql($sql);
-		$this->_parseParams($sql);
+		
+		$this->_sql = $this->_prepareSql($sql);
+		$this->_parseParams($this->_sql);
 		$this->_conn = $conn;
 		$this->_attributes = $driverOptions;
 	}
@@ -210,9 +210,11 @@ abstract class SiTech_DB_Statement_Base implements SiTech_DB_Statement_Interface
 	 */
 	public function fetch($fetchMode=null, $curserOrientation=null, $cursorOffset=null)
 	{
-		$oldFetchMode = $this->_fetchMode;
 		try {
-			$this->setFetchMode($fetchMode);
+			if (!empty($fetchMode)) {
+				$oldFetchMode = $this->_fetchMode;
+				$this->setFetchMode($fetchMode, $curserOrientation, $cursorOffset);
+			}
 
 			switch ($this->_fetchMode['Mode']) {
 				case SiTech_DB::FETCH_ASSOC:
@@ -298,7 +300,10 @@ abstract class SiTech_DB_Statement_Base implements SiTech_DB_Statement_Interface
 			throw $e;
 		}
 
-		$this->_fetchMode = $oldFetchMode;
+		if (!empty($oldFetchMode)) {
+			$this->_fetchMode = $oldFetchMode;
+		}
+		
 		return($row);
 	}
 
@@ -317,7 +322,7 @@ abstract class SiTech_DB_Statement_Base implements SiTech_DB_Statement_Interface
 		$array = array();
 
 		try {
-			while ($row = $this->fetch()) {
+			while (($row = $this->fetch()) !== false) {
 				if ($this->_fetchMode['Mode'] == SiTech_DB::FETCH_NAMED) {
 					$keys = array_keys($row);
 					foreach ($keys as $key) {
@@ -442,5 +447,45 @@ abstract class SiTech_DB_Statement_Base implements SiTech_DB_Statement_Interface
 			}
 		}
 	}
+	
+	/**
+	 * Bind a column to a PHP variable.
+	 *
+	 * @param mixed $column Column to bind variable to.
+	 * @param mixed $var Variable to bind to column.
+	 * @param int $type Force type on variable.
+	 * @return bool Returns false on failure.
+	 */
+	abstract protected function _bindColumn($column, &$var, $type=null);
+	
+	/**
+	 * Bind a parameter to the specified variable.
+	 *
+	 * @param mixed $parameter Parameter to bind variable to.
+	 * @param mixed $var Variable to bind to parameter.
+	 * @param int $type Force type specified on variable.
+	 * @param int $length Force length on variable.
+	 * @param array $driverOptions Other driver options to specify for this parameter.
+	 * @return bool Returns false on failure.
+	 * @todo Add parameter checking to ensure success
+	 */
+	abstract protected function _bindParam($parameter, &$var, $type, $length, array $driverOptions);
+	
+	/**
+	 * Execute the prepared statement.
+	 *
+	 * @return bool
+	 */
+	abstract protected function _execute();
+	
+	abstract protected function _fetch($mode, $arg1=null, $arg2=null);
+	
+	/**
+	 * Prepare SQL for execution.
+	 *
+	 * @param string $sql
+	 * @return string
+	 */
+	abstract protected function _prepareSql($sql);
 }
 ?>

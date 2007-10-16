@@ -132,12 +132,31 @@ class SiTech_DB_Statement_MySQL extends SiTech_DB_Statement_Base
 		}
 	}
 
+	/**
+	 * Bind a column to a PHP variable.
+	 *
+	 * @param mixed $column Column to bind variable to.
+	 * @param mixed $var Variable to bind to column.
+	 * @param int $type Force type on variable.
+	 * @return bool Returns false on failure.
+	 */
 	protected function _bindColumn($column, &$var, $type)
 	{
 		/* Nothing specific to do for this driver */
 		return(true);
 	}
 
+	/**
+	 * Bind a parameter to the specified variable.
+	 *
+	 * @param mixed $parameter Parameter to bind variable to.
+	 * @param mixed $var Variable to bind to parameter.
+	 * @param int $type Force type specified on variable.
+	 * @param int $length Force length on variable.
+	 * @param array $driverOptions Other driver options to specify for this parameter.
+	 * @return bool Returns false on failure.
+	 * @todo Add parameter checking to ensure success
+	 */
 	protected function _bindParam($parameter, &$var, $type, $length, $driverOptions)
 	{
 		/* Nothing specific to do for this driver */
@@ -151,7 +170,7 @@ class SiTech_DB_Statement_MySQL extends SiTech_DB_Statement_Base
 	 */
 	protected function _execute(array $params=array())
 	{
-		if (($result = mysql_query($sql, $this->_conn)) === false) {
+		if (($result = mysql_query($this->_sql, $this->_conn)) === false) {
 			$errMode = $this->getAttribute(SiTech_DB::ATTR_ERRMODE);
 			if ($errMode === SiTech_DB::ERRMODE_EXCEPTION) {
 				require_once('SiTech/DB/Exception.php');
@@ -198,10 +217,11 @@ class SiTech_DB_Statement_MySQL extends SiTech_DB_Statement_Base
 	 * Prepare SQL for execution.
 	 *
 	 * @param string $sql
+	 * @return string
 	 */
 	public function _prepareSql($sql)
 	{
-		/* nothing to do? */
+		return($sql);
 	}
 }
 ?>
