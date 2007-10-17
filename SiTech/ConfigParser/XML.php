@@ -28,7 +28,7 @@ class SiTech_ConfigParser_XML extends SiTech_ConfigParser_Base
 			xml_set_character_data_handler($parser, array($this, '_charData'));
 			if (($fp = fopen($file, 'r')) !== false) {
 				$ret[$file] = true;
-				while ($data = fread($fp, 4096)) {
+				while (($data = fread($fp, 4096)) !== false) {
 					if (!xml_parse($parser, $data, feof($fp))) {
 						$errno = xml_get_error_code($parser);
 						$error = xml_error_string($errno);
@@ -91,15 +91,22 @@ class SiTech_ConfigParser_XML extends SiTech_ConfigParser_Base
 		return(true);
 	}
 	
+	/**
+	 * Parse character data from the XML.
+	 *
+	 * @param resource $parser
+	 * @param string $data
+	 */
 	private function _charData($parser, $data)
 	{
 		$data = trim($data);
+		
 		if ($this->_depth < 3 || strlen($data) == 0) {
-			/* junk data or whitespace */
 			return;
 		}
 		
 		$var =& $this->_config;
+		
 		for ($i = 1; $i <= sizeof($this->_buffer); $i++) {
 			$var =& $var[$this->_buffer[$i]];
 		}

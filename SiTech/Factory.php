@@ -33,11 +33,14 @@ class SiTech_Factory
 	 */
 	public function __call($method, $args)
 	{
+		$val = false;
 		if (method_exists($this->_objBackend, $method) || method_exists($this->_objBackend, '__call')) {
-			return(call_user_method_array($method, $this->_objBackend, $args));
+			$val = call_user_method_array($method, $this->_objBackend, $args);
 		} else {
-			trigger_error('', E_USER_WARNING);
+			throw new SiTech_Exception('Unknown method %s in class %s', array($method, get_class($this->_objBackend)));
 		}
+		
+		return($val);
 	}
 
 	/**

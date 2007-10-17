@@ -55,8 +55,15 @@ abstract class SiTech_ConfigParser_Base implements SiTech_ConfigParser_Interface
 	{
 		switch ($var) {
 			case 'error':
-				return($this->_error);
+				$val = $this->_error;
+				break;
+				
+			default:
+				$val = null;
+				break;
 		}
+		
+		return($val);
 	}
 	
 	/**

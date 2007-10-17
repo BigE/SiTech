@@ -171,7 +171,5 @@ interface SiTech_ConfigParser_Interface
 	 * @return bool
 	 */
 	public function write($file);
-	
-	protected function _handleError($string, $array = array());
 }
 ?>
