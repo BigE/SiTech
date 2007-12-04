@@ -7,14 +7,9 @@
  */
 
 /**
- * @see SiTech
- */
-require_once('SiTech.php');
-
-/**
  * @see SiTech_DB_Statement_Interface
  */
-SiTech::loadInterface('SiTech_DB_Statement_Interface');
+require_once('SiTech/DB/Statement/Interface.php');
 
 /**
  * Base class for database statements.

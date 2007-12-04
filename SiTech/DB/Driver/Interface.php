@@ -101,4 +101,3 @@ interface SiTech_DB_Driver_Interface
 	 */
 	public function setAttribute($attribute, $value);
 }
-?>

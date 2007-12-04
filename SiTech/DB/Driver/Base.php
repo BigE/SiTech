@@ -1,7 +1,23 @@
 <?php
-require_once('SiTech.php');
-SiTech::loadInterface('SiTech_DB_Driver_Interface');
+/**
+ * Base file for database drivers.
+ *
+ * @author Eric Gach <eric.gach@gmail.com>
+ * @package SiTech_DB
+ */
 
+/**
+ * @see SiTech_DB_Driver_Interface
+ */
+require_once ('SiTech/DB/Driver/Interface.php');
+
+/**
+ * Base driver for database backend.
+ *
+ * @author Eric Gach <eric.gach@gmail.com>
+ * @name SiTech_DB_Driver_Base
+ * @package SiTech_DB
+ */
 abstract class SiTech_DB_Driver_Base extends SiTech_DB_Driver_Interface
 {
 	/**
@@ -197,4 +213,3 @@ abstract class SiTech_DB_Driver_Base extends SiTech_DB_Driver_Interface
 	 */
 	abstract protected function __disconnect();
 }
-?>

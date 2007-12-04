@@ -7,14 +7,9 @@
  */
 
 /**
- * @see SiTech
- */
-require_once('SiTech.php');
-
-/**
  * @see SiTech_DB_Driver_Base
  */
-SiTech::loadClass('SiTech_DB_Driver_Base');
+require_once ('SiTech/DB/Driver/Base.php');
 
 /**
  * MySQL driver for database backend.
@@ -154,4 +149,3 @@ class SiTech_DB_Driver_MySQL extends SiTech_DB_Driver_Base
 		$this->_conn = null;
 	}
 }
-?>
