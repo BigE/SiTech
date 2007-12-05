@@ -7,9 +7,14 @@
  */
 
 /**
+ * @see SiTech
+ */
+require_once('SiTech.php');
+
+/**
  * @see SiTech_DB_Driver_Interface
  */
-require_once ('SiTech/DB/Driver/Interface.php');
+SiTech::loadInterface('SiTech_DB_Driver_Interface');
 
 /**
  * Base driver for database backend.
@@ -201,6 +206,17 @@ abstract class SiTech_DB_Driver_Base extends SiTech_DB_Driver_Interface
 		}
 		
 		return(true);
+	}
+	
+	protected function _handleError($sqlState, $errno, $error)
+	{
+		$errMode = $this->getAttribute(SiTech_DB::ATTR_ERRMODE);
+		if ($errMode === SiTech_DB::ERRMODE_EXCEPTION) {
+			require_once('SiTech/DB/Exception.php');
+			throw new SiTech_DB_Exception($sqlState, $errno, $error);
+		} elseif ($errMode === SiTech_DB::ERRMODE_WARNING) {
+			trigger_error(sprintf('%s: (%d) %s', $sqlState, $errno, $error), E_USER_WARNING);
+		}
 	}
 	
 	/**

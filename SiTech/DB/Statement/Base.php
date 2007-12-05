@@ -7,9 +7,14 @@
  */
 
 /**
+ * @see SiTech
+ */
+require_once('SiTech.php');
+
+/**
  * @see SiTech_DB_Statement_Interface
  */
-require_once('SiTech/DB/Statement/Interface.php');
+SiTech::loadInterface('SiTech_DB_Statement_Interface');
 
 /**
  * Base class for database statements.
@@ -424,6 +429,17 @@ abstract class SiTech_DB_Statement_Base implements SiTech_DB_Statement_Interface
 			'Arg2' => $arg2
 		);
 		return(true);
+	}
+	
+	protected function _handleError($sqlState, $errno, $error)
+	{
+		$errMode = $this->getAttribute(SiTech_DB::ATTR_ERRMODE);
+		if ($errMode === SiTech_DB::ERRMODE_EXCEPTION) {
+			require_once('SiTech/DB/Exception.php');
+			throw new SiTech_DB_Exception($sqlState, $errno, $error);
+		} elseif ($errMode === SiTech_DB::ERRMODE_WARNING) {
+			trigger_error(sprintf('%s: (%d) %s', $sqlState, $errno, $error), E_USER_WARNING);
+		}
 	}
 
 	/**

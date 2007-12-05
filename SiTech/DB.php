@@ -99,7 +99,8 @@ class SiTech_DB extends SiTech_Factory
 	const MYSQL_ATTR_MAX_BUFFER_SIZE = 1005;
 	const MYSQL_ATTR_DIRECT_QUERY = 1006;
 	const TYPE_STRING = 0;
-	const TYPE_TABLE = 1;
+	const TYPE_BINARY = 1;
+	const TYPE_TABLE = 2;
 
 	/**
 	 * Use SiTech_DB_Backend_MySQL

@@ -7,14 +7,19 @@
  */
 
 /**
+ * @see SiTech
+ */
+require_once('SiTech.php');
+
+/**
  * @see SiTech_DB
  */
-require_once('SiTech/DB.php');
+SiTech::loadClass('SiTech_DB');
 
 /**
  * @see SiTech_DB_Statement_Base
  */
-require_once('SiTech/DB/Statement/Base.php');
+SiTech::loadClass('SiTech_DB_Statement_Base');
 
 /**
  * Enter description here...
@@ -133,7 +138,7 @@ class SiTech_DB_Statement_MySQL extends SiTech_DB_Statement_Base
 			return($rows);
 		}
 	}
-
+	
 	/**
 	 * Bind a column to a PHP variable.
 	 *
@@ -173,14 +178,7 @@ class SiTech_DB_Statement_MySQL extends SiTech_DB_Statement_Base
 	protected function _execute(array $params=array())
 	{
 		if (($result = mysql_query($this->_sql, $this->_conn)) === false) {
-			$errMode = $this->getAttribute(SiTech_DB::ATTR_ERRMODE);
-			if ($errMode === SiTech_DB::ERRMODE_EXCEPTION) {
-				require_once('SiTech/DB/Exception.php');
-				throw new SiTech_DB_Exception('', mysql_errno(), mysql_error());
-			} elseif ($errMode === SiTech_DB::ERRMODE_WARNING) {
-				trigger_error(sprintf('(%d) %s', mysql_errno(), mysql_error()), E_USER_WARNING);
-			}
-
+			$this->_handleError('', mysql_errno(), mysql_error());
 			return(false);
 		}
 
