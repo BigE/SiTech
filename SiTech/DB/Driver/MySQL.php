@@ -80,7 +80,7 @@ class SiTech_DB_Driver_MySQL extends SiTech_DB_Driver_Base
 	 *
 	 * @param string $name Field name to grab ID from.
 	 */
-	public function getLastInsertId($name=null)
+	public function getLastInsertId($column=null)
 	{
 		if (empty($name)) {
 			return(mysql_insert_id($this->_conn));

@@ -37,6 +37,7 @@ class SiTech_Factory
 		if (method_exists($this->_objBackend, $method) || method_exists($this->_objBackend, '__call')) {
 			$val = call_user_method_array($method, $this->_objBackend, $args);
 		} else {
+			require_once('SiTech/Exception.php');
 			throw new SiTech_Exception('Unknown method %s in class %s', array($method, get_class($this->_objBackend)));
 		}
 		

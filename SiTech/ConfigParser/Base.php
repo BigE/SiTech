@@ -104,7 +104,7 @@ abstract class SiTech_ConfigParser_Base implements SiTech_ConfigParser_Interface
 	public function get($section, $option)
 	{
 		if ($this->hasSection($section)) {
-			if ($this->hasOption($option)) {
+			if ($this->hasOption($section, $option)) {
 				return($this->_config[$section][$option]);
 			} else {
 				$this->_handleError('Cannot retreive value for option "%s" because it does not exist', array($option));
@@ -274,15 +274,6 @@ abstract class SiTech_ConfigParser_Base implements SiTech_ConfigParser_Interface
 	}
 	
 	/**
-	 * Read the specified file(s) into the configuration. Return value
-	 * will be an array in filename => bool format.
-	 *
-	 * @param array $files Files to read into configuration.
-	 * @return array
-	 */
-	abstract public function read(array $files);
-	
-	/**
 	 * Remove the option from the specified section of the configuration.
 	 *
 	 * @param string $section
@@ -395,14 +386,6 @@ abstract class SiTech_ConfigParser_Base implements SiTech_ConfigParser_Interface
 		
 		return($ret);
 	}
-	
-	/**
-	 * Write the current configuration to a single specified file.
-	 *
-	 * @param string $file
-	 * @return bool
-	 */
-	abstract public function write($file);
 	
 	/**
 	 * Handle an error message based on the current ATTR_ERRMODE level.

@@ -7,6 +7,8 @@ SiTech::loadInterface('SiTech_Template_Interface');
  */
 abstract class SiTech_Template_Base implements SiTech_Template_Interface
 {
+	protected $_attributes = array();
+
 	/**
 	 * Template file to load.
 	 *
@@ -38,7 +40,8 @@ abstract class SiTech_Template_Base implements SiTech_Template_Interface
 	public function __construct ( $file , $path = null )
 	{
 		$this->_path = $path;
-		$this->_file = $file;	}
+		$this->_file = $file;
+	}
 	
 	/**
 	 * 
@@ -53,7 +56,8 @@ abstract class SiTech_Template_Base implements SiTech_Template_Interface
 			throw new SiTech_Template_Exception('Strict mode in effect - variable %s is already set', array($variable));
 		}
 		
-		$this->_vars[$variable] = $value;	}
+		$this->_vars[$variable] = $value;
+	}
 	
 	/**
 	 * Output the template file completely rendered.
@@ -62,15 +66,22 @@ abstract class SiTech_Template_Base implements SiTech_Template_Interface
 	 */
 	public function display ()
 	{
-		echo $this->render();	}
-	
-	/**
-	 * Render the template file and return the contents.
-	 * 
-	 * @return string 
-	 * @see SiTech_Template_Interface::render()
-	 */
-	abstract public function render ();
+		echo $this->render();
+	}
+
+	public function getAttribute($attribute)
+	{
+		if (isset($this->_attributes[$attribute])) {
+			return($this->_attributes[$attribute]);
+		} else {
+			return(null);
+		}
+	}
+
+	public function setAttribute($attribute, $value)
+	{
+		$this->_attributes[$attribute] = $value;
+	}
 	
 	/**
 	 * Set the template path to find the template at.
@@ -80,7 +91,8 @@ abstract class SiTech_Template_Base implements SiTech_Template_Interface
 	 */
 	public function setPath ( $path )
 	{
-		$this->_path = $path;	}
+		$this->_path = $path;
+	}
 	
 	/**
 	 * Unset the specified variable.
@@ -92,7 +104,8 @@ abstract class SiTech_Template_Base implements SiTech_Template_Interface
 	{
 		if (isset($this->_vars[$variable])) {
 			unset($this->_vars[$variable]);
-		}	}
+		}
+	}
 }
 
 ?>

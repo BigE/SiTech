@@ -105,7 +105,7 @@ class SiTech_DB extends SiTech_Factory
 	/**
 	 * Use SiTech_DB_Backend_MySQL
 	 */
-	const DRIVER_MYSQL = 'SiTech_DB_Backend_MySQL';
+	const DRIVER_MYSQL = 'SiTech_DB_Driver_MySQL';
 
 	/**
 	 * Class constructor.

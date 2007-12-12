@@ -7,6 +7,7 @@
  * @see SiTech
  */
 require_once('SiTech.php');
+SiTech::loadClass('SiTech_Template');
 /**
  * @see SiTech_Template_Base
  */

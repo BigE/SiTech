@@ -23,7 +23,7 @@ interface SiTech_DB_Driver_Interface
 	 *
 	 * @return int
 	 */
-	public function exec();
+	public function exec($sql, $params = array());
 	
 	/**
 	 * Get the value of the specified attribute.
@@ -55,7 +55,7 @@ interface SiTech_DB_Driver_Interface
 	 * @param string $column
 	 * @return mixed
 	 */
-	public function getLastInserId($column = null);
+	public function getLastInsertId($column = null);
 	
 	/**
 	 * Prepare a SQL statement for execution.
