@@ -7,14 +7,9 @@
  */
 
 /**
- * @see SiTech
- */
-require_once('SiTech.php');
-
-/**
  * @see SiTech_DB_Driver_Base
  */
-SiTech::loadClass('SiTech_DB_Driver_Base');
+require_once('SiTech/DB/Driver/Base.php');
 
 /**
  * MySQL driver for database backend.
@@ -82,7 +77,7 @@ class SiTech_DB_Driver_MySQL extends SiTech_DB_Driver_Base
 	 */
 	public function getLastInsertId($column=null)
 	{
-		if (empty($name)) {
+		if (empty($column)) {
 			return(mysql_insert_id($this->_conn));
 		} else {
 			/* TODO: Implement functionality to grab ID based on field name. */

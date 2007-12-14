@@ -7,14 +7,9 @@
  */
 
 /**
- * @see SiTech
- */
-require_once('SiTech.php');
-
-/**
  * @see SiTech_DB_Driver_Base
  */
-SiTech::loadClass('SiTech_DB_Driver_Base');
+require_once('SiTech/DB/Driver/Base.php');
 
 /**
  * PostgreSQL driver for database backend.

@@ -8,10 +8,11 @@
  * @see SiTech
  */
 require_once('SiTech.php');
+
 /**
  * @see SiTech_Factory
  */
-SiTech::loadClass('SiTech_Factory');
+require_once('SiTech/Factory.php');
 
 /**
  * @author Eric Gach <eric.gach@gmail.com>

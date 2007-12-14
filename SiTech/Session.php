@@ -1,6 +1,6 @@
 <?php
 require_once('SiTech.php');
-SiTech::loadClass('SiTech_Factory');
+require_once('SiTech/Factory.php');
 
 /**
  *

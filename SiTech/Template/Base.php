@@ -1,6 +1,8 @@
 <?php
-require_once('SiTech.php');
-SiTech::loadInterface('SiTech_Template_Interface');
+/**
+ * @see SiTech_Template_Interface
+ */
+require_once('SiTech/Template/Interface.php');
 
 /**
  * 

@@ -1,6 +1,8 @@
 <?php
-require_once('SiTech.php');
-SiTech::loadClass('SiTech_ConfigParser_Base');
+/**
+ * @see SiTech_ConfigParser_Base
+ */
+require_once('SiTech/ConfigParser/Base.php');
 
 class SiTech_ConfigParser_INI extends SiTech_ConfigParser_Base
 {

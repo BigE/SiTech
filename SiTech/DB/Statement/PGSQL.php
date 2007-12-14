@@ -1,16 +1,27 @@
 <?php
 /**
- * @see SiTech
+ * PostgreSQL support file for database statements.
+ *
+ * @author Eric Gach <eric.gach@gmail.com>
+ * @package SiTech_DB
  */
-require_once ('SiTech.php');
+
+/**
+ * @see SiTech_DB
+ */
+require_once('SiTech/DB.php');
 
 /**
  * @see SiTech_DB_Statement_Base
  */
-SiTech::loadClass('SiTech_DB_Statement_Base');
+require_once('SiTech/DB/Statement/Base.php');
 
 /**
+ * Enter description here...
  *
+ * @author Eric Gach <eric.gach@gmail.com>
+ * @name SiTech_DB_Statement_PGSQL
+ * @package SiTech_DB
  */
 class SiTech_DB_Statement_PGSQL extends SiTech_DB_Statement_Base
 {

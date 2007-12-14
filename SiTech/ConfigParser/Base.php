@@ -5,17 +5,13 @@
  */
 
 /**
- * @see SiTech
- */
-require_once('SiTech.php');
-/**
  * @see SiTech_ConfigParser
  */
-SiTech::loadClass('SiTech_ConfigParser');
+require_once('SiTech/ConfigParser.php');
 /**
  * @see SiTech_ConfigParser_Interface
  */
-SiTech::loadInterface('SiTech_ConfigParser_Interface');
+require_once('SiTech/ConfigParser/Interface.php');
 
 /**
  * @author Eric Gach <eric.gach@gmail.com>

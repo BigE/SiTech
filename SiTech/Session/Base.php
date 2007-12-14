@@ -1,10 +1,20 @@
 <?php
-require_once('SiTech.php');
-SiTech::loadInterface('SiTech_Session_Interface');
-SiTech::loadClass('SiTech_Session');
+/**
+ * 
+ */
 
 /**
- *
+ * @see SiTech_Session
+ */
+require_once('SiTech/Session.php');
+
+/**
+ * @see SiTech_Session_Interface
+ */
+require_once ('SiTech/Session/Interface.php');
+
+/**
+ * @author Eric Gach <eric.gach@gmail.com>
  */
 abstract class SiTech_Session_Base implements SiTech_Session_Interface
 {

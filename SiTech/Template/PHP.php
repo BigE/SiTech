@@ -4,14 +4,14 @@
  */
 
 /**
- * @see SiTech
+ * @see SiTech_Template
  */
-require_once('SiTech.php');
-SiTech::loadClass('SiTech_Template');
+require_once('SiTech/Template.php');
+
 /**
  * @see SiTech_Template_Base
  */
-SiTech::loadClass('SiTech_Template_Base');
+require_once('SiTech/Template/Base.php');
 
 /**
  * PHP type template class.

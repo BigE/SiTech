@@ -7,14 +7,9 @@
  */
 
 /**
- * @see SiTech
- */
-require_once('SiTech.php');
-
-/**
  * @see SiTech_DB_Driver_Interface
  */
-SiTech::loadInterface('SiTech_DB_Driver_Interface');
+require_once('SiTech/DB/Driver/Interface.php');
 
 /**
  * Base driver for database backend.

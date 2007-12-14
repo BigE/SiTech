@@ -1,6 +1,5 @@
 <?php
-require_once('SiTech.php');
-SiTech::loadInterface('SiTech_DB_Select_Interface');
+require_once('SiTech/DB/Select/Interface.php');
 
 class SiTech_DB_Select implements SiTech_DB_Select_Interface
 {

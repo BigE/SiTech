@@ -7,19 +7,14 @@
  */
 
 /**
- * @see SiTech
- */
-require_once('SiTech.php');
-
-/**
  * @see SiTech_DB
  */
-SiTech::loadClass('SiTech_DB');
+require_once('SiTech/DB.php');
 
 /**
  * @see SiTech_DB_Statement_Base
  */
-SiTech::loadClass('SiTech_DB_Statement_Base');
+require_once('SiTech/DB/Statement/Base.php');
 
 /**
  * Enter description here...

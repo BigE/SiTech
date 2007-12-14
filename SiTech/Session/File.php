@@ -1,6 +1,18 @@
 <?php
+/**
+ * 
+ */
+
+/**
+ * @see SiTech_Session
+ */
+require_once ('SiTech/Session.php');
+
+/**
+ * @see SiTech_Session_Base
+ */
 require_once ('SiTech/Session/Base.php');
-require_once ('SiTech/Session/Interface.php');
+
 /**
  *
  */

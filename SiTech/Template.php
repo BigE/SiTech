@@ -1,6 +1,6 @@
 <?php
 require_once('SiTech.php');
-SiTech::loadClass('SiTech_Factory');
+require_once('SiTech/Factory.php');
 
 class SiTech_Template extends SiTech_Factory
 {
@@ -19,6 +19,7 @@ class SiTech_Template extends SiTech_Factory
 			$type = self::TYPE_PHP;
 		}
 		
+		SiTech::loadClass($type);
 		$this->_objBackend = new $type();
 	}
 }
