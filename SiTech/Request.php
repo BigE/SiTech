@@ -1,6 +1,6 @@
 <?php
-
-require_once ('trunk/SiTech/Request/Interface.php') ;
+require_once('SiTech.php') ;
+SiTech::loadInterface('SiTech_Request_Interface');;
 
 /**
  *
