@@ -10,6 +10,8 @@ abstract class SiTech_Session_Base implements SiTech_Session_Interface
 {
 	protected $_attributes = array();
 	
+	protected $_started = false;
+	
 	/**
 	 * 
 	 */
@@ -22,6 +24,7 @@ abstract class SiTech_Session_Base implements SiTech_Session_Interface
 		$this->setAttribute(SiTech_Session::ATTR_NAME, '');
 		$this->setAttribute(SiTech_Session::ATTR_REMEMBER, false);
 		$this->setAttribute(SiTech_Session::ATTR_STRICT, false);
+		
 		/* set session handlers */
 		session_set_save_handler(
 			array($this, '_open'),
@@ -39,6 +42,7 @@ abstract class SiTech_Session_Base implements SiTech_Session_Interface
 	 */
 	public function close ()
 	{
+		$this->_started = false;
 		session_write_close();
 	}
 
@@ -49,6 +53,7 @@ abstract class SiTech_Session_Base implements SiTech_Session_Interface
 	 */
 	public function destroy ()
 	{
+		$this->_started = false;
 		return(session_destroy());
 	}
 
@@ -65,6 +70,11 @@ abstract class SiTech_Session_Base implements SiTech_Session_Interface
 		} else {
 			return(null);
 		}
+	}
+	
+	public function isStarted()
+	{
+		return($this->_started);
 	}
 
 	/**
@@ -105,17 +115,34 @@ abstract class SiTech_Session_Base implements SiTech_Session_Interface
 
 	/**
 	 * 
-	 * @see SiTech_Session_Interface::start()
+	 * @return bool
 	 */
 	public function start ()
 	{
+		/* first the options need to be set */
+		session_set_cookie_params(
+			$this->getAttribute(SiTech_Session::ATTR_COOKIE_TIME),
+			$this->getAttribute(SiTech_Session::ATTR_COOKIE_PATH),
+			$this->getAttribute(SiTech_Session::ATTR_COOKIE_DOMAIN)
+		);
+		
+		if (!empty($this->_attributes[SiTech_Session::ATTR_NAME])) {
+			session_name($this->_attributes[SiTech_Session::ATTR_NAME]);
+		}
+		
+		if (session_start()) {
+			$this->_started = true;
+			return(true);
+		} else {
+			return(false);
+		}
 	}
 	
-	abstract protected function _close();
-	abstract protected function _destroy($id);
-	abstract protected function _gc($maxLife);
-	abstract protected function _open($path, $name);
-	abstract protected function _read($id);
-	abstract protected function _write($id, $data);
+	abstract public function _close();
+	abstract public function _destroy($id);
+	abstract public function _gc($maxLife);
+	abstract public function _open($path, $name);
+	abstract public function _read($id);
+	abstract public function _write($id, $data);
 }
 ?>

@@ -24,6 +24,8 @@ interface SiTech_Session_Interface
 	 */
 	public function getAttribute($attribute);
 	
+	public function isStarted();
+	
 	/**
 	 * Set a session attribute.
 	 *

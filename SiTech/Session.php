@@ -21,6 +21,7 @@ class SiTech_Session extends SiTech_Factory
 			$type = self::TYPE_FILE;
 		}
 		
+		SiTech::loadClass($type);
 		$this->_objBackend = new $type();
 	}
 }

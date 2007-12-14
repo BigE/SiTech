@@ -18,7 +18,7 @@ class SiTech_Session_File extends SiTech_Session_Base
 	 * 
 	 * @return bool
 	 */
-	protected function _close ()
+	public function _close ()
 	{
 		return(true);
 	}
@@ -29,7 +29,7 @@ class SiTech_Session_File extends SiTech_Session_Base
 	 * @param string $id
 	 * @return bool
 	 */
-	protected function _destroy ($id)
+	public function _destroy ($id)
 	{
 		$file = 'sess_'.$id;
 		$file = realpath($this->_savePath.DIRECTORY_SEPARATOR.$file);
@@ -41,7 +41,7 @@ class SiTech_Session_File extends SiTech_Session_Base
 	 * 
 	 * @return bool
 	 */
-	protected function _gc ($maxLife)
+	public function _gc ($maxLife)
 	{
 		foreach (glob($this->_savePath.DIRECTORY_SEPARATOR.'sess_*') as $file) {
 			if (filemtime($this->_savePath.DIRECTORY_SEPARATOR.$file) + $maxLife < time()) {
@@ -65,7 +65,7 @@ class SiTech_Session_File extends SiTech_Session_Base
 	 * @param string $name
 	 * @return bool
 	 */
-	protected function _open ($path, $name)
+	public function _open ($path, $name)
 	{
 		$this->_savePath = $path;
 		$this->setAttribute(SiTech_Session::ATTR_NAME, $name);
@@ -78,7 +78,7 @@ class SiTech_Session_File extends SiTech_Session_Base
 	 * @param string $id
 	 * @return string
 	 */
-	protected function _read ($id)
+	public function _read ($id)
 	{
 		$file = 'sess_'.$id;
 		$file = realpath($this->_savePath.DIRECTORY_SEPARATOR.$file);
@@ -103,7 +103,7 @@ class SiTech_Session_File extends SiTech_Session_Base
 	 * @param string $data
 	 * @return bool
 	 */
-	protected function _write ($id, $data)
+	public function _write ($id, $data)
 	{
 		$file = 'sess_'.$id;
 		$file = realpath($this->_savePath.DIRECTORY_SEPARATOR.$file);
