@@ -100,4 +100,14 @@ interface SiTech_DB_Driver_Interface
 	 * @return bool
 	 */
 	public function setAttribute($attribute, $value);
+	
+	/**
+	 * Set the default fetch mode for the current connection.
+	 *
+	 * @param int $mode Fetch mode to set current connection to.
+	 * @param mixed $arg1
+	 * @param mixed $arg2
+	 * @return bool
+	 */
+	public function setFetchMode($mode, $arg1=null, $arg2=null);
 }

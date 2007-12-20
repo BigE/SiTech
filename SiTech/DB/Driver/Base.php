@@ -41,8 +41,18 @@ abstract class SiTech_DB_Driver_Base implements SiTech_DB_Driver_Interface
 	 */
 	protected $_conn;
 	
+	/**
+	 * Fetch mode holder.
+	 *
+	 * @var array
+	 */
+	protected $_fetchMode = array('mode' => SiTech_DB::FETCH_ASSOC, 'arg1' => null, 'arg2' => null);
+	
 	public function __construct(array $config, array $options = array())
 	{
+		/* default to exceptions */
+		$this->setAttribute(SiTech_DB::ATTR_ERRMODE, SiTech_DB::ERRMODE_EXCEPTION);
+		
 		$this->_config = $config;
 		foreach ($options as $attribute => $value) {
 			$this->setAttribute($attribute, $value);
@@ -137,6 +147,26 @@ abstract class SiTech_DB_Driver_Base implements SiTech_DB_Driver_Interface
 				break;
 		}
 		
+		return(true);
+	}
+	
+	/**
+	 * Set the default fetch mode for the current connection.
+	 *
+	 * @param int $mode Fetch mode to set current connection to.
+	 * @param mixed $arg1
+	 * @param mixed $arg2
+	 * @return bool
+	 * @todo Parse each fetch mode and check arguments.
+	 */
+	public function setFetchMode($mode, $arg1=null, $arg2=null)
+	{
+		/* TODO: Parse each fetch mode and check arguments. */
+		$this->_fetchMode = array(
+			'Mode' => $mode,
+			'Arg1' => $arg1,
+			'Arg2' => $arg2
+		);
 		return(true);
 	}
 	

@@ -51,6 +51,7 @@ class SiTech_DB extends SiTech_Factory
 	const FETCH_SERIALIZE = 524288;
 	const FETCH_PROPS_LATE = 1048576;
 	const FETCH_NAMED = 11;
+	const FETCH_CONSTRUCT = 13;
 	const ATTR_AUTOCOMMIT = 0;
 	const ATTR_PREFETCH = 1;
 	const ATTR_TIMEOUT = 2;

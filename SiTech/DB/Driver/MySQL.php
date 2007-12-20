@@ -93,8 +93,10 @@ class SiTech_DB_Driver_MySQL extends SiTech_DB_Driver_Base
 	 */
 	public function prepare($sql)
 	{
-		$stmnt = new SiTech_DB_Statment_MySQL($sql);
-		$stmnt->setFetchMode($this->_fetch['Mode'], $this->_fetch['Arg1'], $this->_fetch['Arg2']);
+		$this->_connect();
+		require_once('SiTech/DB/Statement/MySQL.php');
+		$stmnt = new SiTech_DB_Statement_MySQL($sql, $this->_conn, $this->_attributes);
+		$stmnt->setFetchMode($this->_fetchMode['mode'], $this->_fetchMode['arg1'], $this->_fetchMode['arg2']);
 		return($stmnt);
 	}
 
@@ -134,6 +136,8 @@ class SiTech_DB_Driver_MySQL extends SiTech_DB_Driver_Base
 
 	protected function _connect()
 	{
+		if (is_resource($this->_conn)) return;
+		
 		if (($this->_conn = @mysql_connect($this->_config['host'], $this->_config['user'], $this->_config['pass'])) === false) {
 			$this->_handleError('', mysql_errno(), mysql_error());
 		}

@@ -142,7 +142,7 @@ class SiTech_DB_Statement_MySQL extends SiTech_DB_Statement_Base
 	 * @param int $type Force type on variable.
 	 * @return bool Returns false on failure.
 	 */
-	protected function _bindColumn($column, &$var, $type)
+	protected function _bindColumn($column, &$var, $type=null)
 	{
 		/* Nothing specific to do for this driver */
 		return(true);
@@ -159,7 +159,7 @@ class SiTech_DB_Statement_MySQL extends SiTech_DB_Statement_Base
 	 * @return bool Returns false on failure.
 	 * @todo Add parameter checking to ensure success
 	 */
-	protected function _bindParam($parameter, &$var, $type, $length, $driverOptions)
+	protected function _bindParam($parameter, &$var, $type, $length, array $driverOptions)
 	{
 		/* Nothing specific to do for this driver */
 		return(true);
@@ -172,7 +172,13 @@ class SiTech_DB_Statement_MySQL extends SiTech_DB_Statement_Base
 	 */
 	protected function _execute(array $params=array())
 	{
-		if (($result = mysql_query($this->_sql, $this->_conn)) === false) {
+		$sql = $this->_sql;
+		$params = array_merge($params, $this->_boundParams);
+		foreach ($params as $param => $value) {
+			$sql = str_replace($param, "'$value'", $sql);
+		}
+		
+		if (($result = mysql_query($sql, $this->_conn)) === false) {
 			$this->_handleError('', mysql_errno(), mysql_error());
 			return(false);
 		}
@@ -185,6 +191,7 @@ class SiTech_DB_Statement_MySQL extends SiTech_DB_Statement_Base
 	{
 		switch ($mode) {
 			case SiTech_DB::FETCH_ASSOC:
+			default:
 				$row = mysql_fetch_assoc($this->_result);
 				break;
 

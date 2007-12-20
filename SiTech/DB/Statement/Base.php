@@ -215,12 +215,11 @@ abstract class SiTech_DB_Statement_Base implements SiTech_DB_Statement_Interface
 				$this->setFetchMode($fetchMode, $curserOrientation, $cursorOffset);
 			}
 
-			switch ($this->_fetchMode['Mode']) {
+			switch ($this->_fetchMode['mode']) {
 				case SiTech_DB::FETCH_ASSOC:
 				case SiTech_DB::FETCH_BOTH:
 				case SiTech_DB::FETCH_NUM:
-				case SiTech_DB::FETCH_OBJ:
-					$row = $this->_fetch($this->_fetchMode['Mode']);
+					$row = $this->_fetch($this->_fetchMode['mode']);
 					break;
 
 				case SiTech_DB::FETCH_BOUND:
@@ -229,25 +228,30 @@ abstract class SiTech_DB_Statement_Base implements SiTech_DB_Statement_Interface
 					$row = true;
 					break;
 
+				case SiTech_DB::FETCH_OBJ:
 				case SiTech_DB::FETCH_CLASS:
-					if (!class_exists($this->_fetchMode['Arg1'])) {
+					if (!class_exists($this->_fetchMode['arg1'])) {
 						/* not sure what to do here yet... */
 						$row = false;
 					} else {
-						$row = $this->_fetch(SiTech_DB::FETCH_CLASS, $this->_fetchMode['Arg1'], $this->_fetchMode['Arg2']);
+						$row = $this->_fetch(SiTech_DB::FETCH_CLASS, $this->_fetchMode['arg1'], $this->_fetchMode['arg2']);
 					}
 					break;
 
 				case SiTech_DB::FETCH_CLASSTYPE:
 					throw new SiTech_DB_Exception('Unsupported fetch mode SiTech_DB::FETCH_CLASSTYPE');
 					break;
+					
+				case SiTech_DB::FETCH_CONSTRUCT:
+					throw new SiTech_DB_Exception('Unsupported fetch mode SiTech_DB::CONSTRUCT');
+					break;
 
 				case SiTech_DB::FETCH_COLUMN:
-					$row = $this->_fetch($this->_fetchMode['Mode'], $this->_fetchMode['Arg1']);
+					$row = $this->_fetch($this->_fetchMode['mode'], $this->_fetchMode['arg1']);
 					break;
 
 				case SiTech_DB::FETCH_FUNC:
-					$row = call_user_func_array($this->_fetchMode['Arg1'], $this->_fetch(SiTech_DB::FETCH_NUM));
+					$row = call_user_func_array($this->_fetchMode['arg1'], $this->_fetch(SiTech_DB::FETCH_NUM));
 					break;
 
 				case SiTech_DB::FETCH_GROUP:
@@ -256,7 +260,7 @@ abstract class SiTech_DB_Statement_Base implements SiTech_DB_Statement_Interface
 
 				case SiTech_DB::FETCH_INTO:
 					$tmpRow = $this->_fetch(SiTech_DB::FETCH_ASSOC);
-					$row = $this->_fetchMode['Arg1'];
+					$row = $this->_fetchMode['arg1'];
 					foreach ($tmpRow as $field => $value) {
 						$row->$field = $value;
 					}
@@ -291,11 +295,15 @@ abstract class SiTech_DB_Statement_Base implements SiTech_DB_Statement_Interface
 					break;
 
 				default:
-					throw new SiTech_DB_Exception('Unknown fetch mode %s', array($this->_fetchMode['Mode']));
+					require_once('SiTech/Exception.php');
+					throw new SiTech_Exception('Unknown fetch mode %s', array($this->_fetchMode['mode']));
 					break;
 			}
 		} catch (Exception $e) {
-			$this->_fetchMode = $oldFetchMode;
+			if (!empty($oldFetchMode)) {
+				$this->_fetchMode = $oldFetchMode;
+			}
+			
 			throw $e;
 		}
 
@@ -322,7 +330,7 @@ abstract class SiTech_DB_Statement_Base implements SiTech_DB_Statement_Interface
 
 		try {
 			while (($row = $this->fetch()) !== false) {
-				if ($this->_fetchMode['Mode'] == SiTech_DB::FETCH_NAMED) {
+				if ($this->_fetchMode['mode'] == SiTech_DB::FETCH_NAMED) {
 					$keys = array_keys($row);
 					foreach ($keys as $key) {
 						if (!isset($array[$key])) {
@@ -366,17 +374,7 @@ abstract class SiTech_DB_Statement_Base implements SiTech_DB_Statement_Interface
 	 */
 	public function fetchObject($className=null, array $constructArgs=array())
 	{
-		$oldFetchMode = $this->_fetchMode;
-		$this->setFetchMode(SiTech_DB::FETCH_OBJ, $className, $constructArgs);
-
-		try {
-			$row = $this->fetch();
-		} catch (Exception $e) {
-			$this->_fetchMode = $oldFetchMode;
-			throw $e;
-		}
-
-		$this->_fetchMode = $oldFetchMode;
+		$row = $this->fetch(SiTech_DB::FETCH_OBJ, $className, $constructArgs);
 		return($row);
 	}
 
@@ -423,9 +421,9 @@ abstract class SiTech_DB_Statement_Base implements SiTech_DB_Statement_Interface
 	{
 		/* TODO: Parse each fetch mode and check arguments. */
 		$this->_fetchMode = array(
-			'Mode' => $mode,
-			'Arg1' => $arg1,
-			'Arg2' => $arg2
+			'mode' => $mode,
+			'arg1' => $arg1,
+			'arg2' => $arg2
 		);
 		return(true);
 	}
