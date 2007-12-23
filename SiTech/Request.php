@@ -17,15 +17,15 @@ class SiTech_Request implements SiTech_Request_Interface
 	
 	const METHOD_POST = 'POST';
 	
-	const TYPE_BOOL = 0;
+	const TYPE_BOOL = 1;
 	
-	const TYPE_DOUBLE = 1;
+	const TYPE_DOUBLE = 2;
 	
-	const TYPE_FLOAT = 2;
+	const TYPE_FLOAT = 3;
 	
-	const TYPE_INT = 3;
+	const TYPE_INT = 4;
 	
-	const TYPE_STRING = 4;
+	const TYPE_STRING = 5;
 
 	/**
 	 * 

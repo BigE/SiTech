@@ -239,10 +239,12 @@ abstract class SiTech_DB_Statement_Base implements SiTech_DB_Statement_Interface
 					break;
 
 				case SiTech_DB::FETCH_CLASSTYPE:
+					require_once('SiTech/DB/Exception.php');
 					throw new SiTech_DB_Exception('Unsupported fetch mode SiTech_DB::FETCH_CLASSTYPE');
 					break;
 					
 				case SiTech_DB::FETCH_CONSTRUCT:
+					require_once('SiTech/DB/Exception.php');
 					throw new SiTech_DB_Exception('Unsupported fetch mode SiTech_DB::CONSTRUCT');
 					break;
 
@@ -268,6 +270,7 @@ abstract class SiTech_DB_Statement_Base implements SiTech_DB_Statement_Interface
 
 				case SiTech_DB::FETCH_KEY_PAIR:
 					if ($this->columnCount() > 2) {
+						require_once('SiTech/DB/Exception.php');
 						throw new SiTech_DB_Exception('SiTech_DB::FETCH_KEY_PAIR fetch mode expects exactly 2 columns in result set.');
 					} else {
 						$tmpRow = $this->_fetch(SiTech_DB::FETCH_NUM);
@@ -324,8 +327,11 @@ abstract class SiTech_DB_Statement_Base implements SiTech_DB_Statement_Interface
 	 */
 	public function fetchAll($fetchMode=null, $arg1=null, $arg2=null)
 	{
-		$oldFetchMode = $this->_fetchMode;
-		$this->setFetchMode($fetchMode, $arg1, $arg2);
+		if (!is_null($fetchMode)) {
+			$oldFetchMode = $this->_fetchMode;
+			$this->setFetchMode($fetchMode, $arg1, $arg2);
+		}
+		
 		$array = array();
 
 		try {
@@ -345,11 +351,16 @@ abstract class SiTech_DB_Statement_Base implements SiTech_DB_Statement_Interface
 			}
 		} catch (Exception $e) {
 			/* handy... cleanup, but still pass the exception */
-			$this->_fetchMode = $oldFetchMode;
+			if (isset($oldFetchMode)) {
+				$this->_fetchMode = $oldFetchMode;
+			}
 			throw $e;
 		}
 
-		$this->_fetchMode = $oldFetchMode;
+		if (isset($oldFetchMode)) {
+			$this->_fetchMode = $oldFetchMode;
+		}
+		
 		return($array);
 	}
 

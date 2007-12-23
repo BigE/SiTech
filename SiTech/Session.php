@@ -7,13 +7,16 @@ require_once('SiTech/Factory.php');
  */
 class SiTech_Session extends SiTech_Factory
 {
-	const ATTR_COOKIE_DOMAIN = 0;
-	const ATTR_COOKIE_PATH = 1;
-	const ATTR_COOKIE_TIME = 2;
-	const ATTR_NAME = 3;
-	const ATTR_REMEMBER = 4;
-	const ATTR_STRICT = 5;
+	const ATTR_COOKIE_DOMAIN = 1;
+	const ATTR_COOKIE_PATH = 2;
+	const ATTR_COOKIE_TIME = 3;
+	const ATTR_DB_CONN = 4;
+	const ATTR_DB_TABLE = 5;
+	const ATTR_NAME = 6;
+	const ATTR_REMEMBER = 7;
+	const ATTR_STRICT = 8;
 	const TYPE_FILE = 'SiTech_Session_File';
+	const TYPE_DB = 'SiTech_Session_DB';
 	
 	function __construct ($type = null)
 	{

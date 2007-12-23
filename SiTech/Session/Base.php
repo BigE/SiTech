@@ -31,6 +31,8 @@ abstract class SiTech_Session_Base implements SiTech_Session_Interface
 		$this->setAttribute(SiTech_Session::ATTR_COOKIE_DOMAIN, $_SERVER['HTTP_HOST']);
 		$this->setAttribute(SiTech_Session::ATTR_COOKIE_PATH, '/');
 		$this->setAttribute(SiTech_Session::ATTR_COOKIE_TIME, 3600); /* one hour */
+		$this->setAttribute(SiTech_Session::ATTR_DB_CONN, null);
+		$this->setAttribute(SiTech_Session::ATTR_DB_TABLE, 'SiTech_Sessions');
 		$this->setAttribute(SiTech_Session::ATTR_NAME, '');
 		$this->setAttribute(SiTech_Session::ATTR_REMEMBER, false);
 		$this->setAttribute(SiTech_Session::ATTR_STRICT, false);
@@ -103,6 +105,8 @@ abstract class SiTech_Session_Base implements SiTech_Session_Interface
 			case SiTech_Session::ATTR_COOKIE_DOMAIN:
 			case SiTech_Session::ATTR_COOKIE_PATH:
 			case SiTech_Session::ATTR_NAME:
+			case SiTech_Session::ATTR_DB_CONN:
+			case SiTech_Session::ATTR_DB_TABLE:
 				$this->_attributes[$attribute] = $value;
 				break;
 				

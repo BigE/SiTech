@@ -127,8 +127,8 @@ class SiTech_DB_Statement_MySQL extends SiTech_DB_Statement_Base
 	 */
 	public function rowCount()
 	{
-		if (($rows = mysql_num_rows($this->_result)) === false) {
-			return(mysql_affected_rows($this->_result));
+		if (($rows = @mysql_num_rows($this->_result)) === false) {
+			return(@mysql_affected_rows($this->_conn));
 		} else {
 			return($rows);
 		}
