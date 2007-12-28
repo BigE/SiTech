@@ -1,5 +1,7 @@
 <?php
 /**
+ * SiTech_ConfigParser package.
+ *
  * @author Eric Gach <eric.gach@gmail.com>
  * @package SiTech_ConfigParser
  */
@@ -15,6 +17,9 @@ require_once('SiTech.php');
 require_once('SiTech/Factory.php');
 
 /**
+ * Caller class for SiTech_ConfigParser. You can either use this to gain access to
+ * the class you want, or call it directly.
+ *
  * @author Eric Gach <eric.gach@gmail.com>
  * @name SiTech_ConfigParser
  * @package SiTech_ConfigParser
