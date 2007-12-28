@@ -124,7 +124,7 @@ class SiTech_Filter implements SiTech_Filter_Interface
 				break;
 		}
 		
-		return($val);
+		return(!$val);
 	}
 }
 
