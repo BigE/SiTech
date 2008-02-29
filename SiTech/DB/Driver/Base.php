@@ -55,7 +55,10 @@ abstract class SiTech_DB_Driver_Base implements SiTech_DB_Driver_Interface
 		
 		$this->_config = $config;
 		foreach ($options as $attribute => $value) {
-			$this->setAttribute($attribute, $value);
+			if ($this->setAttribute($attribute, $value) === false) {
+				require_once('SiTech/DB/Exception.php');
+				throw new SiTech_DB_Exception('Invalid configuration value');
+			}
 		}
 	}
 	
