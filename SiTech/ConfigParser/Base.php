@@ -335,7 +335,7 @@ abstract class SiTech_ConfigParser_Base implements SiTech_ConfigParser_Interface
 				$this->_handleError('Strict mode in effect - Cannot overwrite option "%s" in section "%s"', array($option, $section));
 			}
 			
-			$this->_config[$section][$value] = (string)$value;
+			$this->_config[$section][$option] = (string)$value;
 			return(true);
 		} else {
 			$this->_handleError('Cannot set option "%s". No section named "%s" exists in configuration!', array($section, $option));

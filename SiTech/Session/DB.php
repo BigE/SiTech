@@ -51,7 +51,7 @@ class SiTech_Session_DB extends SiTech_Session_Base
 	{
 		$db = $this->setAttribute(SiTech_Session::ATTR_DB_CONN);
 		$table = $this->setAttribute(SiTech_Session::ATTR_DB_TABLE);
-		$stmnt = $db->prepare('DELETE FROM '.$table.' WHERE Started < :maxLife AND Remember = 0');
+		$stmnt = $db->prepare('DELETE FROM '.$table.' WHERE Started < DATETIME(:maxLife) AND Remember = 0');
 		$stmnt->execute(array(':maxLife' => $maxLife));
 		
 		return(true);

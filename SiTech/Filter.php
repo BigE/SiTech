@@ -14,7 +14,7 @@ require_once('SiTech/Filter/Interface.php');
 class SiTech_Filter implements SiTech_Filter_Interface
 {
 	const METHOD_GET = 1;
-	const METHOD_POST = 0;
+	const METHOD_POST = 2;
 	const TYPE_BOOL = 1;
 	const TYPE_DOUBLE = 2;
 	const TYPE_FLOAT = 3;

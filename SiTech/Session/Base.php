@@ -104,6 +104,10 @@ abstract class SiTech_Session_Base implements SiTech_Session_Interface
 		{
 			case SiTech_Session::ATTR_COOKIE_DOMAIN:
 			case SiTech_Session::ATTR_COOKIE_PATH:
+				if ($this->_started) {
+					require_once('SiTech/Session/Exception.php');
+					throw new SiTech_Session_Exception('Cannot set cookie parameter. Session is already started and cookie is already sent. Please make sure you set this before calling %s::start()', array(__CLASS__));
+				}
 			case SiTech_Session::ATTR_NAME:
 			case SiTech_Session::ATTR_DB_CONN:
 			case SiTech_Session::ATTR_DB_TABLE:
@@ -146,6 +150,9 @@ abstract class SiTech_Session_Base implements SiTech_Session_Interface
 		
 		if (session_start()) {
 			$this->_started = true;
+			if ($this->getAttribute(SiTech_Session::ATTR_REMEMBER)) {
+				setcookie(session_name(), $_COOKIE[session_name()], time() + (86400 * 365), $this->getAttribute(SiTech_Session::ATTR_COOKIE_PATH), $this->getAttribute(SiTech_Session::ATTR_COOKIE_DOMAIN));
+			}
 			return(true);
 		} else {
 			return(false);
