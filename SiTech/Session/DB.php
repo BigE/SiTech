@@ -1,6 +1,6 @@
 <?php
 /**
- * 
+ *
  */
 
 /**
@@ -20,7 +20,7 @@ class SiTech_Session_DB extends SiTech_Session_Base
 {
 	/**
 	 * Close the session.
-	 * 
+	 *
 	 * @return bool
 	 */
 	public function _close ()
@@ -30,7 +30,7 @@ class SiTech_Session_DB extends SiTech_Session_Base
 
 	/**
 	 * Delete the session entierly.
-	 * 
+	 *
 	 * @param string $id
 	 * @return bool
 	 */
@@ -44,22 +44,22 @@ class SiTech_Session_DB extends SiTech_Session_Base
 
 	/**
 	 * Do garbage cleanup.
-	 * 
+	 *
 	 * @return bool
 	 */
 	public function _gc ($maxLife)
 	{
-		$db = $this->setAttribute(SiTech_Session::ATTR_DB_CONN);
-		$table = $this->setAttribute(SiTech_Session::ATTR_DB_TABLE);
+		$db = $this->getAttribute(SiTech_Session::ATTR_DB_CONN);
+		$table = $this->getAttribute(SiTech_Session::ATTR_DB_TABLE);
 		$stmnt = $db->prepare('DELETE FROM '.$table.' WHERE Started < DATETIME(:maxLife) AND Remember = 0');
 		$stmnt->execute(array(':maxLife' => $maxLife));
-		
+
 		return(true);
 	}
 
 	/**
 	 * Open the session.
-	 * 
+	 *
 	 * @param string $path
 	 * @param string $name
 	 * @return bool
@@ -71,7 +71,7 @@ class SiTech_Session_DB extends SiTech_Session_Base
 			require_once('SiTech/Session/Exception.php');
 			throw new SiTech_Session_Exception('Cannot open session. Attribute SiTech_Session::ATTR_DB_CONN must instance of SiTech_DB_Driver_Interface');
 		}
-		
+
 		$this->_savePath = $path;
 		$this->setAttribute(SiTech_Session::ATTR_NAME, $name);
 		return(true);
@@ -79,7 +79,7 @@ class SiTech_Session_DB extends SiTech_Session_Base
 
 	/**
 	 * Read the session information.
-	 * 
+	 *
 	 * @param string $id
 	 * @return string
 	 */
@@ -100,7 +100,7 @@ class SiTech_Session_DB extends SiTech_Session_Base
 
 	/**
 	 * Write the session information.
-	 * 
+	 *
 	 * @param string $id
 	 * @param string $data
 	 * @return bool
@@ -121,7 +121,7 @@ class SiTech_Session_DB extends SiTech_Session_Base
 		} else {
 			$stmnt = $db->prepare('INSERT INTO '.$table.' (Id, Name, Data, Remember, Strict, RemoteAddr) VALUES(:id, :name, :data, :remember, :strict, :remote)');
 		}
-		
+
 		$ret = $stmnt->execute(array(':id' => $id, ':name' => $this->getAttribute(SiTech_Session::ATTR_NAME), ':data' => serialize($data), ':remember' => (int)$this->getAttribute(SiTech_Session::ATTR_REMEMBER), ':strict' => (int)$this->getAttribute(SiTech_Session::ATTR_STRICT), ':remote' => $_SERVER['REMOTE_ADDR']));
 		return($ret);
 	}

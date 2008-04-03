@@ -34,7 +34,7 @@ abstract class SiTech_ConfigParser_Base implements SiTech_ConfigParser_Interface
 	 *
 	 * @param array $options Array of SiTech_ConfigParser::ATTR_* options to set.
 	 */
-	public function __construct(array $options)
+	public function __construct(array $options=array())
 	{
 		foreach ($options as $attr => $value) {
 			$this->setAttribute($attr, $value);

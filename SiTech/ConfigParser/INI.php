@@ -70,4 +70,3 @@ class SiTech_ConfigParser_INI extends SiTech_ConfigParser_Base
 		}
 	}
 }
-?>

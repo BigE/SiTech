@@ -133,7 +133,7 @@ class SiTech_DB_Statement_MySQL extends SiTech_DB_Statement_Base
 			return($rows);
 		}
 	}
-	
+
 	/**
 	 * Bind a column to a PHP variable.
 	 *
@@ -175,9 +175,10 @@ class SiTech_DB_Statement_MySQL extends SiTech_DB_Statement_Base
 		$sql = $this->_sql;
 		$params = array_merge($params, $this->_boundParams);
 		foreach ($params as $param => $value) {
+			$value = mysql_escape_string($value);
 			$sql = str_replace($param, "'$value'", $sql);
 		}
-		
+
 		if (($result = mysql_query($sql, $this->_conn)) === false) {
 			$this->_handleError('', mysql_errno(), mysql_error());
 			return(false);

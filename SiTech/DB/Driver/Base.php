@@ -26,33 +26,33 @@ abstract class SiTech_DB_Driver_Base implements SiTech_DB_Driver_Interface
 	 * @var array
 	 */
 	protected $_attributes = array();
-	
+
 	/**
 	 * Array holder for current configuration
 	 *
 	 * @var array
 	 */
 	protected $_config = array();
-	
+
 	/**
 	 * Database connection holder.
 	 *
 	 * @var resource
 	 */
 	protected $_conn;
-	
+
 	/**
 	 * Fetch mode holder.
 	 *
 	 * @var array
 	 */
 	protected $_fetchMode = array('mode' => SiTech_DB::FETCH_ASSOC, 'arg1' => null, 'arg2' => null);
-	
+
 	public function __construct(array $config, array $options = array())
 	{
 		/* default to exceptions */
 		$this->setAttribute(SiTech_DB::ATTR_ERRMODE, SiTech_DB::ERRMODE_EXCEPTION);
-		
+
 		$this->_config = $config;
 		foreach ($options as $attribute => $value) {
 			if ($this->setAttribute($attribute, $value) === false) {
@@ -61,7 +61,7 @@ abstract class SiTech_DB_Driver_Base implements SiTech_DB_Driver_Interface
 			}
 		}
 	}
-	
+
 	/**
 	 * Execute a SQL query on the database and return the number of rows
 	 * affected.
@@ -76,10 +76,10 @@ abstract class SiTech_DB_Driver_Base implements SiTech_DB_Driver_Interface
 		$stmnt->execute($params);
 		return($stmnt->rowCount());
 	}
-	
+
 	/**
 	 * Get the value of the specified attribute. An unsuccessful call to
-	 * this 
+	 * this
 	 *
 	 * @param int $attributes
 	 * @return mixed
@@ -90,6 +90,30 @@ abstract class SiTech_DB_Driver_Base implements SiTech_DB_Driver_Interface
 			return($this->_attributes[$attributes]);
 		} else {
 			return(null);
+		}
+	}
+
+	/**
+	 * Insert rows into the database.
+	 *
+	 * @param string $table Table name.
+	 * @param array $bind
+	 * @return int ID of last insert. False if  insert fails.
+	 */
+	public function insert($table, array $bind)
+	{
+		$cols = array();
+		$vals = array();
+		foreach ($bind as $col => $val) {
+			$cols[] = $col;
+			$vals[] = '?';
+		}
+
+		$sql = 'INSERT INTO '.$table.' ('.implode(', ', $cols).') VALUES('.implode(', ', $vals).')';
+		if ($this->exec($sql, $bind)) {
+			return($this->getLastInsertId());
+		} else {
+			return(false);
 		}
 	}
 
@@ -110,7 +134,7 @@ abstract class SiTech_DB_Driver_Base implements SiTech_DB_Driver_Interface
 		$stmnt->execute();
 		return($stmnt);
 	}
-	
+
 	/**
 	 * Set an attribute for the current connection.
 	 *
@@ -144,15 +168,15 @@ abstract class SiTech_DB_Driver_Base implements SiTech_DB_Driver_Interface
 			case SiTech_DB::ATTR_DEFAULT_FETCH_MODE:
 				$this->_attributes[$attribute] = $value;
 				break;
-			
+
 			default:
 				return(false);
 				break;
 		}
-		
+
 		return(true);
 	}
-	
+
 	/**
 	 * Set the default fetch mode for the current connection.
 	 *
@@ -172,7 +196,28 @@ abstract class SiTech_DB_Driver_Base implements SiTech_DB_Driver_Interface
 		);
 		return(true);
 	}
-	
+
+	/**
+	 * Update existing rows in a database.
+	 *
+	 * @param string $table
+	 * @param array $bind
+	 * @param string $where
+	 */
+	public function update($table, array $bind, $where)
+	{
+		$values = array();
+		foreach ($bind as $key => $val) {
+			$set[] = $key . '=?';
+		}
+		$sql = 'UPDATE '.$table.' SET '.implode(', ', $values);
+		if (!empty($where)) {
+			$sql .= ' WHERE '.$where;
+		}
+
+		return($this->exec($sql, $bind));
+	}
+
 	protected function _handleError($sqlState, $errno, $error)
 	{
 		$errMode = $this->getAttribute(SiTech_DB::ATTR_ERRMODE);
@@ -183,12 +228,12 @@ abstract class SiTech_DB_Driver_Base implements SiTech_DB_Driver_Interface
 			trigger_error(sprintf('%s: (%d) %s', $sqlState, $errno, $error), E_USER_WARNING);
 		}
 	}
-	
+
 	/**
 	 * Enter description here...
 	 */
 	abstract protected function _connect();
-	
+
 	/**
 	 * Enter description here...
 	 */

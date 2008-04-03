@@ -30,7 +30,8 @@ class SiTech_ConfigParser_XML extends SiTech_ConfigParser_Base
 			xml_set_character_data_handler($parser, array($this, '_charData'));
 			if (($fp = fopen($file, 'r')) !== false) {
 				$ret[$file] = true;
-				while (($data = fread($fp, 4096)) !== false) {
+				while (!feof($fp)) {
+					$data = fread($fp, 4096);
 					if (!xml_parse($parser, $data, feof($fp))) {
 						$errno = xml_get_error_code($parser);
 						$error = xml_error_string($errno);
@@ -38,6 +39,7 @@ class SiTech_ConfigParser_XML extends SiTech_ConfigParser_Base
 						$column = xml_get_current_column_number($parser);
 						$this->_handleError('XML Parse Error: (%d) %s at line %d column %d', array($errno, $error, $lineno, $column));
 						$ret[$file] = false;
+						break;
 					}
 				}
 				
@@ -65,13 +67,13 @@ class SiTech_ConfigParser_XML extends SiTech_ConfigParser_Base
 			return(false);
 		}
 		
-		@frwite($fp, "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<config>\n");
+		@fwrite($fp, "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<config>\n");
 		
 		foreach ($this->_config as $section => $options) {
 			@fwrite($fp, "\t<$section>\n");
 			
 			foreach ($options as $option => $val) {
-				fwrite($fp, "\t\t<$option>\n");
+				@fwrite($fp, "\t\t<$option>\n");
 				if (is_array($val)) {
 					$this->_walkArray($val, 3, $fp);
 				} elseif (is_object($val)) {
@@ -165,7 +167,7 @@ class SiTech_ConfigParser_XML extends SiTech_ConfigParser_Base
 				break;
 		}
 		
-		$this->_buffer[$this->_dept++] = $name;
+		$this->_buffer[$this->_depth++] = $name;
 	}
 	
 	private function _walkArray($array, $depth, $fp)
@@ -183,4 +185,3 @@ class SiTech_ConfigParser_XML extends SiTech_ConfigParser_Base
 		}
 	}
 }
-?>
