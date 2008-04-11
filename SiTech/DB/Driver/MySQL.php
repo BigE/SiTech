@@ -7,6 +7,11 @@
  */
 
 /**
+ * @see SiTech_DB
+ */
+require_once('SiTech/DB.php');
+
+/**
  * @see SiTech_DB_Driver_Base
  */
 require_once('SiTech/DB/Driver/Base.php');
@@ -112,7 +117,7 @@ class SiTech_DB_Driver_MySQL extends SiTech_DB_Driver_Base
 			case SiTech_DB::TYPE_TABLE:
 				$string = "`$string`";
 				break;
-				
+
 			case SiTech_DB::TYPE_STRING:
 			default:
 				$string = mysql_real_escape_string($string, $this->_conn);
@@ -137,7 +142,7 @@ class SiTech_DB_Driver_MySQL extends SiTech_DB_Driver_Base
 	protected function _connect()
 	{
 		if (is_resource($this->_conn)) return;
-		
+
 		if (($this->_conn = @mysql_connect($this->_config['host'], $this->_config['user'], $this->_config['pass'])) === false) {
 			$this->_handleError('', mysql_errno(), mysql_error());
 		}

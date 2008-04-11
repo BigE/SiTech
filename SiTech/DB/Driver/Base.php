@@ -108,7 +108,7 @@ abstract class SiTech_DB_Driver_Base implements SiTech_DB_Driver_Interface
 			$cols[] = $col;
 			$vals[] = '?';
 		}
-
+		
 		$sql = 'INSERT INTO '.$table.' ('.implode(', ', $cols).') VALUES('.implode(', ', $vals).')';
 		if ($this->exec($sql, $bind)) {
 			return($this->getLastInsertId());

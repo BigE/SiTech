@@ -175,8 +175,34 @@ class SiTech_DB_Statement_MySQL extends SiTech_DB_Statement_Base
 		$sql = $this->_sql;
 		$params = array_merge($params, $this->_boundParams);
 		foreach ($params as $param => $value) {
-			$value = mysql_escape_string($value);
-			$sql = str_replace($param, "'$value'", $sql);
+			if ($param[0] == ':') {
+				$value = mysql_escape_string($value);
+				$sql = str_replace($param, "'$value'", $sql);
+				unset($params[$param]);
+			}
+		}
+
+		if (!empty($params)) {
+			$inQuote = false;
+			$tmp = '';
+			reset($params);
+			for ($x = 0; $x < strlen($sql); $x++) {
+				if ($sql[$x] == '?' && !$inQuote) {
+					$value = current($params);
+					$tmp .= '\''.mysql_real_escape_string($value).'\'';
+					next($params);
+				} elseif ($sql[$x] == '\'' && !$inQuote) {
+					$inQuote = true;
+					$tmp .= $sql[$x];
+				} elseif ($sql[$x] == '\\' && $inQuote) {
+					$tmp .= $sql[$x];
+					$x++;
+					$tmp .= $sql[$x];
+				} else {
+					$tmp .= $sql[$x];
+				}
+			}
+			$sql = $tmp;
 		}
 
 		if (($result = mysql_query($sql, $this->_conn)) === false) {
@@ -209,6 +235,7 @@ class SiTech_DB_Statement_MySQL extends SiTech_DB_Statement_Base
 				break;
 
 			case SiTech_DB::FETCH_OBJ:
+			case SiTech_DB::FETCH_CLASS:
 				$row = mysql_fetch_object($this->_result, $arg1, $arg2);
 				break;
 		}

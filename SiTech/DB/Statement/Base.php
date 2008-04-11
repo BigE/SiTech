@@ -91,7 +91,7 @@ abstract class SiTech_DB_Statement_Base implements SiTech_DB_Statement_Interface
 		if ($sql instanceof SiTech_DB_Select) {
 			$sql = $sql->__toString();
 		}
-		
+
 		$this->_sql = $this->_prepareSql($sql);
 		$this->_parseParams($this->_sql);
 		$this->_conn = $conn;
@@ -242,7 +242,7 @@ abstract class SiTech_DB_Statement_Base implements SiTech_DB_Statement_Interface
 					require_once('SiTech/DB/Exception.php');
 					throw new SiTech_DB_Exception('Unsupported fetch mode SiTech_DB::FETCH_CLASSTYPE');
 					break;
-					
+
 				case SiTech_DB::FETCH_CONSTRUCT:
 					require_once('SiTech/DB/Exception.php');
 					throw new SiTech_DB_Exception('Unsupported fetch mode SiTech_DB::CONSTRUCT');
@@ -306,14 +306,14 @@ abstract class SiTech_DB_Statement_Base implements SiTech_DB_Statement_Interface
 			if (!empty($oldFetchMode)) {
 				$this->_fetchMode = $oldFetchMode;
 			}
-			
+
 			throw $e;
 		}
 
 		if (!empty($oldFetchMode)) {
 			$this->_fetchMode = $oldFetchMode;
 		}
-		
+
 		return($row);
 	}
 
@@ -331,7 +331,7 @@ abstract class SiTech_DB_Statement_Base implements SiTech_DB_Statement_Interface
 			$oldFetchMode = $this->_fetchMode;
 			$this->setFetchMode($fetchMode, $arg1, $arg2);
 		}
-		
+
 		$array = array();
 
 		try {
@@ -360,7 +360,7 @@ abstract class SiTech_DB_Statement_Base implements SiTech_DB_Statement_Interface
 		if (isset($oldFetchMode)) {
 			$this->_fetchMode = $oldFetchMode;
 		}
-		
+
 		return($array);
 	}
 
@@ -438,7 +438,7 @@ abstract class SiTech_DB_Statement_Base implements SiTech_DB_Statement_Interface
 		);
 		return(true);
 	}
-	
+
 	protected function _handleError($sqlState, $errno, $error)
 	{
 		$errMode = $this->getAttribute(SiTech_DB::ATTR_ERRMODE);
@@ -466,7 +466,7 @@ abstract class SiTech_DB_Statement_Base implements SiTech_DB_Statement_Interface
 			}
 		}
 	}
-	
+
 	/**
 	 * Bind a column to a PHP variable.
 	 *
@@ -476,7 +476,7 @@ abstract class SiTech_DB_Statement_Base implements SiTech_DB_Statement_Interface
 	 * @return bool Returns false on failure.
 	 */
 	abstract protected function _bindColumn($column, &$var, $type=null);
-	
+
 	/**
 	 * Bind a parameter to the specified variable.
 	 *
@@ -489,16 +489,16 @@ abstract class SiTech_DB_Statement_Base implements SiTech_DB_Statement_Interface
 	 * @todo Add parameter checking to ensure success
 	 */
 	abstract protected function _bindParam($parameter, &$var, $type, $length, array $driverOptions);
-	
+
 	/**
 	 * Execute the prepared statement.
 	 *
 	 * @return bool
 	 */
 	abstract protected function _execute();
-	
+
 	abstract protected function _fetch($mode, $arg1=null, $arg2=null);
-	
+
 	/**
 	 * Prepare SQL for execution.
 	 *
