@@ -38,7 +38,7 @@ class SiTech_Template_PHP extends SiTech_Template_Base
     	if ($this->getAttribute(SiTech_Template::ATTR_STRICT)) {
     		$errReporting = error_reporting(E_ALL);
     	} else {
-    		$errReporting = error_reporting(E_ALL & ~E_NOTICE);
+    		$errReporting = error_reporting(E_ALL ^ E_NOTICE);
     	}
 
     	if (!SiTech::isReadable($this->_file)) {

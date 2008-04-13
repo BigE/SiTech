@@ -108,7 +108,7 @@ abstract class SiTech_DB_Driver_Base implements SiTech_DB_Driver_Interface
 			$cols[] = $col;
 			$vals[] = '?';
 		}
-		
+
 		$sql = 'INSERT INTO '.$table.' ('.implode(', ', $cols).') VALUES('.implode(', ', $vals).')';
 		if ($this->exec($sql, $bind)) {
 			return($this->getLastInsertId());
@@ -204,7 +204,7 @@ abstract class SiTech_DB_Driver_Base implements SiTech_DB_Driver_Interface
 	 * @param array $bind
 	 * @param string $where
 	 */
-	public function update($table, array $bind, $where)
+	public function update($table, array $bind, $where=null)
 	{
 		$values = array();
 		foreach ($bind as $key => $val) {
