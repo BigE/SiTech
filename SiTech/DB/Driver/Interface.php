@@ -127,5 +127,5 @@ interface SiTech_DB_Driver_Interface
 	 * @param array $bind
 	 * @param string $where
 	 */
-	public function update($table, array $bind, $where);
+	public function update($table, array $bind, $where=null);
 }
