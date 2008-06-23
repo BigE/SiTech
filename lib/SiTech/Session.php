@@ -74,22 +74,38 @@ class SiTech_Session extends ArrayObject
 	protected $attributes = array();
 
 	/**
-	 * Session handler backend. This should be an object of a class that
-	 * implements SiTech_Session_Handler_Interface
+	 * Tells the constructor if the session was initalized internally or not.
 	 *
-	 * @var object SiTech_Session_Handler_Interface
+	 * @var bool
 	 */
-	protected $handler;
+	static protected $internal;
 
+	/**
+	 * Current state of the session. See the SiTech_Session::STATE_ constants.
+	 *
+	 * @var int
+	 */
 	protected $state;
 
+	/**
+	 * Constructor - We initalize the system here.
+	 */
 	public function __construct()
 	{
+		if (self::$internal == false) {
+			trigger_error('Call to protected '.__METHOD__.' from invalid context', E_USER_ERROR);
+		}
+
 		session_start();
+		$this->state = $this->state | self::STATE_STARTED;
+		parent::__construct($_SESSION);
 		/* Assign the object to $_SESSION */
 		$_SESSION = $this;
 	}
 
+	/**
+	 * Destructor.
+	 */
 	public function __destruct()
 	{
 		$this->close();
@@ -181,6 +197,32 @@ class SiTech_Session extends ArrayObject
 	}
 
 	/**
+	 * Register a session handler. This must be done before the session is started
+	 * to ensure the proper methods are used.
+	 *
+	 * @param SiTech_Session_Handler_Interface $object An object that implements
+	 *                                                 SiTech_Session_Handler_Interface.
+	 * @throws Exception
+	 */
+	static public function registerHandler($object)
+	{
+		if (isset($_SESSION)) {
+			throw new Exception('You cannot register a handler after the session has been started');
+		} elseif (!($object instanceof SiTech_Session_Handler_Interface)) {
+			throw new Exception('The session handler must implement SiTech_Session_Handler_Interface');
+		}
+
+		session_set_save_handler(
+			array($object, 'open'),
+			array($object, 'close'),
+			array($object, 'read'),
+			array($object, 'write'),
+			array($object, 'destroy'),
+			array($object, 'gc')
+		);
+	}
+
+	/**
 	 * Set an attribute for the session. See the SiTech_Session::ATTR_* constants
 	 * for specific attributes.
 	 *
@@ -221,5 +263,25 @@ class SiTech_Session extends ArrayObject
 		}
 
 		return(true);
+	}
+
+	/**
+	 * Start the session. This must be called instead of the constructor so that
+	 * proper setup of the session can be acheived. Any handlers must be registered
+	 * before this method is called.
+	 *
+	 * @throws Exception
+	 */
+	static public function start()
+	{
+		if (isset($_SESSION) && $_SESSION instanceof SiTech_Session && $_SESSION->isActive()) {
+			return;
+		} elseif (isset($_SESSION) && !($_SESSION instanceof Session)) {
+			throw new Exception('A session has already been started using session_start() or session.auto-start');
+		}
+
+		self::$internal = true;
+		new self();
+		self::$internal = false;
 	}
 }
