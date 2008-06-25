@@ -73,6 +73,10 @@ class SiTech_Session extends ArrayObject
 	 */
 	protected $attributes = array();
 
+	static protected $handler = false;
+
+	static protected $instance;
+
 	/**
 	 * Tells the constructor if the session was initalized internally or not.
 	 *
@@ -94,6 +98,14 @@ class SiTech_Session extends ArrayObject
 	{
 		if (self::$internal == false) {
 			trigger_error('Call to protected '.__METHOD__.' from invalid context', E_USER_ERROR);
+		}
+
+		self::$instance = $this;
+
+		if (!self::$handler) {
+			$handler = self::HANDLER_FILE;
+			require_once(str_replace('_', '/', $handler).'.php');
+			self::registerHandler(new $handler());
 		}
 
 		session_start();
@@ -212,6 +224,8 @@ class SiTech_Session extends ArrayObject
 			throw new Exception('The session handler must implement SiTech_Session_Handler_Interface');
 		}
 
+		self::$handler = true;
+
 		session_set_save_handler(
 			array($object, 'open'),
 			array($object, 'close'),
@@ -265,6 +279,16 @@ class SiTech_Session extends ArrayObject
 		return(true);
 	}
 
+	static public function singleton()
+	{
+		if (empty(self::$instance)) {
+			$c = __CLASS__;
+			self::$instance = new $c();
+		}
+
+		return(self::$instance);
+	}
+
 	/**
 	 * Start the session. This must be called instead of the constructor so that
 	 * proper setup of the session can be acheived. Any handlers must be registered
@@ -281,7 +305,7 @@ class SiTech_Session extends ArrayObject
 		}
 
 		self::$internal = true;
-		new self();
+		self::singleton();
 		self::$internal = false;
 	}
 }

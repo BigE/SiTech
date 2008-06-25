@@ -21,6 +21,7 @@
 class SiTech_DB extends PDO
 {
 	const DRIVER_MYSQL = 'SiTech_DB_Driver_MySQL';
+	const DRIVER_SQLITE = 'SiTech_DB_Driver_SQLite';
 
 	/**
 	 * Instance of class implementing SiTech_DB_Driver_Interface
@@ -49,6 +50,7 @@ class SiTech_DB extends PDO
 		/* This can be reset in user code, but we prefer exceptions */
 		$this->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
+		require_once(str_replace('_', '/', $driver).'.php');
 		/* We use a singleton to simplify things. */
 		$this->driver = call_user_func(array($driver, 'singleton'));
 	}

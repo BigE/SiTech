@@ -76,7 +76,8 @@ class SiTech_Session_Handler_DB implements SiTech_Session_Handler_Interface
 	public function destroy ($id)
 	{
 		$stmnt = $this->db->prepare('DELETE FROM '.$this->table.' WHERE Name = :name AND Id = :id');
-		return($stmnt->execute(array(':name' => $_SESSION->getAttribute(SiTech_Session::ATTR_NAME), ':id' => $id)));
+		$session = SiTech_Session::singleton();
+		return($stmnt->execute(array(':name' => $session->getAttribute(SiTech_Session::ATTR_SESSION_NAME), ':id' => $id)));
 	}
 
 	/**
@@ -103,7 +104,8 @@ class SiTech_Session_Handler_DB implements SiTech_Session_Handler_Interface
 	public function open ($path, $name)
 	{
 		$this->_savePath = $path;
-		$_SESSION->setAttribute(SiTech_Session::ATTR_NAME, $name);
+		$session = SiTech_Session::singleton();
+		$session->setAttribute(SiTech_Session::ATTR_SESSION_NAME, $name);
 		return(true);
 	}
 
@@ -116,10 +118,12 @@ class SiTech_Session_Handler_DB implements SiTech_Session_Handler_Interface
 	public function read ($id)
 	{
 		$stmnt = $this->db->prepare('SELECT Id, Name, Data, Remember, Strict, RemoteAddr FROM '.$this->table.' WHERE Name=:name AND Id=:id');
-		if ($stmnt->execute(array(':name' => $_SESSION->getAttribute(SiTech_Session::ATTR_NAME), ':id' => $id))) {
+		$session = SiTech_Session::singleton();
+		if ($stmnt->execute(array(':name' => $session->getAttribute(SiTech_Session::ATTR_SESSION_NAME), ':id' => $id))) {
 			$row = $stmnt->fetch();
-			$_SESSION->setAttribute(SiTech_Session::ATTR_REMEMBER, (bool)$row['Remember']);
-			$_SESSION->setAttribute(SiTech_Session::ATTR_STRICT, (bool)$row['Strict']);
+			$session = SiTech_Session::singleton();
+			$session->setAttribute(SiTech_Session::ATTR_REMEMBER, (bool)$row['Remember']);
+			$session->setAttribute(SiTech_Session::ATTR_STRICT, (bool)$row['Strict']);
 			return(unserialize($row['Data']));
 		} else {
 			return('');
@@ -132,6 +136,9 @@ class SiTech_Session_Handler_DB implements SiTech_Session_Handler_Interface
 	 * @param string $id
 	 * @param string $data
 	 * @return bool
+	 * @todo Currently the method sets the error mode of the database object to
+	 *       none. The mode needs to be set back to the original value before
+	 *       ending the method.
 	 */
 	public function write ($id, $data)
 	{
@@ -141,14 +148,15 @@ class SiTech_Session_Handler_DB implements SiTech_Session_Handler_Interface
 		 */
 		$this->db->setAttribute(SiTech_DB::ATTR_ERRMODE, SiTech_DB::ERR_NONE);
 		$stmnt = $this->db->prepare('SELECT Id FROM '.$this->table.' WHERE Name=:name AND Id=:id');
-		$stmnt->execute(array(':name' => $_SESSION->getAttribute(SiTech_Session::ATTR_NAME), ':id' => $id));
+		$session = SiTech_Session::singleton();
+		$stmnt->execute(array(':name' => $session->getAttribute(SiTech_Session::ATTR_SESSION_NAME), ':id' => $id));
 		if ($stmnt->rowCount() > 0) {
 			$stmnt = $this->db->prepare('UPDATE '.$this->table.' SET Data=:data, Remember=:remember, Strict=:strict, RemoteAddr=:remote WHERE Id=:id AND Name=:name');
 		} else {
 			$stmnt = $this->db->prepare('INSERT INTO '.$this->table.' (Id, Name, Data, Remember, Strict, RemoteAddr) VALUES(:id, :name, :data, :remember, :strict, :remote)');
 		}
 
-		$ret = $stmnt->execute(array(':id' => $id, ':name' => $_SESSION->getAttribute(SiTech_Session::ATTR_NAME), ':data' => serialize($data), ':remember' => (int)$_SESSION->getAttribute(SiTech_Session::ATTR_REMEMBER), ':strict' => (int)$_SESSION->getAttribute(SiTech_Session::ATTR_STRICT), ':remote' => $_SERVER['REMOTE_ADDR']));
+		$ret = $stmnt->execute(array(':id' => $id, ':name' => $session->getAttribute(SiTech_Session::ATTR_SESSION_NAME), ':data' => serialize($data), ':remember' => (int)$session->getAttribute(SiTech_Session::ATTR_REMEMBER), ':strict' => (int)$session->getAttribute(SiTech_Session::ATTR_STRICT), ':remote' => $_SERVER['REMOTE_ADDR']));
 		return($ret);
 	}
 }

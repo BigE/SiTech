@@ -85,7 +85,8 @@ class SiTech_Session_Handler_File implements SiTech_Session_Handler_Interface
 	public function open ($path, $name)
 	{
 		$this->_savePath = $path;
-		$_SESSION->setAttribute(SiTech_Session::ATTR_NAME, $name);
+		$session = SiTech_Session::singleton();
+		$session->setAttribute(SiTech_Session::ATTR_SESSION_NAME, $name);
 		return(true);
 	}
 
@@ -104,8 +105,9 @@ class SiTech_Session_Handler_File implements SiTech_Session_Handler_Interface
 			$data = @file_get_contents($file);
 			list($r, $s, $data) = explode("\n", $data, 3);
 
-			$_SESSION->setAttribute(SiTech_Session::ATTR_REMEMBER, (bool)$r);
-			$_SESSION->setAttribute(SiTech_Session::ATTR_STRICT, (bool)$s);
+			$session = SiTech_Session::singleton();
+			$session->setAttribute(SiTech_Session::ATTR_REMEMBER, (bool)$r);
+			$session->setAttribute(SiTech_Session::ATTR_STRICT, (bool)$s);
 
 			return((string)$data);
 		} else {
@@ -125,7 +127,8 @@ class SiTech_Session_Handler_File implements SiTech_Session_Handler_Interface
 		$file = 'sess_'.$id;
 		$file = realpath($this->_savePath.DIRECTORY_SEPARATOR.$file);
 
-		$data = sprintf("%d\n%d\n%s", $_SESSION->getAttribute(SiTech_Session::ATTR_REMEMBER), $_SESSION->getAttribute(SiTech_Session::ATTR_STRICT), $data);
+		$session = SiTech_Session::singleton();
+		$data = sprintf("%d\n%d\n%s", $session->getAttribute(SiTech_Session::ATTR_REMEMBER), $session->getAttribute(SiTech_Session::ATTR_STRICT), $data);
 
 		if (is_writeable($file)) {
 			@file_put_contents($file, $data);
