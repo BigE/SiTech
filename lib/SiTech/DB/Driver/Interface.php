@@ -13,7 +13,8 @@
 /**
  * SiTech_DB_Driver_Interface - Interface for all database type classes.
  *
- * @package SiTech_DB_Driver
+ * @package SiTech_DB
+ * @subpackage SiTech_DB_Driver
  */
 interface SiTech_DB_Driver_Interface
 {

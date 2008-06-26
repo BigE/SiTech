@@ -18,7 +18,8 @@ require_once('SiTech/DB/Driver/Interface.php');
 /**
  * SiTech_DB_Driver_Abstract - Base class for all database types.
  *
- * @package SiTech_DB_Driver
+ * @package SiTech_DB
+ * @subpackage SiTech_DB_Driver
  */
 abstract class SiTech_DB_Driver_Abstract implements SiTech_DB_Driver_Interface
 {

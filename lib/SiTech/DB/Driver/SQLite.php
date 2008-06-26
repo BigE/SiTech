@@ -21,7 +21,8 @@ require_once('SiTech/DB/Driver/Abstract.php');
  * Driver that contains special methods and instructions for SQLite database
  * connections.
  *
- * @package SiTech_DB_Driver
+ * @package SiTech_DB
+ * @subpackage SiTech_DB_Driver
  */
 class SiTech_DB_Driver_SQLite extends SiTech_DB_Driver_Abstract
 {
