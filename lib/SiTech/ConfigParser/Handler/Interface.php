@@ -1,6 +1,6 @@
 <?php
 /**
- * Contains the interface for all database drivers.
+ * Contains the interface for all config handlers.
  *
  * @author Eric Gach <eric@php-oop.net>
  * @copyright SiTech Group (c) 2008
@@ -11,7 +11,8 @@
  */
 
 /**
- * SiTech_DB_Driver_Interface - Interface for all database type classes.
+ * SiTech_ConfigParser_Handler_Interface - Interface for all configuration
+ * parser classes.
  *
  * @package SiTech_ConfigParser
  * @subpackage SiTech_ConfigParser_Handler

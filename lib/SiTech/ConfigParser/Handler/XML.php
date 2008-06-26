@@ -1,6 +1,27 @@
 <?php
+/**
+ * Contains the XML handler for the config parsers.
+ *
+ * @author Eric Gach <eric@php-oop.net>
+ * @copyright SiTech Group (c) 2008
+ * @filesource
+ * @package SiTech_ConfigParser
+ * @subpackage SiTech_ConfigParser_Handler
+ * @version $Id$
+ */
+
+/**
+ * @see SiTech_ConfigParser_Handler_Interface
+ */
 require_once('SiTech/ConfigParser/Handler/Interface.php');
 
+/**
+ * SiTech_ConfigParser_Handler_XML - Reads and writes configuration files that
+ * are in XML format.
+ *
+ * @package SiTech_ConfigParser
+ * @subpackage SiTech_ConfigParser_Handler
+ */
 class SiTech_ConfigParser_Handler_XML implements SiTech_ConfigParser_Handler_Interface
 {
 	private $_depth = 0;

@@ -1,6 +1,27 @@
 <?php
+/**
+ * Contains the INI handler for the config parsers.
+ *
+ * @author Eric Gach <eric@php-oop.net>
+ * @copyright SiTech Group (c) 2008
+ * @filesource
+ * @package SiTech_ConfigParser
+ * @subpackage SiTech_ConfigParser_Handler
+ * @version $Id$
+ */
+
+/**
+ * @see SiTech_ConfigParser_Handler_Interface
+ */
 require_once('SiTech/ConfigParser/Handler/Interface.php');
 
+/**
+ * SiTech_ConfigParser_Handler_INI - Reads and writes configuration files that
+ * are in INI format.
+ *
+ * @package SiTech_ConfigParser
+ * @subpackage SiTech_ConfigParser_Handler
+ */
 class SiTech_ConfigParser_Handler_INI implements SiTech_ConfigParser_Handler_Interface
 {
 	/**
