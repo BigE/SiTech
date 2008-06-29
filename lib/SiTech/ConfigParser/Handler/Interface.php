@@ -34,5 +34,5 @@ interface SiTech_ConfigParser_Handler_Interface
 	 * @param string $file
 	 * @return bool
 	 */
-	public function write($file);
+	public function write($item, $config);
 }

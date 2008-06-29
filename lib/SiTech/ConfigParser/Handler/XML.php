@@ -52,14 +52,14 @@ class SiTech_ConfigParser_Handler_XML implements SiTech_ConfigParser_Handler_Int
 					$error = xml_error_string($errno);
 					$lineno = xml_get_current_line_number($parser);
 					$column = xml_get_current_column_number($parser);
-					return(array(false, 'XML Parse Error: (%d) %s at line %d column %d', array($errno, $error, $lineno, $column)));
+					return(array(false, 'XML Parse Error: ('.$errno.') '.$error.' at line '.$lineno.' column '.$column));
 				}
 			}
 
 			@fclose($fp);
 			xml_parser_free($parser);
 		} else {
-			return(array(false, 'Failed to open file "%s" for reading', array($file)));
+			return(array(false, 'Failed to open file "'.$file.'" for reading'));
 		}
 
 		return(array(true, $config));
@@ -71,16 +71,15 @@ class SiTech_ConfigParser_Handler_XML implements SiTech_ConfigParser_Handler_Int
 	 * @param string $file
 	 * @return bool
 	 */
-	public function write($file)
+	public function write($file, $config)
 	{
 		if (($fp = @fopen($file, 'w')) === false) {
-			$this->_handleError('Failed to open config file "%s" for writing', array($file));
-			return(false);
+			return(array(false, 'Failed to open config file "%s" for writing', array($file)));
 		}
 
 		@fwrite($fp, "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<config>\n");
 
-		foreach ($this->_config as $section => $options) {
+		foreach ($config as $section => $options) {
 			@fwrite($fp, "\t<$section>\n");
 
 			foreach ($options as $option => $val) {

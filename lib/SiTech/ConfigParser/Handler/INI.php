@@ -37,15 +37,14 @@ class SiTech_ConfigParser_Handler_INI implements SiTech_ConfigParser_Handler_Int
 			$config = parse_ini_file($file, true);
 			$ret = true;
 		} else {
+			$config = array();
 			$ret = false;
 		}
 
 		/* now loop through the config options and unserialize items */
 		foreach ($config as $section => $options) {
 			foreach ($options as $option => $value) {
-				if (preg_match('#^a:\d+:{|^o:\d+:&quot;#', $value)) {
-					$this->_config[$section][$option] = unserialize(str_replace('&quot;', '"', $value));
-				}
+				$config[$section][$option] = urldecode($value);
 			}
 		}
 
@@ -58,27 +57,29 @@ class SiTech_ConfigParser_Handler_INI implements SiTech_ConfigParser_Handler_Int
 	 * @param string $file
 	 * @return bool
 	 */
-	public function write($file)
+	public function write($file, $config)
 	{
 		if (is_writeable($file)) {
 			if (($fp = @fopen($file, 'w')) !== false) {
-				foreach ($this->_config as $section => $options) {
+				foreach ($config as $section => $options) {
 					@fwrite($fp, "[$section]\n");
 					foreach ($options as $option => $value) {
 						if (is_array($value) || is_object($value)) {
 							$value = serialize($value);
 						}
 
-						$value = str_replace('"', '&quot;', $value);
+						$value = urlencode($value);
 						@fwrite($fp, "$option=$value\n");
 					}
 				}
 				@fclose($fp);
 			} else {
-				$this->_handleError('Failed to open config file "%s" for writing', array($file));
+				return(array(false, 'Failed to open config file "'.$file.'" for writing'));
 			}
 		} else {
-			$this->_handleError('Configuration file "%s" is not writeable', array($file));
+			return(array(false, 'Configuration file "'.$file.'" is not writeable'));
 		}
+
+		return(true);
 	}
 }

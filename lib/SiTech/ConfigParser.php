@@ -32,6 +32,10 @@ class SiTech_ConfigParser
 
 	const HANDLER_XML = 'SiTech_ConfigParser_Handler_XML';
 
+	protected $_attributes = array();
+
+	protected $_config = array();
+
 	/**
 	 * Constructor for config parser.
 	 *
