@@ -1,6 +1,6 @@
 <?php
 /**
- * Contains the XML handler for the config parsers.
+ * Contains the template engine for SiTech.
  *
  * @author Eric Gach <eric@php-oop.net>
  * @copyright SiTech Group (c) 2008
@@ -10,8 +10,8 @@
  */
 
 /**
- * SiTech_ConfigParser_Handler_XML - Reads and writes configuration files that
- * are in XML format.
+ * SiTech_Template - This is the template class for all templates. Here you can
+ * assign variables, render the page, and even display the full output.
  *
  * @package SiTech_Template
  */
@@ -25,12 +25,46 @@ class SiTech_Template
 	 */
 	const ATTR_STRICT = 0;
 
+	/**
+	 * Rendering engine to use. Should be a full class name to use. If none is
+	 * set, we default to SiTech_Template_Renderer_PHP.
+	 */
 	const ATTR_RENDER_ENGINE = 1;
 
+	/**
+	 * Attributes set within the current template.
+	 *
+	 * @var array
+	 */
 	protected $attributes = array();
 
+	/**
+	 * Template page to render.
+	 *
+	 * @var string
+	 */
+	protected $page;
+
+	/**
+	 * Template path to locate files at.
+	 *
+	 * @var string
+	 */
+	protected $path;
+
+	/**
+	 * Variables set for the current template
+	 *
+	 * @var array
+	 */
 	protected $vars = array();
 
+	/**
+	 * Initalize the class by setting the page and path settings.
+	 *
+	 * @param string $page Page name to render.
+	 * @param string $path Path where to load the template file.
+	 */
 	public function __construct($page, $path = null)
 	{
 		$this->page = $page;
