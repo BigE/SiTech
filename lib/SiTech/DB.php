@@ -56,6 +56,27 @@ class SiTech_DB extends PDO
 	}
 
 	/**
+	 * Execute an SQL statement and return the number of affected rows. We
+	 * created our own method here isntead of using PDO to allow for an array
+	 * of options to be passed similar to PDO_Statement::execute()
+	 *
+	 * @param string $statement SQL statement to prepare and execute.
+	 * @param array $args Array of arguments to use in the SQL statement.
+	 * @return int Returns the number of rows that were modified or deleted by
+	 *             the SQL statement. If no rows were affected 0 is returned. If
+	 *             the function fails FALSE will be returned.
+	 */
+	public function exec($statement, $args = array())
+	{
+		$stmnt = $this->prepare($statement);
+		if ($stmnt->execute($args)) {
+			return($stmnt->rowCount());
+		} else {
+			return(false);
+		}
+	}
+
+	/**
 	 * Get the current statement class name.
 	 *
 	 * @return string
@@ -63,6 +84,30 @@ class SiTech_DB extends PDO
 	public function getStatementClass()
 	{
 		return($this->getAttribute(PDO::ATTR_STATEMENT_CLASS));
+	}
+
+	/**
+	 * Insert rows into the database.
+	 *
+	 * @param string $table Table name.
+	 * @param array $bind
+	 * @return int ID of last insert. False if  insert fails.
+	 */
+	public function insert($table, array $bind)
+	{
+		$cols = array();
+		$vals = array();
+		foreach ($bind as $col => $val) {
+			$cols[] = $col;
+			$vals[] = '?';
+		}
+
+		$sql = 'INSERT INTO '.$table.' ('.implode(', ', $cols).') VALUES('.implode(', ', $vals).')';
+		if ($this->exec($sql, array_values($bind))) {
+			return($this->lastInsertId());
+		} else {
+			return(false);
+		}
 	}
 
 	/**
@@ -80,5 +125,27 @@ class SiTech_DB extends PDO
 		}
 
 		return(false);
+	}
+
+	/**
+	 * Update existing rows in a database.
+	 *
+	 * @param string $table
+	 * @param array $bind
+	 * @param string $where
+	 */
+	public function update($table, array $bind, $where=null)
+	{
+		$values = array();
+		foreach ($bind as $key => $val) {
+			$values[] = $key . '=?';
+		}
+
+		$sql = 'UPDATE '.$table.' SET '.implode(', ', $values);
+		if (!empty($where)) {
+			$sql .= ' WHERE '.$where;
+		}
+
+		return($this->exec($sql, array_values($bind)));
 	}
 }

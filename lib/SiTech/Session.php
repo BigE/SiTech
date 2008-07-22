@@ -93,6 +93,8 @@ class SiTech_Session extends ArrayObject
 
 	/**
 	 * Constructor - We initalize the system here.
+	 *
+	 * @todo Fix a segfault that occurs with xdebug.
 	 */
 	public function __construct()
 	{
@@ -110,8 +112,9 @@ class SiTech_Session extends ArrayObject
 
 		session_start();
 		$this->state = $this->state | self::STATE_STARTED;
-		parent::__construct($_SESSION);
+		parent::__construct($_SESSION, ArrayObject::ARRAY_AS_PROPS);
 		/* Assign the object to $_SESSION */
+		/* TODO: Find another way to do this!! This causes a segfault when using xdebug. */
 		$_SESSION = $this;
 	}
 

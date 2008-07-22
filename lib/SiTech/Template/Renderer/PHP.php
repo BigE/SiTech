@@ -22,7 +22,7 @@ require_once('SiTech/Template/Renderer/Abstract.php');
  * @package SiTech_Template
  * @subpackage SiTech_Template_Renderer
  */
-class SiTech_Template_Renderer_PHP implements SiTech_Template_Renderer_Abstract
+class SiTech_Template_Renderer_PHP extends SiTech_Template_Renderer_Abstract
 {
 	static public function render($file, $path, array $vars)
 	{
@@ -32,6 +32,7 @@ class SiTech_Template_Renderer_PHP implements SiTech_Template_Renderer_Abstract
 			return(false);
 		}
 		extract($vars, EXTR_OVERWRITE);
+		unset($vars);
 
 		ob_start();
 		include($file);

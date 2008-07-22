@@ -73,6 +73,15 @@ class SiTech_Template
 		}
 	}
 
+	public function __get($name)
+	{
+		if (isset($this->vars[$name])) {
+			return($this->vars[$name]);
+		} else {
+			return(null);
+		}
+	}
+
 	/**
 	 * Assign a variable to the current template file.
 	 *
@@ -128,7 +137,8 @@ class SiTech_Template
 	{
 		$engine = $this->getAttribute(self::ATTR_RENDER_ENGINE);
 		if (empty($engine)) {
-			$engine = 'SiTech_Template_Render_PHP';
+			$engine = 'SiTech_Template_Renderer_PHP';
+			require_once(str_replace('_', DIRECTORY_SEPARATOR, $engine).'.php');
 		}
 
 		if ($this->getAttribute(self::ATTR_STRICT)) {
@@ -137,7 +147,7 @@ class SiTech_Template
 			$error_reporting = error_reporting(E_ALL ^ E_NOTICE);
 		}
 
-		if (!($rendered = call_user_func_array(array($engine, 'render'), array($file, $path, $this->vars)))) {
+		if (!($rendered = call_user_func_array(array($engine, 'render'), array($this->page, $this->path, $this->vars)))) {
 			$this->_handleError(call_user_func(array($engine, 'getError')));
 		}
 
