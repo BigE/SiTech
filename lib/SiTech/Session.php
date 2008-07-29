@@ -103,6 +103,8 @@ class SiTech_Session extends ArrayObject
 		}
 
 		self::$instance = $this;
+		$this->setAttribute(self::ATTR_COOKIE_DOMAIN, '.'.$_SERVER['HTTP_HOST']);
+		$this->setAttribute(self::ATTR_COOKIE_PATH, '/');
 
 		if (!self::$handler) {
 			$handler = self::HANDLER_FILE;
@@ -252,6 +254,16 @@ class SiTech_Session extends ArrayObject
 		switch ($attr) {
 			case self::ATTR_COOKIE_DOMAIN:
 			case self::ATTR_COOKIE_PATH:
+				$this->attributes[$attr] = (string)$value;
+				setcookie(
+						$this->getAttribute(self::ATTR_SESSION_NAME),
+						session_id(),
+						$this->getAttribute(self::ATTR_COOKIE_TIME),
+						$this->getAttribute(self::ATTR_COOKIE_PATH),
+						$this->getAttribute(self::ATTR_COOKIE_DOMAIN)
+				);
+				break;
+
 			case self::ATTR_DB_TABLE:
 			case self::ATTR_SESSION_NAME:
 				$this->attributes[$attr] = (string)$value;
@@ -259,6 +271,13 @@ class SiTech_Session extends ArrayObject
 
 			case self::ATTR_COOKIE_TIME:
 				$this->attributes[$attr] = (int)$value;
+				setcookie(
+						$this->getAttribute(self::ATTR_SESSION_NAME),
+						session_id(),
+						$this->getAttribute(self::ATTR_COOKIE_TIME),
+						$this->getAttribute(self::ATTR_COOKIE_PATH),
+						$this->getAttribute(self::ATTR_COOKIE_DOMAIN)
+				);
 				break;
 
 			case self::ATTR_DB_CONN:
@@ -270,6 +289,16 @@ class SiTech_Session extends ArrayObject
 				break;
 
 			case self::ATTR_REMEMBER:
+				if ((bool)$value === true) {
+					$this->setAttribute(self::ATTR_COOKIE_TIME, time() + (86400 * 365));
+					setcookie(
+						$this->getAttribute(self::ATTR_SESSION_NAME),
+						session_id(),
+						$this->getAttribute(self::ATTR_COOKIE_TIME),
+						$this->getAttribute(self::ATTR_COOKIE_PATH),
+						$this->getAttribute(self::ATTR_COOKIE_DOMAIN)
+					);
+				}
 			case self::ATTR_STRICT:
 				$this->attributes[$attr] = (bool)$value;
 				break;
