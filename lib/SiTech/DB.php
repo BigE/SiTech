@@ -95,11 +95,10 @@ class SiTech_DB extends PDO
 	 */
 	public function insert($table, array $bind)
 	{
-		$cols = array();
 		$vals = array();
-		foreach ($bind as $col => $val) {
-			$cols[] = $col;
-			$vals[] = '?';
+		$cols = array_keys($bind);
+		for ($i = 0; $i < sizeof($cols); $i++) {
+			$vals[$i] = '?';
 		}
 
 		$sql = 'INSERT INTO '.$table.' ('.implode(', ', $cols).') VALUES('.implode(', ', $vals).')';

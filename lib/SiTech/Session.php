@@ -311,11 +311,18 @@ class SiTech_Session extends ArrayObject
 		return(true);
 	}
 
+	/**
+	 * Get a single instance of the session.
+	 *
+	 * @return object SiTech_Session
+	 */
 	static public function singleton()
 	{
 		if (empty(self::$instance)) {
 			$c = __CLASS__;
+			self::$internal = true;
 			self::$instance = new $c();
+			self::$internal = false;
 		}
 
 		return(self::$instance);
