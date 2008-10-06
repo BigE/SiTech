@@ -48,8 +48,7 @@ class SiTech_Session_Handler_File implements SiTech_Session_Handler_Interface
 	 */
 	public function destroy ($id)
 	{
-		$file = 'sess_'.$id;
-		$file = realpath($this->_savePath.DIRECTORY_SEPARATOR.$file);
+		$file = $this->_savePath.DIRECTORY_SEPARATOR.'sess_'.$id;
 		return(@unlink($file));
 	}
 
@@ -61,12 +60,12 @@ class SiTech_Session_Handler_File implements SiTech_Session_Handler_Interface
 	public function gc ($maxLife)
 	{
 		foreach (glob($this->_savePath.DIRECTORY_SEPARATOR.'sess_*') as $file) {
-			if (filemtime($this->_savePath.DIRECTORY_SEPARATOR.$file) + $maxLife < time()) {
-				if (($fp = @fopen($this->_savePath.DIRECTORY_SEPARATOR.$file)) !== false) {
+			if (filemtime($file) + $maxLife < time()) {
+				if (($fp = @fopen($file)) !== false) {
 					$r = trim(@fgets($fp, 4));
 					@fclose($fp);
 					if ($r == '0') {
-						@unlink($this->_savePath.DIRECTORY_SEPARATOR.$file);
+						@unlink($file);
 					}
 				}
 			}
@@ -84,7 +83,8 @@ class SiTech_Session_Handler_File implements SiTech_Session_Handler_Interface
 	 */
 	public function open ($path, $name)
 	{
-		$this->_savePath = $path;
+		if (empty($path)) { $path = '/tmp'; }
+		$this->_savePath = realpath($path);
 		$session = SiTech_Session::singleton();
 		$session->setAttribute(SiTech_Session::ATTR_SESSION_NAME, $name);
 		return(true);
@@ -98,8 +98,7 @@ class SiTech_Session_Handler_File implements SiTech_Session_Handler_Interface
 	 */
 	public function read ($id)
 	{
-		$file = 'sess_'.$id;
-		$file = realpath($this->_savePath.DIRECTORY_SEPARATOR.$file);
+		$file = $this->_savePath.DIRECTORY_SEPARATOR.'sess_'.$id;
 
 		if (file_exists($file)) {
 			$data = @file_get_contents($file);
@@ -125,12 +124,12 @@ class SiTech_Session_Handler_File implements SiTech_Session_Handler_Interface
 	public function write ($id, $data)
 	{
 		$file = 'sess_'.$id;
-		$file = realpath($this->_savePath.DIRECTORY_SEPARATOR.$file);
+		$file = $this->_savePath.DIRECTORY_SEPARATOR.$file;
 
 		$session = SiTech_Session::singleton();
 		$data = sprintf("%d\n%d\n%s", $session->getAttribute(SiTech_Session::ATTR_REMEMBER), $session->getAttribute(SiTech_Session::ATTR_STRICT), $data);
 
-		if (is_writeable($file)) {
+		if (is_writeable($this->_savePath)) {
 			@file_put_contents($file, $data);
 			return(true);
 		} else {
