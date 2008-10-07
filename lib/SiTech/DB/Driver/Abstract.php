@@ -31,6 +31,18 @@ abstract class SiTech_DB_Driver_Abstract implements SiTech_DB_Driver_Interface
 	static protected $instance;
 
 	/**
+	 * Instance of SiTech_DB
+	 *
+	 * @var SiTech_DB
+	 */
+	protected $pdo;
+
+	protected function __construct($pdo)
+	{
+		$this->pdo = $pdo;
+	}
+
+	/**
 	 * Get the instance of the class specified. The class that extends this
 	 * class should have a singleton() method that will pass __CLASS__ to this
 	 * protected method.
@@ -38,10 +50,10 @@ abstract class SiTech_DB_Driver_Abstract implements SiTech_DB_Driver_Interface
 	 * @param string $class Class name that we're getting an instance of.
 	 * @return SiTech_DB_Driver_Interface
 	 */
-	final static protected function _singleton($class)
+	final static protected function _singleton($pdo, $class)
 	{
 		if (empty(self::$instance)) {
-			self::$instance = new $class;
+			self::$instance = new $class($pdo);
 		}
 
 		return(self::$instance);

@@ -23,5 +23,5 @@ interface SiTech_DB_Driver_Interface
 	 *
 	 * @return SiTech_DB_Driver_Interface
 	 */
-	static public function singleton();
+	static public function singleton($pdo);
 }

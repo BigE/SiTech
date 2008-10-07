@@ -26,13 +26,21 @@ require_once('SiTech/DB/Driver/Abstract.php');
  */
 class SiTech_DB_Driver_MySQL extends SiTech_DB_Driver_Abstract
 {
+	public function getPrivileges($user=null, $host=null)
+	{
+		require_once('SiTech/DB/Privilege/MySQL.php');
+		$stmnt = $this->pdo->prepare('SHOW GRANTS');
+		$stmnt->execute();
+		return($stmnt->fetchAll(PDO::FETCH_CLASS, 'SiTech_DB_Privilege_MySQL'));
+	}
+
 	/**
 	 * Singleton method to get the instance of the driver.
 	 *
 	 * @return SiTech_DB_Driver_MySQL
 	 */
-	static public function singleton()
+	static public function singleton($pdo)
 	{
-		return(self::_singleton(__CLASS__));
+		return(self::_singleton($pdo, __CLASS__));
 	}
 }
