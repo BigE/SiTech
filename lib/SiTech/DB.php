@@ -58,6 +58,16 @@ class SiTech_DB extends PDO
 		$this->driver = call_user_func_array(array($driver, 'singleton'), array($this));
 	}
 
+	public function delete($table, $where=null)
+	{
+		$sql = 'DELETE FROM '.$table;
+		if (!empty($where)) {
+			$sql .= ' WHERE '.$where;
+		}
+
+		return($this->exec($sql));
+	}
+
 	/**
 	 * Execute an SQL statement and return the number of affected rows. We
 	 * created our own method here isntead of using PDO to allow for an array

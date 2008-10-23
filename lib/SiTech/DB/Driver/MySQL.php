@@ -29,9 +29,7 @@ class SiTech_DB_Driver_MySQL extends SiTech_DB_Driver_Abstract
 	public function getPrivileges($user=null, $host=null)
 	{
 		require_once('SiTech/DB/Privilege/MySQL.php');
-		$stmnt = $this->pdo->prepare('SHOW GRANTS');
-		$stmnt->execute();
-		return($stmnt->fetchAll(PDO::FETCH_CLASS, 'SiTech_DB_Privilege_MySQL'));
+		return(new SiTech_DB_Privilege_MySQL($this->pdo));
 	}
 
 	/**

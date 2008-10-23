@@ -1,23 +1,47 @@
 <?php
 require_once('SiTech/DB/Privilege/Abstract.php');
+require_once('SiTech/DB/Privilege/Record/MySQL.php');
 
 class SiTech_DB_Privilege_MySQL extends SiTech_DB_Privilege_Abstract
 {
-	protected $_matches;
-
-	public function __set($name, $val)
+	public function __construct(SiTech_DB $pdo, $user=null, $host=null)
 	{
-		if (strstr($name, 'Grants for') === false) {
-			/* not sure what this would be? */
-			return;
+		parent::__construct($pdo);
+		$stmnt = $this->pdo->prepare('SHOW GRANTS');
+		$stmnt->execute();
+		while ($priv = $stmnt->fetchObject('SiTech_DB_Privilege_Record_MySQL')) {
+			$this->privileges[$priv->getDatabase()] = $priv;
+		}
+	}
+
+	public function canCreateDatabase()
+	{
+		if (isset($this->privileges['*'])) {
+			return($this->privileges['*']->canCreateDatabase());
+		} else {
+			return(false);
+		}
+	}
+
+	public function canCreateTable($dbName)
+	{
+		if (isset($this->privileges['*']) && $this->privileges['*']->canCreateTable()) {
+			return(true);
 		}
 
-		/* At this point, I don't forsee a need to match any further. We just get the
-		   permissions of the current user. */
-		$matches = array();
-		if (preg_match('#^GRANT (.*) ON ([^\s]+) TO \'([^\']*)\'@\'([^\']*)\'(.*)$#i', $val, $matches)) {
-			$matches = array('privileges' => $matches[1], 'target' => $matches[2], 'user' => $matches[3], 'host' => $matches[4], 'leftover' => trim($matches[5]));
-			$this->_matches = $matches;
+		if (isset($this->privileges[$dbName])) {
+			return($this->privileges[$dbName]->canCreateTable());
+		} else {
+			return(false);
+		}
+	}
+
+	public function canCreateUser()
+	{
+		if (isset($this->privileges['*']) && $this->privileges['*']->canCreateUser()) {
+			return(true);
+		} else {
+			return(false);
 		}
 	}
 }
