@@ -1,6 +1,28 @@
 <?php
+/**
+ * Contains the MySQL class for each privilege record.
+ *
+ * @author Eric Gach <eric@php-oop.net>
+ * @copyright SiTech Group (c) 2008
+ * @filesource
+ * @package SiTech_DB
+ * @subpackage SiTech_DB_Privilege_Record
+ * @todo Finish documentation for file
+ * @version $Id: Abstract.php 113 2008-11-07 09:18:11Z eric $
+ */
+
+/**
+ * @see SiTech_DB_Privilege_Record_Abstract
+ */
 require_once('SiTech/DB/Privilege/Record/Abstract.php');
 
+/**
+ * SiTech_DB_Privilege_Record_MySQL - MySQL class for each privilege record that
+ * is retreived from MySQL.
+ *
+ * @package SiTech_DB
+ * @subpackage SiTech_DB_Privilege_Record
+ */
 class SiTech_DB_Privilege_Record_MySQL extends SiTech_DB_Privilege_Record_Abstract
 {
 	/**

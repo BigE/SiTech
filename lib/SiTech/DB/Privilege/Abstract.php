@@ -1,4 +1,23 @@
 <?php
+/**
+ * Contains the base class for all privilege classes.
+ *
+ * @author Eric Gach <eric@php-oop.net>
+ * @copyright SiTech Group (c) 2008
+ * @filesource
+ * @package SiTech_DB
+ * @subpackage SiTech_DB_Privilege
+ * @todo Finish documentation for file
+ * @version $Id: Abstract.php 113 2008-11-07 09:18:11Z eric $
+ */
+
+/**
+ * SiTech_DB_Privilege_Abstract - Base class for all privilege classes based on
+ * database type.
+ *
+ * @package SiTech_DB
+ * @subpackage SiTech_DB_Privilege
+ */
 abstract class SiTech_DB_Privilege_Abstract
 {
 	/**
