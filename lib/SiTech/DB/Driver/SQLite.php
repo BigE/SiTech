@@ -29,6 +29,7 @@ class SiTech_DB_Driver_SQLite extends SiTech_DB_Driver_Abstract
 	/**
 	 * Singleton method to get the instance of the driver.
 	 *
+	 * @param SiTech_DB $pdo
 	 * @return SiTech_DB_Driver_SQLite
 	 */
 	static public function singleton($pdo)
