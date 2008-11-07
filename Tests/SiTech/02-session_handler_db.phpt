@@ -2,9 +2,10 @@
 SiTech_Session::start(); usage with database handler.
 --FILE--
 <?php
-require_once(dirname(__FILE__).'/../../lib/SiTech/Session.php');
-require_once(dirname(__FILE__).'/../../lib/SiTech/DB.php');
-require_once(dirname(__FILE__).'/../../lib/SiTech/Session/Handler/DB.php');
+require_once('SiTech_Test.php');
+require_once('SiTech/Session.php');
+require_once('SiTech/DB.php');
+require_once('SiTech/Session/Handler/DB.php');
 try {
 	$db = new SiTech_DB('sqlite::memory:', SiTech_DB::DRIVER_SQLITE);
 	$db->exec(file_get_contents(dirname(__FILE__).'/../../Tools/SiTech_Session.sql'));

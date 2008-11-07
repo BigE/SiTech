@@ -1,8 +1,9 @@
 --TEST--
-SiTech_Session::start(); usage
+SiTech_Session::start(); Basic usage.
 --FILE--
 <?php
-require_once(dirname(__FILE__).'/../../lib/SiTech/Session.php');
+require_once('SiTech_Test.php');
+require_once('SiTech/Session.php');
 try {
 	SiTech_Session::start();
 } catch (Exception $e) {
