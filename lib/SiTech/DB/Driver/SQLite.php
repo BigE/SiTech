@@ -31,8 +31,8 @@ class SiTech_DB_Driver_SQLite extends SiTech_DB_Driver_Abstract
 	 *
 	 * @return SiTech_DB_Driver_SQLite
 	 */
-	static public function singleton()
+	static public function singleton($pdo)
 	{
-		return(self::_singleton(__CLASS__));
+		return(self::_singleton($pdo, __CLASS__));
 	}
 }

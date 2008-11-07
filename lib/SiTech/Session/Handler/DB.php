@@ -156,7 +156,8 @@ class SiTech_Session_Handler_DB implements SiTech_Session_Handler_Interface
 			$stmnt = $this->db->prepare('INSERT INTO '.$this->table.' (Id, Name, Data, Remember, Strict, RemoteAddr) VALUES(:id, :name, :data, :remember, :strict, :remote)');
 		}
 
-		$ret = $stmnt->execute(array(':id' => $id, ':name' => $session->getAttribute(SiTech_Session::ATTR_SESSION_NAME), ':data' => serialize($data), ':remember' => (int)$session->getAttribute(SiTech_Session::ATTR_REMEMBER), ':strict' => (int)$session->getAttribute(SiTech_Session::ATTR_STRICT), ':remote' => $_SERVER['REMOTE_ADDR']));
+		$remote = (isset($_SERVER['REMOTE_ADDR']))? $_SERVER['REMOTE_ADDR'] : null;
+		$ret = $stmnt->execute(array(':id' => $id, ':name' => $session->getAttribute(SiTech_Session::ATTR_SESSION_NAME), ':data' => serialize($data), ':remember' => (int)$session->getAttribute(SiTech_Session::ATTR_REMEMBER), ':strict' => (int)$session->getAttribute(SiTech_Session::ATTR_STRICT), ':remote' => $remote));
 		return($ret);
 	}
 }
