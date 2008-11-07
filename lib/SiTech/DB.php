@@ -89,6 +89,14 @@ class SiTech_DB extends PDO
 		}
 	}
 
+	/**
+	 * Get privileges for the specified user. If no user is specified, then the
+	 * user that connected will be used.
+	 *
+	 * @param string $user
+	 * @param string $host
+	 * @return SiTech_DB_Privilege_Abstract
+	 */
 	public function getPrivileges($user=null, $host=null)
 	{
 		return($this->driver->getPrivileges($user, $host));
