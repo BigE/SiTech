@@ -37,6 +37,11 @@ abstract class SiTech_DB_Driver_Abstract implements SiTech_DB_Driver_Interface
 	 */
 	protected $pdo;
 
+	/**
+	 * Constructor.
+	 *
+	 * @param SiTech_DB $pdo
+	 */
 	protected function __construct($pdo)
 	{
 		$this->pdo = $pdo;
