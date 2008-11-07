@@ -103,7 +103,9 @@ class SiTech_Session extends ArrayObject
 		}
 
 		self::$instance = $this;
-		$this->setAttribute(self::ATTR_COOKIE_DOMAIN, '.'.$_SERVER['HTTP_HOST']);
+		if (isset($_SERVER['HTTP_HOST'])) {
+			$this->setAttribute(self::ATTR_COOKIE_DOMAIN, '.'.$_SERVER['HTTP_HOST']);
+		}
 		$this->setAttribute(self::ATTR_COOKIE_PATH, '/');
 
 		if (!self::$handler) {

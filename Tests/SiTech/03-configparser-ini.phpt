@@ -1,5 +1,5 @@
 --TEST--
-SiTech_Session::start(); usage with database handler.
+SiTech_ConfigParser(); Basic configuration usage.
 --FILE--
 <?php
 require_once('SiTech_Test.php');
