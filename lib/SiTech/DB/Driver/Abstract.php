@@ -52,6 +52,7 @@ abstract class SiTech_DB_Driver_Abstract implements SiTech_DB_Driver_Interface
 	 * class should have a singleton() method that will pass __CLASS__ to this
 	 * protected method.
 	 *
+	 * @param SiTech_DB $pdo
 	 * @param string $class Class name that we're getting an instance of.
 	 * @return SiTech_DB_Driver_Interface
 	 */
