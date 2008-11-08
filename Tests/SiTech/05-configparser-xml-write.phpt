@@ -13,7 +13,7 @@ try {
 
 $config->addSection('foo');
 $config->set('foo', 'bar', 'baz');
-$return = $config->write(SITECH_BASEPATH.DIRECTORY_SEPARATOR.'Tsts'.DIRECTORY_SEPARATOR.'test-config.xml');
+$return = $config->write(SITECH_BASEPATH.DIRECTORY_SEPARATOR.'Tests'.DIRECTORY_SEPARATOR.'test-config.xml');
 if ($return === true) {
 	var_dump('Wrote file');
 } else {

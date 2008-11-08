@@ -34,10 +34,10 @@ class SiTech_ConfigParser_Handler_XML implements SiTech_ConfigParser_Handler_Int
 	 * Read the specified file(s) into the configuration. Return value
 	 * will be an array in filename => bool format.
 	 *
-	 * @param array $files Files to read into configuration.
+	 * @param string $file File to read into configuration.
 	 * @return array
 	 */
-	public function read(array $files)
+	public function read($file)
 	{
 		$parser = xml_parser_create();
 		xml_parser_set_option($parser, XML_OPTION_CASE_FOLDING, false);
