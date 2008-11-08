@@ -59,8 +59,9 @@ class SiTech_ConfigParser_Handler_INI implements SiTech_ConfigParser_Handler_Int
 	 */
 	public function write($file, $config)
 	{
-		if (is_writeable($file)) {
-			if (($fp = @fopen($file, 'w')) !== false) {
+		if ((file_exists($file) && is_writeable($file)) || (!file_exists($file) && is_writeable(dirname($file)))) {
+			$fp = @fopen($file, 'w');
+			if ($fp !== false) {
 				foreach ($config as $section => $options) {
 					@fwrite($fp, "[$section]\n");
 					foreach ($options as $option => $value) {
