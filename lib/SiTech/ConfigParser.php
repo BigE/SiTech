@@ -305,7 +305,7 @@ class SiTech_ConfigParser
 			list($bool, $config) = $this->_attributes[self::ATTR_HANDLER]->read($item);
 			$ret[$item] = $bool;
 			if (!$bool) {
-				$this->_handleError('Unable to parse "%s" into the config', array($file));
+				$this->_handleError('Unable to parse "%s" into the config', array($item));
 			} else {
 				$this->_config = array_merge($config, $this->_config);
 			}
