@@ -23,10 +23,10 @@ interface SiTech_ConfigParser_Handler_Interface
 	 * Read the specified item(s)/file(s) into the configuration. Return value
 	 * will be an array in array(bool, array(config)) format.
 	 *
-	 * @param array $files Files to read into configuration.
+	 * @param string $file File name to read into configuration.
 	 * @return array
 	 */
-	public function read($item);
+	public function read($file);
 
 	/**
 	 * Write the current configuration to a single specified file.
