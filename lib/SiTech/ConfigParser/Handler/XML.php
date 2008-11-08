@@ -30,6 +30,8 @@ class SiTech_ConfigParser_Handler_XML implements SiTech_ConfigParser_Handler_Int
 
 	private $_buffer = array();
 
+	private $_config = array();
+
 	/**
 	 * Read the specified file(s) into the configuration. Return value
 	 * will be an array in filename => bool format.
@@ -62,7 +64,7 @@ class SiTech_ConfigParser_Handler_XML implements SiTech_ConfigParser_Handler_Int
 			return(array(false, 'Failed to open file "'.$file.'" for reading'));
 		}
 
-		return(array(true, $config));
+		return(array(true, $this->_config));
 	}
 
 	/**
