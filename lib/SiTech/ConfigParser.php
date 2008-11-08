@@ -136,7 +136,7 @@ class SiTech_ConfigParser
 	 */
 	public function getAttribute($attr)
 	{
-		return($this->_attributes[$attr]);
+		return(isset($this->_attributes[$attr])? $this->_attributes[$attr] : null);
 	}
 
 	/**
