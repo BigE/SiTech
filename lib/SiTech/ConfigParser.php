@@ -448,7 +448,7 @@ class SiTech_ConfigParser
 	 */
 	public function write($item)
 	{
-		return($this->_attributes[self::ATTR_HANDLER]->write($item));
+		return($this->_attributes[self::ATTR_HANDLER]->write($item, $this->_config));
 	}
 
 	/**
