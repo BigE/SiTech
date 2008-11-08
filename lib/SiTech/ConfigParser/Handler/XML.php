@@ -96,7 +96,7 @@ class SiTech_ConfigParser_Handler_XML implements SiTech_ConfigParser_Handler_Int
 				@fwrite($fp, "\t\t</$option>\n");
 			}
 
-			@fwrite($fp, "\t<$section>\n");
+			@fwrite($fp, "\t</$section>\n");
 		}
 
 		@fwrite($fp, '</config>');
