@@ -94,18 +94,6 @@ class SiTech_ConfigParser
 	}
 
 	/**
-	 * Return an array containing instance wide defaults.
-	 *
-	 * @return array
-	 * @todo This method does not do anything yet. The code needs to be
-	 *       implemented to return the correct data and not just an empty array.
-	 */
-	public function defaults()
-	{
-		return(array());
-	}
-
-	/**
 	 * Get the specified option value for the named section. This default
 	 * method returns all values as what they are in the config.
 	 *
