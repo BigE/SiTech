@@ -3,7 +3,7 @@ SiTech_ConfigParser(); Load configuration with the XML file format.
 --SKIPIF--
 <?php
 require_once('SiTech_Test.php');
-if (!file_exists(SITECH_BASEPATH.DIRECTORY_SEPARATOR.'Tests'.DIRECTORY_SEPARATOR.'test-config.ini')) die('skip the file test-config.ini does not exist.');
+if (!file_exists(dirname(__FILE__).'/test-config.xml')) die('skip the file test-config.xml does not exist.');
 ?>
 --FILE--
 <?php
@@ -16,13 +16,18 @@ try {
 	echo $e->getMessage(),"\n";
 }
 
-$return = $config->read(array(SITECH_BASEPATH.DIRECTORY_SEPARATOR.'Tests'.DIRECTORY_SEPARATOR.'test-config.xml'));
-if ($return[SITECH_BASEPATH.DIRECTORY_SEPARATOR.'Tests'.DIRECTORY_SEPARATOR.'test-config.xml'] !== true) {
+$return = $config->read(array(dirname(__FILE__).'/test-config.xml'));
+if ($return[dirname(__FILE__).'/test-config.xml'] !== true) {
 	var_dump($return);
 } else {
 	var_dump($config->get('foo', 'bar'));
 }
 ?>
-
+--CLEAN--
+<?php
+require_once('SiTech_Test.php');
+$file = dirname(__FILE__).'/test-config.xml';
+if (file_exists($file)) unlink($file);
+?>
 --EXPECT--
 string(3) "baz"
