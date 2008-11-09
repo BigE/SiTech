@@ -45,7 +45,8 @@ class SiTech_ConfigParser_Handler_XML implements SiTech_ConfigParser_Handler_Int
 		xml_parser_set_option($parser, XML_OPTION_CASE_FOLDING, false);
 		xml_set_element_handler($parser, array($this, '_startTag'), array($this, '_endTag'));
 		xml_set_character_data_handler($parser, array($this, '_charData'));
-		if (($fp = fopen($file, 'r')) !== false) {
+        $fp = fopen($file, 'r');
+		if (is_resource($fp)) {
 			$ret[$file] = true;
 			while (!feof($fp)) {
 				$data = fread($fp, 4096);
@@ -75,7 +76,8 @@ class SiTech_ConfigParser_Handler_XML implements SiTech_ConfigParser_Handler_Int
 	 */
 	public function write($file, $config)
 	{
-		if (($fp = @fopen($file, 'w')) === false) {
+        $fp = @fopen($file, 'w');
+		if (!is_resource($fp)) {
 			return(array(false, 'Failed to open config file "%s" for writing', array($file)));
 		}
 

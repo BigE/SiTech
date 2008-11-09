@@ -147,7 +147,8 @@ class SiTech_Template
 			$error_reporting = error_reporting(E_ALL ^ E_NOTICE);
 		}
 
-		if (!($rendered = call_user_func_array(array($engine, 'render'), array($this->page, $this->path, $this->vars)))) {
+        $rendered = call_user_func_array(array($engine, 'render'), array($this->page, $this->path, $this->vars));
+		if ($rendered === false) {
 			$this->_handleError(call_user_func(array($engine, 'getError')));
 		}
 
