@@ -119,7 +119,7 @@ class SiTech_Session extends ArrayObject
 		parent::__construct($_SESSION, ArrayObject::ARRAY_AS_PROPS);
 		/* Assign the object to $_SESSION */
 		/* TODO: Find another way to do this!! This causes a segfault when using xdebug. */
-		$_SESSION = $this;
+		//$_SESSION = $this;
 	}
 
 	/**
@@ -142,12 +142,10 @@ class SiTech_Session extends ArrayObject
 			return;
 		}
 
-		$obj = $this;
 		$array = $this->getArrayCopy();
 		$_SESSION = $array;
 		session_write_close();
 		$this->state = $this->state | self::STATE_CLOSED;
-		$_SESSION = $obj;
 	}
 
 	/**
@@ -225,7 +223,7 @@ class SiTech_Session extends ArrayObject
 	 */
 	static public function registerHandler($object)
 	{
-		if (isset($_SESSION)) {
+		if (isset(self::$instance) && self::$instance instanceof SiTech_Session) {
 			throw new Exception('You cannot register a handler after the session has been started');
 		} elseif (!($object instanceof SiTech_Session_Handler_Interface)) {
 			throw new Exception('The session handler must implement SiTech_Session_Handler_Interface');
@@ -339,14 +337,6 @@ class SiTech_Session extends ArrayObject
 	 */
 	static public function start()
 	{
-		if (isset($_SESSION) && $_SESSION instanceof SiTech_Session && $_SESSION->isActive()) {
-			return;
-		} elseif (isset($_SESSION) && !($_SESSION instanceof Session)) {
-			throw new Exception('A session has already been started using session_start() or session.auto-start');
-		}
-
-		self::$internal = true;
 		self::singleton();
-		self::$internal = false;
 	}
 }
