@@ -113,11 +113,11 @@ class SiTech_DB extends PDO
 	}
 
 	/**
-	 * Insert rows into the database.
+	 * Insert a row into the database.
 	 *
 	 * @param string $table Table name.
 	 * @param array $bind
-	 * @return int ID of last insert. False if  insert fails.
+	 * @return int ID of last insert. False if insert fails.
 	 */
 	public function insert($table, array $bind)
 	{
