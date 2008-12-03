@@ -37,6 +37,16 @@ class SiTech_ConfigParser_Handler_Array implements SiTech_ConfigParser_Handler_I
 			include($file);
             if (isset($config)) {
                 $ret = true;
+
+				foreach ($config as $section => &$options) {
+					foreach ($options as $opt => &$val) {
+						$val = $this->_readValue($opt, $val);
+						if (substr($opt, 0, 12) === '_sitech_obj_') {
+							$options[substr($opt, 12)] = $val;
+							unset($options[$opt]);
+						}
+					}
+				}
             }
 		}
 
@@ -63,6 +73,9 @@ class SiTech_ConfigParser_Handler_Array implements SiTech_ConfigParser_Handler_I
 				foreach ($config as $section => $options) {
 					@fwrite($fp, "\t".(is_numeric($section)? $section : '\''.addslashes($section).'\'')." => array(\n");
 					foreach ($options as $option => $value) {
+						if (is_object($value)) {
+							$option = '_sitech_obj_'.$option;
+						}
 						@fwrite($fp, "\t\t".(is_numeric($option)? $option : '\''.addslashes($option).'\'').' => ');
 						$this->_writeValue($fp, $value);
 					}
@@ -82,6 +95,19 @@ class SiTech_ConfigParser_Handler_Array implements SiTech_ConfigParser_Handler_I
 		}
 
 		return(true);
+	}
+
+	protected function _readValue($option, $value)
+	{
+		if (is_string($value)) {
+			$value = stripslashes($value);
+		}
+		
+		if (substr($option, 0, 12) === '_sitech_obj_') {
+			$value = unserialize($value);
+		}
+
+		return($value);
 	}
 
 	/**
@@ -105,6 +131,9 @@ class SiTech_ConfigParser_Handler_Array implements SiTech_ConfigParser_Handler_I
 		} elseif (is_numeric($value)) {
 			@fwrite($fp, "$value,\n");
 		} else {
+			if (is_object($value)) {
+				$value = serialize($value);
+			}
 			/* assume string */
 			$value = addslashes($value);
 			@fwrite($fp, "'$value',\n");

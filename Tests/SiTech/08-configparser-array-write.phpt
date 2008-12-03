@@ -15,6 +15,7 @@ $config->addSection('foo');
 $config->set('foo', 'bar', 'baz');
 $config->set('foo', 'baz', array('foo', 'bar', array('baz', 'shebang')));
 $config->set('foo', 'hmm', array('whee\'' => 'uNF', 123));
+$config->set('foo', 'myobj', new stdclass());
 $return = $config->write(dirname(__FILE__).'/test-config.php');
 if ($return === true) {
 	var_dump('Wrote file');

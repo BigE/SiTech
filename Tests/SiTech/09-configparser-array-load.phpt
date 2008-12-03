@@ -23,6 +23,7 @@ if ($return[dirname(__FILE__).'/test-config.php'] !== true) {
 	var_dump($config->get('foo', 'bar'));
 	var_dump($config->get('foo', 'baz'));
 	var_dump($config->get('foo', 'hmm'));
+	var_dump($config->get('foo', 'myobj'));
 }
 ?>
 --CLEAN--
@@ -51,4 +52,6 @@ array(2) {
   string(3) "uNF"
   [0]=>
   int(123)
+}
+object(stdClass)#3 (0) {
 }
