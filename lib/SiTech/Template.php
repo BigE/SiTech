@@ -31,6 +31,17 @@ class SiTech_Template
 	 */
 	const ATTR_RENDER_ENGINE = 1;
 
+    /**
+     * Error mode to use for templates.
+     */
+    const ATTR_ERRMODE = 2;
+
+    const ERRMODE_NONE = 0;
+
+	const ERRMODE_WARNING = 1;
+
+	const ERRMODE_EXCEPTION = 2;
+
 	/**
 	 * Attributes set within the current template.
 	 *
@@ -183,11 +194,15 @@ class SiTech_Template
 	 * Handle the error according to the error output settings.
 	 *
 	 * @param string $msg Error message to be used.
-	 * @todo Change this to actually use the ATTR_ERRMOD setting. Currently only
-	 *       exceptions are thrown.
 	 */
-	protected function _handleError($msg)
+	protected function _handleError($msg, $array = array())
 	{
-		throw new Exception($msg);
+		if ($this->getAttribute(SiTech_Template::ATTR_ERRMODE) === SiTech_Template::ERRMODE_EXCEPTION) {
+			throw new Exception(vsprintf($msg, $array));
+		} elseif ($this->getAttribute(SiTech_Template::ATTR_ERRMODE) === SiTech_Template::ERRMODE_WARNING) {
+			trigger_error(vsprintf($msg, $array), E_USER_WARNING);
+		}
+
+		$this->_error = vsprintf($msg, $array);
 	}
 }

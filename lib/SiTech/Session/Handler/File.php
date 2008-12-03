@@ -61,7 +61,8 @@ class SiTech_Session_Handler_File implements SiTech_Session_Handler_Interface
 	{
 		foreach (glob($this->_savePath.DIRECTORY_SEPARATOR.'sess_*') as $file) {
 			if (filemtime($file) + $maxLife < time()) {
-				if (($fp = @fopen($file)) !== false) {
+                $fp = @fopen($file);
+				if (is_resource($file)) {
 					$r = trim(@fgets($fp, 4));
 					@fclose($fp);
 					if ($r == '0') {

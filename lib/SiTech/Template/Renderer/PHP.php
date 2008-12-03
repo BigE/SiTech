@@ -27,7 +27,8 @@ class SiTech_Template_Renderer_PHP extends SiTech_Template_Renderer_Abstract
 	static public function render($file, $path, array $vars)
 	{
 		$_SiTech_oldPath = set_include_path($path.PATH_SEPARATOR.get_include_path());
-		if (!($fp = fopen($file, 'r', true))) {
+		$fp = @fopen($file, 'r', true);
+        if (!is_resource($fp)) {
 			self::$error = 'Unable to read file '.$file.' on path '.$path;
 			return(false);
 		}

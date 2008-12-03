@@ -136,16 +136,10 @@ class SiTech_Session_Handler_DB implements SiTech_Session_Handler_Interface
 	 * @param string $id
 	 * @param string $data
 	 * @return bool
-	 * @todo Currently the method sets the error mode of the database object to
-	 *       none. The mode needs to be set back to the original value before
-	 *       ending the method.
 	 */
 	public function write ($id, $data)
 	{
-		/*
-		 * TODO: Fix this so we get the old value to reset it later. We have to se it to none here
-		 * because this is usually called while the script is ending.
-		 */
+        $old_mode = $this->db->getAttribute(SiTech_DB::ATTR_ERRMODE);
 		$this->db->setAttribute(SiTech_DB::ATTR_ERRMODE, SiTech_DB::ERR_NONE);
 		$stmnt = $this->db->prepare('SELECT Id FROM '.$this->table.' WHERE Name=:name AND Id=:id');
 		$session = SiTech_Session::singleton();
@@ -158,6 +152,7 @@ class SiTech_Session_Handler_DB implements SiTech_Session_Handler_Interface
 
 		$remote = (isset($_SERVER['REMOTE_ADDR']))? $_SERVER['REMOTE_ADDR'] : null;
 		$ret = $stmnt->execute(array(':id' => $id, ':name' => $session->getAttribute(SiTech_Session::ATTR_SESSION_NAME), ':data' => serialize($data), ':remember' => (int)$session->getAttribute(SiTech_Session::ATTR_REMEMBER), ':strict' => (int)$session->getAttribute(SiTech_Session::ATTR_STRICT), ':remote' => $remote));
+        $this->db->setAttribute(SiTech_DB::ATTR_ERRMODE, $old_mode);
 		return($ret);
 	}
 }

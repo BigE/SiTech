@@ -144,7 +144,8 @@ class SiTech_Filter
 		if ($filter == null) {
 			switch ($this->input) {
 				case self::INPUT_REQUEST:
-					if (!($var = filter_input(self::INPUT_GET, $varName))) {
+                    $var = filter_input(self::INPUT_GET, $varName);
+					if (empty($var)) {
 						$var = filter_input(self::INPUT_POST, $varName);
 					}
 
@@ -159,7 +160,8 @@ class SiTech_Filter
 		} elseif (!empty($options)) {
 			switch ($this->input) {
 				case self::INPUT_REQUEST:
-					if (!($var = filter_input(self::INPUT_GET, $varName, $filter, $options))) {
+					$var = filter_input(self::INPUT_GET, $varName, $filter, $options);
+                    if (empty($var)) {
 						$var = filter_input(self::INPUT_POST, $varName, $filter, $options);
 					}
 
@@ -174,7 +176,8 @@ class SiTech_Filter
 		} else {
 			switch ($this->input) {
 				case self::INPUT_REQUEST:
-					if (!($var = filter_input(self::INPUT_GET, $varName, $filter))) {
+					$var = filter_input(self::INPUT_GET, $varName, $filter);
+                    if (empty($var)) {
 						$var = filter_input(self::INPUT_POST, $varName, $filter);
 					}
 
