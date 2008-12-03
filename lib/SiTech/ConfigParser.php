@@ -380,7 +380,7 @@ class SiTech_ConfigParser
 				$this->_handleError('Strict mode in effect - Cannot overwrite option "%s" in section "%s"', array($option, $section));
 			}
 
-			$this->_config[$section][$option] = (string)$value;
+			$this->_config[$section][$option] = $value;
 			return(true);
 		} else {
 			$this->_handleError('Cannot set option "%s". No section named "%s" exists in configuration!', array($section, $option));
