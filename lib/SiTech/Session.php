@@ -293,13 +293,6 @@ class SiTech_Session extends ArrayObject
 			case self::ATTR_REMEMBER:
 				if ((bool)$value === true) {
 					$this->setAttribute(self::ATTR_COOKIE_TIME, time() + (86400 * 365));
-					setcookie(
-						$this->getAttribute(self::ATTR_SESSION_NAME),
-						session_id(),
-						$this->getAttribute(self::ATTR_COOKIE_TIME),
-						$this->getAttribute(self::ATTR_COOKIE_PATH),
-						$this->getAttribute(self::ATTR_COOKIE_DOMAIN)
-					);
 				}
 			case self::ATTR_STRICT:
 				$this->attributes[$attr] = (bool)$value;
