@@ -7,7 +7,7 @@
  * @filesource
  * @package SiTech
  * @subpackage SiTech_Filter
- * @version $Id: DB.php 91 2008-06-25 15:13:40Z eric $
+ * @version $Id$
  */
 
 /**

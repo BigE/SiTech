@@ -7,7 +7,7 @@
  * @filesource
  * @package SiTech
  * @subpackage SiTech_Session
- * @version $Id: Session.php 152 2008-12-07 23:13:00Z eric $
+ * @version $Id$
  */
 
 /**

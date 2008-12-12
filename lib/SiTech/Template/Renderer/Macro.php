@@ -7,7 +7,7 @@
  * @filesource
  * @package SiTech_Template
  * @subpackage SiTech_Template_Renderer
- * @version $Id: PHP.php 146 2008-12-03 07:33:49Z eric $
+ * @version $Id$
  */
 
 /**

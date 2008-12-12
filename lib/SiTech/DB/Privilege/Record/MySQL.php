@@ -8,7 +8,7 @@
  * @package SiTech_DB
  * @subpackage SiTech_DB_Privilege_Record
  * @todo Finish documentation for file
- * @version $Id: Abstract.php 113 2008-11-07 09:18:11Z eric $
+ * @version $Id$
  */
 
 /**
