@@ -117,7 +117,6 @@ class SiTech_ConfigParser_Handler_Array implements SiTech_ConfigParser_Handler_I
 	 * @param resource $fp File pointer
 	 * @param mixed $value Value to write to the config.
 	 * @param int $indent Indentation length
-	 * @todo Add object detection support.
 	 */
 	protected function _writeValue($fp, $value, $indent = 2)
 	{
