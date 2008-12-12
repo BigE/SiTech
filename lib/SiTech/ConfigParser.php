@@ -6,7 +6,7 @@
  * @copyright SiTech Group (c) 2008
  * @filesource
  * @package SiTech_ConfigParser
- * @version $Id$
+ * @version $Id: ConfigParser.php 146 2008-12-03 07:33:49Z eric $
  */
 
 /**

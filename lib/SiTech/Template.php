@@ -6,7 +6,7 @@
  * @copyright SiTech Group (c) 2008
  * @filesource
  * @package SiTech_Template
- * @version $Id$
+ * @version $Id: Template.php 146 2008-12-03 07:33:49Z eric $
  */
 
 /**

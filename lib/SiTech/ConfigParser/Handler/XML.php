@@ -7,7 +7,7 @@
  * @filesource
  * @package SiTech_ConfigParser
  * @subpackage SiTech_ConfigParser_Handler
- * @version $Id$
+ * @version $Id: XML.php 146 2008-12-03 07:33:49Z eric $
  */
 
 /**

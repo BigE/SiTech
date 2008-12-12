@@ -7,7 +7,7 @@
  * @filesource
  * @package SiTech_DB
  * @subpackage SiTech_DB_Driver
- * @version $Id$
+ * @version $Id: MySQL.php 146 2008-12-03 07:33:49Z eric $
  */
 
 /**

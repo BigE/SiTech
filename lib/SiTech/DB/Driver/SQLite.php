@@ -7,7 +7,7 @@
  * @filesource
  * @package SiTech_DB
  * @subpackage SiTech_DB_Driver
- * @version $Id$
+ * @version $Id: SQLite.php 111 2008-11-07 08:48:01Z eric $
  */
 
 /**

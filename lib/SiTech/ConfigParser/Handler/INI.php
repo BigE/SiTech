@@ -7,7 +7,7 @@
  * @filesource
  * @package SiTech_ConfigParser
  * @subpackage SiTech_ConfigParser_Handler
- * @version $Id$
+ * @version $Id: INI.php 128 2008-11-08 19:16:08Z eric $
  */
 
 /**
