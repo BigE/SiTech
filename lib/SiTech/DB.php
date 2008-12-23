@@ -81,8 +81,8 @@ class SiTech_DB extends PDO
 	 */
 	public function exec($statement, $args = array())
 	{
-		$stmnt = $this->prepare($statement);
-		if ($stmnt->execute($args)) {
+		$stmnt = $this->query($statement, $args);
+		if ($stmnt) {
 			return($stmnt->rowCount());
 		} else {
 			return(false);
@@ -130,6 +130,23 @@ class SiTech_DB extends PDO
 		$sql = 'INSERT INTO '.$table.' ('.implode(', ', $cols).') VALUES('.implode(', ', $vals).')';
 		if ($this->exec($sql, array_values($bind))) {
 			return($this->lastInsertId());
+		} else {
+			return(false);
+		}
+	}
+
+	/**
+	 * Executes an SQL statement, returning a result set as a PDOStatement object
+	 *
+	 * @param string $statement SQL statement to prepare and execute.
+	 * @param array $args Array of arguments to use in the query.
+	 * @return PDOStatement
+	 */
+	public function query($statement, array $args = array())
+	{
+		$stmnt = $this->prepare($statement);
+		if ($stmnt->execute($args)) {
+			return($stmnt);
 		} else {
 			return(false);
 		}
