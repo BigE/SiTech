@@ -120,22 +120,52 @@ class SiTech_Console_GetOpts
 
 				default:
 					$arg = $_SERVER['argv'][$i];
-					if (substr($arg, 0, 2) == '--') {
+					if ($this->_isLongOpt($arg)) {
 						$arg = substr($arg, 2);
+						if (strstr($arg, '=') !== false) {
+							list($arg,$param) = explode('=', $arg);
+						}
+
 						if (isset($this->long[$arg])) {
-							$options[$arg] = true;
+							if (isset($param)) {
+								$options[$arg] = $param;
+							} else {
+								$options[$arg] = true;
+							}
 						} else {
 							echo 'Unknown long option --',$arg,"\n";
 						}
-					} elseif ($arg[0] == '-') {
+					} elseif ($this->_isShortOpt($arg)) {
 						$arg = substr($arg, 1);
-						if (isset($this->short[$arg])) {
-							$options[$arg] = true;
+						if (strlen($arg) > 1) {
+							/* short arguments can be merged together, so check them! */
+							for ($x = 0; $x < strlen($arg); $x++) {
+								if ($arg[$x] === 'h') {
+									$this->displayHelp();
+								}
+
+								if (isset($this->short[$arg[$x]])) {
+									$options[$arg[$x]] = true;
+								} else {
+									echo 'Unknown short option -',$arg[$x],"\n";
+								}
+							}
 						} else {
-							echo 'Unknown short option -',$arg,"\n";
+							if (isset($this->short[$arg])) {
+								$options[$arg] = true;
+								$key = $this->short[$arg];
+
+								if (isset($this->options[$key]['max']) && $this->options[$key]['max'] > 0) {
+									$next = $i + 1;
+									if (isset($_SERVER['argv'][$next]) && !$this->_isShortOpt($_SERVER['argv'][$next]) && !$this->_isLongOpt($_SERVER['argv'][$next])) {
+									}
+								}
+							} else {
+								echo 'Unknown short option -',$arg,"\n";
+							}
 						}
 					} else {
-						/* parameter */
+						/* parameter or argument */
 					}
 					break;
 			}
@@ -152,6 +182,24 @@ class SiTech_Console_GetOpts
 	public function setVersion($version)
 	{
 		$this->version = $version;
+	}
+
+	protected function _isLongOpt($arg)
+	{
+		if (substr($arg, 0, 2) == '--') {
+			return(true);
+		} else {
+			return(false);
+		}
+	}
+
+	protected function _isShortOpt($arg)
+	{
+		if ($arg[0] == '-' && $arg[1] != '-') {
+			return(true);
+		} else {
+			return(false);
+		}
 	}
 
 	protected function __get($name)
