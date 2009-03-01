@@ -103,7 +103,7 @@ class SiTech_Session_Handler_File implements SiTech_Session_Handler_Interface
 
 		if (file_exists($file)) {
 			$data = @file_get_contents($file);
-			list($r, $s, $data) = explode("\n", $data, 3);
+			@list($r, $s, $data) = explode("\n", $data, 3);
 
 			$session = SiTech_Session::singleton();
 			$session->setAttribute(SiTech_Session::ATTR_REMEMBER, (bool)$r);
