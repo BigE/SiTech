@@ -101,11 +101,33 @@ class SiTech_Session_Handler_File implements SiTech_Session_Handler_Interface
 	{
 		$file = $this->_savePath.DIRECTORY_SEPARATOR.'sess_'.$id;
 
-		if (file_exists($file)) {
-			$data = @file_get_contents($file);
-			@list($r, $s, $data) = explode("\n", $data, 3);
-
+		if (file_exists($file) && ($fp = fopen($file, 'r')) !== false) {
+			$time = microtime();
+			$data = '';
+			$str = '';
 			$session = SiTech_Session::singleton();
+			$timeout = $session->getAttribute(SiTech_Session::ATTR_FILE_TIMEOUT);
+
+			do {
+				$canRead = flock($fp, LOCK_SH + LOCK_NB);
+			} while (!$canRead && (microtime() - $time) < $timeout);
+
+			if (!$canRead) {
+				fclose($fp);
+				return('');
+			}
+
+			while (!feof($fp) && $str !== false) {
+				$str = fread($fp, 1024);
+				if ($str) {
+					$data .= $str;
+				}
+			}
+			flock($fp, LOCK_UN);
+			fclose($fp);
+
+			list($r, $s, $data) = explode("\n", $data, 3);
+
 			$session->setAttribute(SiTech_Session::ATTR_REMEMBER, (bool)$r);
 			$session->setAttribute(SiTech_Session::ATTR_STRICT, (bool)$s);
 
@@ -130,8 +152,25 @@ class SiTech_Session_Handler_File implements SiTech_Session_Handler_Interface
 		$session = SiTech_Session::singleton();
 		$data = sprintf("%d\n%d\n%s", $session->getAttribute(SiTech_Session::ATTR_REMEMBER), $session->getAttribute(SiTech_Session::ATTR_STRICT), $data);
 
-		if (is_writeable($this->_savePath)) {
-			@file_put_contents($file, $data);
+		if (($fp = fopen($file, 'a')) !== false) {
+			$time = microtime();
+			$session = SiTech_Session::singleton();
+			$timeout = $session->getAttribute(SiTech_Session::ATTR_FILE_TIMEOUT);
+
+			do {
+				$canWrite = flock($fp, LOCK_EX + LOCK_NB);
+			} while (!$canWrite && (microtime() - $time) < $timeout);
+
+			if (!$canWrite) {
+				fclose($fp);
+				return(false);
+			}
+
+			ftruncate($fp, 0);
+			fputs($fp, $data);
+			flock($fp, LOCK_UN);
+			fclose($fp);
+
 			return(true);
 		} else {
 			return(false);

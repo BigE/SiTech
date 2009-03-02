@@ -49,6 +49,8 @@ class SiTech_Session extends ArrayObject
 
 	const ATTR_STRICT = 8;
 
+	const ATTR_FILE_TIMEOUT = 9;
+
 	/**
 	 * Database handler for session.
 	 */
@@ -110,6 +112,11 @@ class SiTech_Session extends ArrayObject
 			$handler = self::HANDLER_FILE;
 			require_once(str_replace('_', '/', $handler).'.php');
 			self::registerHandler(new $handler());
+		}
+
+		if ($handler == self::HANDLER_FILE) {
+			/* default locking timeout */
+			$this->setAttribute(self::ATTR_FILE_TIMEOUT, 100);
 		}
 
 		session_start();
