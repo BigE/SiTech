@@ -34,18 +34,22 @@ class SiTech_DB extends PDO
 	 * Constructor. We initalize everything here as well as create the object
 	 * for the driver.
 	 *
-	 * @param string $dsn PDO DSN
+	 * @param array $config Array for the constructor options for PDO.
 	 * @param string $driver SiTech_DB_Driver_* class name that implements
 	 *                       SiTech_DB_Driver_Interface. This can either be a string
 	 *                       that is the class name, or a SiTech_DB::DRIVER_*
 	 *                       constant.
-	 * @param string $user PDO Username
-	 * @param string $password PDO Password
 	 * @param array $options Array of config options to pass to PDO.
 	 */
-	public function __construct($dsn, $driver, $username = null, $password = null, array $options = array())
+	public function __construct(array $config, $driver = 'SiTech_DB_Driver_MySQL', array $options = array())
 	{
-		parent::__construct($dsn, $username, $password, $options);
+		if (empty($config['dsn'])) {
+			throw new SiTech_Exception('Missing required DSN from config');
+		}
+
+		$username = empty($config['user'])? null : $config['user'];
+		$password = empty($config['password'])? null : $config['password'];
+		parent::__construct($config['dsn'], $username, $password, $options);
 
 		/* This can be reset in user code, but we prefer exceptions */
 		$this->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
