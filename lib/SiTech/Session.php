@@ -114,7 +114,7 @@ class SiTech_Session extends ArrayObject
 			self::registerHandler(new $handler());
 		}
 
-		if ($handler == self::HANDLER_FILE) {
+		if (self::$handler instanceof SiTech_Session_Handler_File) {
 			/* default locking timeout */
 			$this->setAttribute(self::ATTR_FILE_TIMEOUT, 100);
 		}
