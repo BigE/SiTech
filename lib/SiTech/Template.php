@@ -49,6 +49,8 @@ class SiTech_Template
 	 */
 	protected $attributes = array();
 
+	protected $_layout;
+
 	/**
 	 * Template page to render.
 	 *
@@ -122,6 +124,48 @@ class SiTech_Template
 		echo $this->render();
 	}
 
+	public function doctype($doctype = 'XHTML_10_STRICT')
+	{
+		switch ($doctype) {
+			case 'HTML_401_STRICT':
+				$doctype = '<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">';
+				break;
+
+			case 'HTML_401_TRANS':
+				$doctype = '<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">';
+				break;
+
+			case 'HTML_401_FRAME':
+				$doctype = '<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN"
+   "http://www.w3.org/TR/html4/frameset.dtd">';
+				break;
+			
+			case 'XHTML_10_STRICT':
+				$doctype = '<?xml version="1.0" encoding="utf-8"?>'.PHP_EOL.'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">';
+				break;
+
+			case 'XHTML_10_TRANS':
+				$doctype = '<?xml version="1.0" encoding="utf-8"?>'.PHP_EOL.'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">';
+				break;
+
+			case 'XHTML_10_FRAME':
+				$doctype = '<?xml version="1.0" encoding="utf-8"?>'.PHP_EOL.'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">';
+				break;
+
+			case 'XHTML_11':
+				$doctype = '<?xml version="1.0" encoding="utf-8"?>'.PHP_EOL.'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+   "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">';
+				break;
+		}
+
+		return($doctype);
+	}
+
 	/**
 	 * Get the value of the specified attribute. If the attribute is not set
 	 * NULL will be returned.
@@ -136,6 +180,11 @@ class SiTech_Template
 		} else {
 			return(null);
 		}
+	}
+
+	public function getLayout()
+	{
+		return($this->_layout);
 	}
 
 	/**
@@ -158,7 +207,7 @@ class SiTech_Template
 			$error_reporting = error_reporting(E_ALL ^ E_NOTICE);
 		}
 
-		$rendered = call_user_func_array(array($engine, 'render'), array($this->page, $this->path, $this->vars));
+		$rendered = call_user_func_array(array($engine, 'render'), array($this, $this->page, $this->path, $this->vars));
 		if ($rendered === false) {
 			$this->_handleError(call_user_func(array($engine, 'getError')));
 		}
@@ -176,6 +225,11 @@ class SiTech_Template
 	public function setAttribute($attr, $value)
 	{
 		$this->attributes[$attr] = $value;
+	}
+
+	public function setLayout($layout)
+	{
+		$this->_layout = $layout;
 	}
 
 	/**

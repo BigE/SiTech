@@ -24,7 +24,7 @@ require_once('SiTech/Template/Renderer/Abstract.php');
  */
 class SiTech_Template_Renderer_PHP extends SiTech_Template_Renderer_Abstract
 {
-	static public function render($file, $path, array $vars)
+	static public function render(SiTech_Template $tpl, $file, $path, array $vars)
 	{
 		$_SiTech_oldPath = set_include_path($path.PATH_SEPARATOR.get_include_path());
 		$fp = @fopen($file, 'r', true);
@@ -37,6 +37,9 @@ class SiTech_Template_Renderer_PHP extends SiTech_Template_Renderer_Abstract
 
 		ob_start();
 		include($file);
+		$content = ob_get_clean();
+		ob_start();
+		include(SITECH_APP_PATH.'/layouts/'.$tpl->getLayout());
 		$rendered = ob_get_clean();
 
 		set_include_path($_SiTech_oldPath);

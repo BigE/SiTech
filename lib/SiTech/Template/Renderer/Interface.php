@@ -33,5 +33,5 @@ interface SiTech_Template_Renderer_Interface
 	 * @param array $vars Array of template variables to be used in the template.
 	 * @return string Returns FALSE on failure.
 	 */
-	static public function render($file, $path, array $vars);
+	static public function render(SiTech_Template $tpl, $file, $path, array $vars);
 }
