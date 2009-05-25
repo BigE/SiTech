@@ -78,9 +78,8 @@ class SiTech_Template
 	 * @param string $page Page name to render.
 	 * @param string $path Path where to load the template file.
 	 */
-	public function __construct($page, $path = null)
+	public function __construct($path = null)
 	{
-		$this->page = $page;
 		if (!empty($path)) {
 			$this->path = realpath($path);
 		}
@@ -119,9 +118,9 @@ class SiTech_Template
 	 *
 	 * @see render
 	 */
-	public function display()
+	public function display($page)
 	{
-		echo $this->render();
+		echo $this->render($page);
 	}
 
 	public function doctype($doctype = 'XHTML_10_STRICT')
@@ -193,7 +192,7 @@ class SiTech_Template
 	 *
 	 * @return string The parsed template file.
 	 */
-	public function render()
+	public function render($page)
 	{
 		$engine = $this->getAttribute(self::ATTR_RENDER_ENGINE);
 		if (empty($engine)) {
@@ -207,7 +206,7 @@ class SiTech_Template
 			$error_reporting = error_reporting(E_ALL ^ E_NOTICE);
 		}
 
-		$rendered = call_user_func_array(array($engine, 'render'), array($this, $this->page, $this->path, $this->vars));
+		$rendered = call_user_func_array(array($engine, 'render'), array($this, $page, $this->path, $this->vars));
 		if ($rendered === false) {
 			$this->_handleError(call_user_func(array($engine, 'getError')));
 		}
