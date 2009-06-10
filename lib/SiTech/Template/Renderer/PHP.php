@@ -39,7 +39,11 @@ class SiTech_Template_Renderer_PHP extends SiTech_Template_Renderer_Abstract
 		include($file);
 		$content = ob_get_clean();
 		ob_start();
-		include(SITECH_APP_PATH.'/layouts/'.$tpl->getLayout());
+		if ($tpl->getLayout() == null) {
+			echo $content;
+		} else {
+			include(SITECH_APP_PATH.'/layouts/'.$tpl->getLayout());
+		}
 		$rendered = ob_get_clean();
 
 		set_include_path($_SiTech_oldPath);
