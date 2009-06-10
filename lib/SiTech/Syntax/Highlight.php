@@ -40,4 +40,8 @@ class SiTech_Syntax_Highlight
 			return $ret;
 		}
 	}
+
+	static public function string($string, $type, $return = false)
+	{
+	}
 }
