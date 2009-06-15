@@ -73,6 +73,23 @@ class SiTech_Loader
 		}
 	}
 
+	public static function loadController($name)
+	{
+		$name = strtolower($name);
+		$class = ucfirst($name).'Controller';
+		if (class_exists($class, false)) return;
+
+		/* Silence the error (if any), its handled by an exception */
+		@include_once(SITECH_APP_PATH.'/controllers/'.$name.'.php');
+
+		if (!class_exists($class, false)) {
+			require_once('SiTech/Exception.php');
+			throw new SiTech_Exception('The controller "%s" failed to load', array($class));
+		}
+
+		return(new $class);
+	}
+
 	public static function registerAutoload($class = 'SiTech_Loader', $enabled = true)
     {
         if (!function_exists('spl_autoload_register')) {
