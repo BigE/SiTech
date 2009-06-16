@@ -1,6 +1,6 @@
 <?php
 /**
- * SiTech/Syntax/Highlight.php
+ * SiTech/Syntax/Highlight/CSS.php
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,49 +21,21 @@
  * @filesource
  * @package SiTech_Syntax
  * @subpackage SiTech_Syntax_Highlight
- * @todo Finish file documentation.
+ * @todo Finish file documentation and implement rules for CSS parsing.
  * @version $Id$
  */
 
 /**
- * Description of Highlight
+ * @see SiTech_Syntax_Highlight_Abstract
+ */
+require_once('SiTech/Syntax/Highlight/Abstract.php');
+
+/**
+ * Description of CSS
  *
  * @package SiTech_Syntax
  * @subpackage SiTech_Syntax_Highlight
  */
-class SiTech_Syntax_Highlight
+class SiTech_Syntax_Highlight_CSS extends SiTech_Syntax_Highlight_Abstract
 {
-	const TYPE_PHP = 1;
-
-	static public function file($file, $type, $return = false)
-	{
-		switch ($type) {
-			case self::TYPE_PHP:
-				require_once('SiTech/Syntax/Highlight/PHP.php');
-				$obj = new SiTech_Syntax_Highlight_PHP;
-				break;
-
-			default:
-				throw new Exception('Invalid type');
-				break;
-		}
-
-		$obj->loadFile($file);
-
-		if ($return) {
-			ob_start();
-		}
-
-		$obj->displaySource();
-
-		if ($return) {
-			$ret = ob_get_contents();
-			ob_end_clean();
-			return $ret;
-		}
-	}
-
-	static public function string($string, $type, $return = false)
-	{
-	}
 }

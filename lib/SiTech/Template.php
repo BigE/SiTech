@@ -1,16 +1,33 @@
 <?php
 /**
- * Contains the template engine for SiTech.
+ * SiTech/Template.php
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * @author Eric Gach <eric@php-oop.net>
- * @copyright SiTech Group (c) 2008
+ * @copyright SiTech Group (c) 2008-2009
  * @filesource
- * @package SiTech_Template
+ * @package SiTech
+ * @subpackage SiTech_Template
  * @version $Id$
  */
 
 /**
- * SiTech_Template - This is the template class for all templates. Here you can
+ * SiTech_Template
+ *
+ * This is the template class for all templates. Here you can
  * assign variables, render the page, and even display the full output.
  *
  * @package SiTech_Template
@@ -123,6 +140,12 @@ class SiTech_Template
 		echo $this->render($page);
 	}
 
+	/**
+	 * Return the proper doctype tag for use in HTML documents.
+	 *
+	 * @param string $doctype
+	 * @return string
+	 */
 	public function doctype($doctype = 'XHTML_10_STRICT')
 	{
 		switch ($doctype) {
@@ -181,6 +204,12 @@ class SiTech_Template
 		}
 	}
 
+	/**
+	 * Get the current layout set for the template. If none is set, null will
+	 * be returned.
+	 *
+	 * @return string
+	 */
 	public function getLayout()
 	{
 		return($this->_layout);
@@ -226,6 +255,13 @@ class SiTech_Template
 		$this->attributes[$attr] = $value;
 	}
 
+
+	/**
+	 * Set a layout to use for the current template. If no layout is set, the
+	 * template itself will still display.
+	 *
+	 * @param string $layout
+	 */
 	public function setLayout($layout)
 	{
 		$this->_layout = $layout;

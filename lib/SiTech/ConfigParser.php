@@ -1,16 +1,35 @@
 <?php
 /**
- * Contains the configuration parser class.
+ * SiTech/ConfigParser.php
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * @author Eric Gach <eric@php-oop.net>
- * @copyright SiTech Group (c) 2008
+ * @copyright SiTech Group (c) 2008-2009
  * @filesource
- * @package SiTech_ConfigParser
+ * @package SiTech
+ * @subpackage SiTech_ConfigParser
  * @version $Id$
  */
 
 /**
  * SiTech_ConfigParser - Configuration management class.
+ *
+ * This configuration class was closely modeled after the ConfigParser module
+ * that is found in Python. I found it to be a very useful class and decided to
+ * port the functionality over to this library.
  *
  * @package SiTech_ConfigParser
  */
@@ -27,6 +46,8 @@ class SiTech_ConfigParser
 	const ERRMODE_WARNING = 1;
 
 	const ERRMODE_EXCEPTION = 2;
+
+	const HANDLER_ARRAY = 'SiTech_ConfigParser_Handler_Array';
 
 	const HANDLER_INI = 'SiTech_ConfigParser_Handler_INI';
 

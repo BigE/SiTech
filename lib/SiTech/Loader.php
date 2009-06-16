@@ -1,36 +1,38 @@
 <?php
 /**
- * Description of Loader.php
+ * SiTech/Loader.php
  *
- * @author Eric Gach <eric at php-oop.net>
- * @copyright SiTech Group (c) 2009
- * @filesource
- * @package SiTech
- * @version $Id$
- */
-
-/** 
- * Loader.php
- * Copyright (C) 2009 Eric Gach <eric at php-oop.net>
- * 
- * This program is free software: you can redistribute it and/or modify
+ * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
+ * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * @author Eric Gach <eric at php-oop.net>
+ * @copyright SiTech Group (c) 2009
+ * @filesource
+ * @package SiTech
+ * @subpackage SiTech_Loader
+ * @todo Fix documentation for whole SiTech_Loader class
+ * @version $Id$
  */
 
 /**
- * Description of Loader
+ * SiTech_Loader
  *
- * @author Eric Gach <eric at php-oop.net>
+ * This loader class adds functionality to the autoload function already built
+ * into PHP. It also provides helper functions to make any application easier to
+ * manage and build.
+ *
+ * @package SiTech_Loader
  */
 class SiTech_Loader
 {
