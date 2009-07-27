@@ -202,7 +202,7 @@ class SiTech_Console_GetOpts
 		}
 	}
 
-	protected function __get($name)
+	public function __get($name)
 	{
 		switch ($name) {
 			case 'program':
