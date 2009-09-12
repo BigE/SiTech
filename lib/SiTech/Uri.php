@@ -54,9 +54,28 @@ class SiTech_Uri
 		return($this->getUri());
 	}
 
-	public function getPath()
+	public function getHost()
 	{
-		return($this->_requestUri['path']);
+		return((empty($this->_requestUri['host']))? $_SERVER['HOST_NAME'] : $this->_requestUri['host']);
+	}
+
+	public function getPath($ltrim = false)
+	{
+		if ($ltrim) {
+			return(ltrim($this->_requestUri['path'], '/'));
+		} else {
+			return($this->_requestUri['path']);
+		}
+	}
+
+	public function getPort()
+	{
+		return($this->_requestUri['port']);
+	}
+
+	public function getScheme()
+	{
+		return((empty($this->_requestUri['scheme']))? 'http' : $this->_requestUri['scheme']);
 	}
 
 	public function getUri($withQuery = true, $withFragment = true)

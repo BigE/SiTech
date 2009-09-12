@@ -75,7 +75,7 @@ class SiTech_Loader
 		}
 	}
 
-	public static function loadController($name)
+	public static function loadController($name, SiTech_Uri $uri)
 	{
 		$name = strtolower($name);
 		$class = ucfirst($name).'Controller';
@@ -86,10 +86,10 @@ class SiTech_Loader
 
 		if (!class_exists($class, false)) {
 			require_once('SiTech/Exception.php');
-			throw new SiTech_Exception('The controller "%s" failed to load', array($class));
+			throw new SiTech_Exception('The controller "%s" failed to load', array($class), 500);
 		}
 
-		return(new $class);
+		return(new $class($uri));
 	}
 
 	public static function registerAutoload($class = 'SiTech_Loader', $enabled = true)
