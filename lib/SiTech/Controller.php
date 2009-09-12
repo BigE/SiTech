@@ -37,17 +37,6 @@ class SiTech_Controller
 		}
 
 		$uri = new SiTech_Uri($uri);
-
-		try {
-			$obj = SiTech_Loader::loadController($controller, $uri);
-		} catch (SiTech_Exception $ex) {
-			if ($ex->getCode() == 500) {
-				throw new phPoop_Error_500('Invalid section "%s"', array($controller));
-			} elseif ($ex->getCode() == 404) {
-				throw new phPoop_Error_404('Invalid page "%s" for "%s"', array($action, $controller));
-			} else {
-				throw $ex;
-			}
-		}
+		$obj = SiTech_Loader::loadController($controller, $uri);
 	}
 }
