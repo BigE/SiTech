@@ -24,14 +24,14 @@ abstract class SiTech_Controller_Abstract
 		$this->_action = array_shift($path);
 		$this->_path = $path;
 
-		$this->_parsePath();
+		$this->init();
 		if (!method_exists($this, $this->_action)) {
 			throw new SiTech_Exception('Method not found', null, 404);
 		}
 		$this->{$this->_action}();
 	}
 
-	protected function _parsePath()
+	protected function init()
 	{
 	}
 }
