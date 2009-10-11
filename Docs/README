@@ -1,0 +1,4 @@
+This folder is here for you to generate documentation using phpdoc. Note that
+SiTech does not come with phpdoc, you must download and install it yourself. To
+create the documentation, please run generate-docs.sh or generate-docs.bat. The
+documentation will be created into the Generated folder.

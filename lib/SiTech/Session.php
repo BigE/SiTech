@@ -139,7 +139,7 @@ class SiTech_Session extends ArrayObject
 		/* Assign the object to $_SESSION */
 		/**
 		 * This used to cause a segfault with Xdebug, but that's now fixed in
-		 * Xdebug CVS.
+		 * Xdebug >= 2.0.4
 		 */
 		$_SESSION = $this;
 	}

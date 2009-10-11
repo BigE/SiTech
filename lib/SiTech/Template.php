@@ -95,10 +95,16 @@ class SiTech_Template
 	 * @param string $page Page name to render.
 	 * @param string $path Path where to load the template file.
 	 */
-	public function __construct($path = null)
+	public function __construct($path = null, array $options = array())
 	{
 		if (!empty($path)) {
 			$this->path = realpath($path);
+		}
+
+		if (!empty($options)) {
+			foreach ($options as $attr => $value) {
+				$this->setAttribute($attr, $value);
+			}
 		}
 	}
 

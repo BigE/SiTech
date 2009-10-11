@@ -171,7 +171,7 @@ class SiTech_DB_Privilege_Record_MySQL extends SiTech_DB_Privilege_Record_Abstra
 	const UPDATE = 'UPDATE';
 
 	/**
-	 * USAGE	Synonym for “no privileges”
+	 * USAGE	Synonym for "no privileges"
 	 */
 	const USAGE = 'USAGE';
 

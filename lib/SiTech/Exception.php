@@ -32,9 +32,19 @@
   * just like printf/sprintf will.
   *
   * @package SiTech_Exception
+  * @see http://php.net/exception
   */
 class SiTech_Exception extends Exception
 {
+	/**
+	 * This constructor takes a formatted string and arguments. It uses vsprintf
+	 * to put the string together and pass to the internal Exception class.
+	 *
+	 * @param string $msg The exception message string. Please see http://php.net/printf
+	 *                    for documentation of formatting.
+	 * @param array $args Array of arguments to pass for formatting, like sprintf.
+	 * @param int $code Error code to pass to internal Exception class.
+	 */
 	public function __construct($msg, $args = array(), $code = 0)
 	{
 		parent::__construct(vsprintf($msg, $args), $code);
