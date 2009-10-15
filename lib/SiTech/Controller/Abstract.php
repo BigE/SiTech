@@ -32,6 +32,12 @@ abstract class SiTech_Controller_Abstract
 {
 	protected $_action;
 	protected $_path;
+
+	/**
+	 * This is a SiTech_Uri object used in the controller itself.
+	 *
+	 * @var SiTech_Uri
+	 */
 	protected $_uri;
 
 	public function __construct(SiTech_Uri $uri)

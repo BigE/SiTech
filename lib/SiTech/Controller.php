@@ -33,6 +33,13 @@ class SiTech_Controller
 {
 	protected static $_routes = array();
 
+	/**
+	 * Add a route to the controller for easier parsing.
+	 *
+	 * @param <type> $path A preg regex to match the path.
+	 * @param <type> $controller
+	 * @param <type> $action
+	 */
 	static public function addRoute($path, $controller, $action)
 	{
 		if (is_array($path)) {
@@ -46,13 +53,18 @@ class SiTech_Controller
 
 	static public function dispatch(SiTech_Uri $uri)
 	{
-		if (empty(self::$_routes[$uri->getPath()])) {
+		foreach (self::$_routes as $regex => $array) {
+			if (preg_match("#^($regex)$#", $uri->getPath(), $parts)) {
+				$controller = $array[0];
+				$action = $array[1];
+				break;
+			}
+		}
+
+		if (empty($parts)) {
 			$parts = explode('/', $uri->getPath(true), 3);
 			$controller = (empty($parts[0]))? 'default' : $parts[0];
 			$action = (empty($parts[1]))? 'index' : $parts[1];
-		} else {
-			$controller = self::$_routes[$uri->getPath()][0];
-			$action = self::$_routes[$uri->getPath()][1];
 		}
 
 		$uri = '/'.$controller.'/'.$action;
