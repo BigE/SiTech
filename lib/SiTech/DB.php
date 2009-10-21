@@ -34,6 +34,8 @@
  */
 class SiTech_DB extends PDO
 {
+	const ATTR_TRACK_QUERIES = 1234567890;
+
 	const DRIVER_MYSQL = 'SiTech_DB_Driver_MySQL';
 	const DRIVER_SQLITE = 'SiTech_DB_Driver_SQLite';
 
@@ -43,6 +45,8 @@ class SiTech_DB extends PDO
 	 * @var object SiTech_DB_Driver_Interface
 	 */
 	protected $driver;
+
+	private $_queries = array();
 
 	/**
 	 * Constructor. We initalize everything here as well as create the object
@@ -107,6 +111,15 @@ class SiTech_DB extends PDO
 		}
 	}
 
+	public function getAttribute($attribute)
+	{
+		if ($attribute == self::ATTR_TRACK_QUERIES) {
+			return(true);
+		} else {
+			return(parent::getAttribute($attribute));
+		}
+	}
+
 	/**
 	 * Get privileges for the specified user. If no user is specified, then the
 	 * user that connected will be used.
@@ -118,6 +131,16 @@ class SiTech_DB extends PDO
 	public function getPrivileges($user=null, $host=null)
 	{
 		return($this->driver->getPrivileges($user, $host));
+	}
+	
+	public function getQueries()
+	{
+		return($this->_queries);
+	}
+
+	public function getQueryCount()
+	{
+		return(sizeof($this->_queries));
 	}
 
 	/**
@@ -162,6 +185,10 @@ class SiTech_DB extends PDO
 	 */
 	public function query($statement, array $args = array())
 	{
+		if ((bool)$this->getAttribute(self::ATTR_TRACK_QUERIES)) {
+			$this->_queries[] = $statement;
+		}
+		
 		$stmnt = $this->prepare($statement);
 		if ($stmnt->execute($args)) {
 			return($stmnt);

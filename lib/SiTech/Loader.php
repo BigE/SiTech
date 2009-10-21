@@ -81,8 +81,12 @@ class SiTech_Loader
 		$class = ucfirst($name).'Controller';
 		if (class_exists($class, false)) return;
 
-		/* Silence the error (if any), its handled by an exception */
-		@include_once(SITECH_APP_PATH.'/controllers/'.$name.'.php');
+		if (is_readable(SITECH_APP_PATH.'/controllers/'.$name.'.php')) {
+			include_once(SITECH_APP_PATH.'/controllers/'.$name.'.php');
+		} else {
+			require_once('SiTech/Exception.php');
+			throw new SiTech_Exception('The controller "%s" failed to load', array($class), 404);
+		}
 
 		if (!class_exists($class, false)) {
 			require_once('SiTech/Exception.php');

@@ -290,7 +290,7 @@ class SiTech_Template
 	 *
 	 * @param string $msg Error message to be used.
 	 */
-	protected function _handleError($msg, $array = array())
+	public function _handleError($msg, $array = array())
 	{
 		if ($this->getAttribute(SiTech_Template::ATTR_ERRMODE) === SiTech_Template::ERRMODE_EXCEPTION) {
 			throw new Exception(vsprintf($msg, $array));

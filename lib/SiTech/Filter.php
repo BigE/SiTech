@@ -31,6 +31,8 @@
  * the filter extension more object oriented.
  *
  * @package SiTech_Filter
+ * @todo Add code to use when filter extension is not available making a
+ *       suitable replacement for the extension.
  */
 class SiTech_Filter
 {
@@ -93,6 +95,7 @@ class SiTech_Filter
 	 * loaded, we cannot continue.
 	 *
 	 * @param int $input Default input to use when using input or hasVar methods.
+	 * @todo Remove requirement for filter extension.
 	 */
 	public function __construct($input = null)
 	{

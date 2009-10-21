@@ -43,7 +43,7 @@ class SiTech_Uri
 	public function __construct($uri = null)
 	{
 		if (is_null($uri)) {
-			$uri = ((isset($_SERVER['HTTPS']))? 'https://' : 'http://').$_SERVER['HTTP_HOST'].':'.$_SERVER['SERVER_PORT'].$_SERVER['REQUEST_URI'];
+			$uri = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on')? 'https://' : 'http://').$_SERVER['HTTP_HOST'].':'.$_SERVER['SERVER_PORT'].$_SERVER['REQUEST_URI'];
 		}
 
 		$this->_requestUri = parse_url($uri);
