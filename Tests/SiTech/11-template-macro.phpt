@@ -7,14 +7,14 @@ require_once('SiTech/Template.php');
 require_once('SiTech/Template/Renderer/Macro.php');
 error_reporting(E_ALL);
 
-$template = new SiTech_Template('macro.tpl', SITECH_BASEPATH.'/Tests/Content');
+$template = new SiTech_Template(SITECH_BASEPATH.'/Tests/Content');
 $template->setAttribute(SiTech_Template::ATTR_RENDER_ENGINE, new SiTech_Template_Renderer_Macro());
 $template->assign('test', 'awesome');
-$template->display();
+$template->display('macro.tpl');
 $template->assign('test', 'horrible');
-$template->display();
+$template->display('macro.tpl');
 $template->unassign('test');
-$template->display();
+$template->display('macro.tpl');
 ?>
 --EXPECTF--
 This is my awesome page for Macro templates.

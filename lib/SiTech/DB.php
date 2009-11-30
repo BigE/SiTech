@@ -62,6 +62,7 @@ class SiTech_DB extends PDO
 	public function __construct(array $config, $driver = 'SiTech_DB_Driver_MySQL', array $options = array())
 	{
 		if (empty($config['dsn'])) {
+			require_once('SiTech/Exception.php');
 			throw new SiTech_Exception('Missing required DSN from config');
 		}
 

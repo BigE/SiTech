@@ -42,7 +42,7 @@ require_once('SiTech/Template/Renderer/Abstract.php');
  */
 class SiTech_Template_Renderer_Macro extends SiTech_Template_Renderer_Abstract
 {
-	static public function render($file, $path, array $vars)
+	static public function render(SiTech_Template $tpl, $file, $path, array $vars)
 	{
 		$rendered = file_get_contents($path.DIRECTORY_SEPARATOR.$file);
 		if ($rendered === false) {
