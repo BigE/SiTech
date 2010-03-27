@@ -116,6 +116,8 @@ class SiTech_Session extends ArrayObject
 			trigger_error('Call to protected '.__METHOD__.' from invalid context', E_USER_ERROR);
 		}
 
+		// Set internal to false, then set the instance
+		self::$internal = false;
 		self::$instance = $this;
 		if (isset($_SERVER['HTTP_HOST'])) {
 			$this->setAttribute(self::ATTR_COOKIE_DOMAIN, '.'.$_SERVER['HTTP_HOST']);
@@ -336,10 +338,7 @@ class SiTech_Session extends ArrayObject
 	static public function singleton()
 	{
 		if (empty(self::$instance)) {
-			$c = __CLASS__;
-			self::$internal = true;
-			self::$instance = new $c();
-			self::$internal = false;
+			throw new Exception('Session not started yet. Please call SiTech_Session::start() first.');
 		}
 
 		return(self::$instance);
@@ -361,7 +360,6 @@ class SiTech_Session extends ArrayObject
 		}
 
 		self::$internal = true;
-		self::singleton();
-		self::$internal = false;
+		new SiTech_Session();
 	}
 }
