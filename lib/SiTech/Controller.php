@@ -71,6 +71,7 @@ class SiTech_Controller
 
 		$controller = $uri->getController();
 		$action = $uri->getAction();
+		$path = '';
 		$parts = explode('/', $uri->getPath(true));
 
 		if (sizeof($parts) > 1) {
@@ -97,9 +98,7 @@ class SiTech_Controller
 		 */
 		$uri->setController($controller);
 		$uri->setAction($action);
-		if (!empty($path)) {
-			$uri->setPath($path);
-		}
+		$uri->setPath($path);
 		$obj = SiTech_Loader::loadController($controller, $uri);
 	}
 }
