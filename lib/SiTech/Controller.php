@@ -97,7 +97,9 @@ class SiTech_Controller
 		 */
 		$uri->setController($controller);
 		$uri->setAction($action);
-		$uri->setPath($path);
+		if (!empty($path)) {
+			$uri->setPath($path);
+		}
 		$obj = SiTech_Loader::loadController($controller, $uri);
 	}
 }
