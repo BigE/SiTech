@@ -48,7 +48,10 @@ class SiTech_Uri
 
 		$this->_requestUri = parse_url($uri);
 	}
-	
+
+	/**
+	 * Returns the string value of the URL.
+	 */
 	public function __toString()
 	{
 		return($this->getUri());
@@ -96,5 +99,16 @@ class SiTech_Uri
 		}
 		
 		return($uri);
+	}
+
+	public function setPath($path)
+	{
+		// Make sure the path is valid
+		if (($url = parse_url($path)) !== false) {
+			$this->_requestUri['path'] = $url['path'];
+			return($this->_requestUri['path']);
+		} else {
+			return(false);
+		}
 	}
 }

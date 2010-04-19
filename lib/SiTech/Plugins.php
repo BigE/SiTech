@@ -105,14 +105,15 @@ class SiTech_Plugins
 	 */
 	protected function _parse($file)
 	{
-		if (!file_exists($file) || !is_readable($file) || ($contents = php_strip_whitespace($file)) === false) {
-			require_once('SiTech/Plugins/Exception.php');
-			throw new SiTech_Plugins_Exception('The plugin file "%s" could not be read');
-		}
 
 		if (filesize($file) > ($this->_attributes[self::ATTR_MAX_FILESIZE] * 1024)) {
 			require_once('SiTech/Plugins/Exception.php');
 			throw new SiTech_Plugins_Exception('The plugin file "%s" could not be loaded because it exceeds the maximum filesize of %d KB', array($file, $this->_attributes[self::ATTR_MAX_FILESIZE]));
+		}
+		
+		if (!file_exists($file) || !is_readable($file) || ($contents = php_strip_whitespace($file)) === false) {
+			require_once('SiTech/Plugins/Exception.php');
+			throw new SiTech_Plugins_Exception('The plugin file "%s" could not be read');
 		}
 
 		$tokens = token_get_all($contents);

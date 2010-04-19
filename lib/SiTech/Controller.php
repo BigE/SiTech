@@ -51,6 +51,13 @@ class SiTech_Controller
 		}
 	}
 
+	/**
+	 * Dispatch the controller. This will load the controller using the
+	 * SiTech_Loader class. It also sets the correct path for the URL if
+	 * the URL is rewritten.
+	 *
+	 * @param SiTech_Uri $uri
+	 */
 	static public function dispatch(SiTech_Uri $uri)
 	{
 		foreach (self::$_routes as $regex => $array) {
@@ -67,12 +74,16 @@ class SiTech_Controller
 			$action = (empty($parts[1]))? 'index' : $parts[1];
 		}
 
-		$uri = '/'.$controller.'/'.$action;
+		$path = '/'.$controller.'/'.$action;
 		if (!empty($parts[2])) {
-			$uri .= '/'.$parts[2];
+			$path .= '/'.$parts[2];
 		}
 
-		$uri = new SiTech_Uri($uri);
+		/**
+		 * Changed to set just the path, that way we don't loose the whole URL
+		 * when passing to a controller.
+		 */
+		$uri->setPath($path);
 		$obj = SiTech_Loader::loadController($controller, $uri);
 	}
 }
