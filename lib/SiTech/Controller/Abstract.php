@@ -44,10 +44,8 @@ abstract class SiTech_Controller_Abstract
 	{
 		$this->_uri = $uri;
 		
-		$path = explode('/', $this->_uri->getPath(true));
-		array_shift($path);
-		$this->_action = array_shift($path);
-		$this->_path = $path;
+		$this->_action = $this->_uri->getAction();
+		$this->_path = $this->_uri->getPath(SiTech_Uri::FLAG_LTRIM | SiTech_Uri::FLAG_ARGS);
 
 		$this->init();
 		if (!method_exists($this, $this->_action)) {

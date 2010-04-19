@@ -32,6 +32,11 @@
  */
 class SiTech_Uri
 {
+	const FLAG_LTRIM = 1;
+	const FLAG_ARGS = 2;
+
+	protected $_action;
+	protected $_controller;
 	protected $_requestUri;
 	
 	/**
@@ -47,6 +52,9 @@ class SiTech_Uri
 		}
 
 		$this->_requestUri = parse_url($uri);
+		$parts = explode('/', ltrim($this->_requestUri['path'], '/'));
+		$this->_controller = (empty($parts[0]))? 'default' : $parts[0];
+		$this->_action = (empty($parts[1]))? 'index' : $parts[1];
 	}
 
 	/**
@@ -57,18 +65,33 @@ class SiTech_Uri
 		return($this->getUri());
 	}
 
+	public function getAction()
+	{
+		return($this->_action);
+	}
+
+	public function getController()
+	{
+		return($this->_controller);
+	}
+
 	public function getHost()
 	{
 		return((empty($this->_requestUri['host']))? $_SERVER['HOST_NAME'] : $this->_requestUri['host']);
 	}
 
-	public function getPath($ltrim = false)
+	public function getPath($flags = 0)
 	{
-		if ($ltrim) {
-			return(ltrim($this->_requestUri['path'], '/'));
-		} else {
-			return($this->_requestUri['path']);
+		$path = $this->_requestUri['path'];
+		if ($flags & SiTech_Uri::FLAG_ARGS) {
+			$path = '/'.ltrim(str_replace(array($this->_controller, $this->_action), '', $path), '/');
 		}
+
+		if ($flags & SiTech_Uri::FLAG_LTRIM) {
+			$path = ltrim($path, '/');
+		}
+
+		return($path);
 	}
 
 	public function getPort()
@@ -99,6 +122,26 @@ class SiTech_Uri
 		}
 		
 		return($uri);
+	}
+
+	public function setAction($action)
+	{
+		if (parse_url($action) !== false) {
+			$this->_action = $action;
+			return($action);
+		} else {
+			return(false);
+		}
+	}
+
+	public function setController($controller)
+	{
+		if (parse_url($controller) !== false) {
+			$this->_controller = $controller;
+			return($controller);
+		} else {
+			return(false);
+		}
 	}
 
 	public function setPath($path)

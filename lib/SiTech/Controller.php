@@ -62,27 +62,41 @@ class SiTech_Controller
 	{
 		foreach (self::$_routes as $regex => $array) {
 			if (preg_match("#^($regex)$#", $uri->getPath(), $parts)) {
-				$controller = $array[0];
-				$action = $array[1];
+				$uri->setController($array[0]);
+				$uri->setAction($array[1]);
 				break;
 			}
 		}
 
-		if (empty($parts)) {
-			$parts = explode('/', $uri->getPath(true), 3);
-			$controller = (empty($parts[0]))? 'default' : $parts[0];
-			$action = (empty($parts[1]))? 'index' : $parts[1];
-		}
 
-		$path = '/'.$controller.'/'.$action;
-		if (!empty($parts[2])) {
-			$path .= '/'.$parts[2];
+		$controller = $uri->getController();
+		$action = $uri->getAction();
+		$parts = explode('/', $uri->getPath(true));
+
+		if (sizeof($parts) > 1) {
+			$i = 1;
+			while (is_dir(SITECH_APP_PATH.DIRECTORY_SEPARATOR.'controllers'.DIRECTORY_SEPARATOR.$controller)) {
+				$controller .= '/'.$parts[$i++];
+			}
+
+			if (empty($parts[$i])) {
+				$action = 'index';
+				$path = '/'.$controller;
+			} else {
+				$action = $parts[$i];
+				$path = '/'.$controller.'/'.$action;
+				for (++$i; $i < sizeof($parts); $i++) {
+					$path .= '/'.$parts[$i];
+				}
+			}
 		}
 
 		/**
 		 * Changed to set just the path, that way we don't loose the whole URL
 		 * when passing to a controller.
 		 */
+		$uri->setController($controller);
+		$uri->setAction($action);
 		$uri->setPath($path);
 		$obj = SiTech_Loader::loadController($controller, $uri);
 	}

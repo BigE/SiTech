@@ -78,7 +78,15 @@ class SiTech_Loader
 	public static function loadController($name, SiTech_Uri $uri)
 	{
 		$name = strtolower($name);
-		$class = ucfirst($name).'Controller';
+
+		if (strstr($name, '/') !== false) {
+			$parts = explode('/', $name);
+			$parts = array_map('ucfirst', $parts);
+			$class = implode('_', $parts).'Controller';
+		} else {
+			$class = ucfirst($name).'Controller';
+		}
+
 		if (class_exists($class, false)) return;
 
 		if (is_readable(SITECH_APP_PATH.'/controllers/'.$name.'.php')) {
