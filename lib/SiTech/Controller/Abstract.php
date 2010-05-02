@@ -31,7 +31,8 @@
 abstract class SiTech_Controller_Abstract
 {
 	protected $_action;
-	protected $_path;
+	protected $_argMap = array();
+	protected $_args;
 
 	/**
 	 * This is a SiTech_Uri object used in the controller itself.
@@ -45,7 +46,14 @@ abstract class SiTech_Controller_Abstract
 		$this->_uri = $uri;
 		
 		$this->_action = $this->_uri->getAction();
-		$this->_path = $this->_uri->getPath(SiTech_Uri::FLAG_LTRIM | SiTech_Uri::FLAG_ARGS);
+
+		$this->_args = explode('/', $this->_uri->getPath(SiTech_Uri::FLAG_LTRIM | SiTech_Uri::FLAG_CONTROLLER | SiTech_Uri::FLAG_ACTION));
+
+		if (isset($this->_argMap[$this->_action]) && is_array($this->_argMap[$this->_action])) {
+			foreach ($this->_argMap[$this->_action] as $k => $arg) {
+				$this->_args[$arg] = $this->_args[$k];
+			}
+		}
 
 		$this->init();
 		if (!method_exists($this, $this->_action)) {

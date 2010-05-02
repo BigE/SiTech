@@ -33,7 +33,8 @@
 class SiTech_Uri
 {
 	const FLAG_LTRIM = 1;
-	const FLAG_ARGS = 2;
+	const FLAG_CONTROLLER = 2;
+	const FLAG_ACTION = 4;
 
 	protected $_action;
 	protected $_controller;
@@ -83,8 +84,12 @@ class SiTech_Uri
 	public function getPath($flags = 0)
 	{
 		$path = $this->_requestUri['path'];
-		if ($flags & SiTech_Uri::FLAG_ARGS) {
-			$path = '/'.ltrim(str_replace(array($this->_controller, $this->_action), '', $path), '/');
+		if ($flags & SiTech_Uri::FLAG_ACTION) {
+			$path = preg_replace('#^/'.$this->_controller.'/'.$this->_action.'#', '/'.$this->_controller, $path);
+		}
+
+		if ($flags & SiTech_Uri::FLAG_CONTROLLER) {
+			$path = preg_replace('#^/('.$this->_controller.')#', '', $path);
 		}
 
 		if ($flags & SiTech_Uri::FLAG_LTRIM) {
