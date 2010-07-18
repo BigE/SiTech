@@ -60,10 +60,13 @@ class SiTech_Controller
 	 */
 	static public function dispatch(SiTech_Uri $uri)
 	{
+		$rewrite = false;
+
 		foreach (self::$_routes as $regex => $array) {
 			if (preg_match("#^($regex)$#", $uri->getPath(), $parts)) {
 				$uri->setController($array[0]);
 				$uri->setAction($array[1]);
+				$rewrite = true;
 				break;
 			}
 		}
@@ -71,21 +74,25 @@ class SiTech_Controller
 
 		$controller = $uri->getController();
 		$action = $uri->getAction();
-		$path = '';
 		$parts = explode('/', $uri->getPath(true));
+		if (isset($parts[0])) {
+			$path = '/'.$parts[0];
+		} else {
+			$path = '';
+		}
 
 		if (sizeof($parts) > 1) {
 			$i = 1;
 			while (is_dir(SITECH_APP_PATH.DIRECTORY_SEPARATOR.'controllers'.DIRECTORY_SEPARATOR.$controller)) {
-				$controller .= '/'.$parts[$i++];
+				$path .= $parts[$i];
+				if (!$rewrite) $controller .= '/'.$parts[$i++];
 			}
 
 			if (empty($parts[$i])) {
-				$action = 'index';
-				$path = '/'.$controller;
+				if (empty($action)) $action = 'index';
 			} else {
-				$action = $parts[$i];
-				$path = '/'.$controller.'/'.$action;
+				if (!$rewrite) $action = $parts[$i];
+				$path .= '/'.$parts[$i];
 				for (++$i; $i < sizeof($parts); $i++) {
 					$path .= '/'.$parts[$i];
 				}
