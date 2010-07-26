@@ -30,9 +30,45 @@
  */
 abstract class SiTech_Controller_Abstract
 {
+	/**
+	 * Internal use for the action of the controller.
+	 *
+	 * @var string Name of action for this controller.
+	 */
 	protected $_action;
+
+	/**
+	 * Internal argument map so the controller knows what arguments to map to
+	 * what variables.
+	 *
+	 * @var array
+	 */
 	protected $_argMap = array();
+
+	/**
+	 * Arguments received by the controller. If they don't have a named key
+	 * in the $_argMap array, they will only be available through the numerical
+	 * index.
+	 *
+	 * @var array
+	 */
 	protected $_args;
+
+	/**
+	 * This tells if _display() has been called yet. If it hasn't then we call
+	 * it automatically.
+	 *
+	 * @var boolean
+	 */
+	private $_display = false;
+
+	/**
+	 * The layout to use for the current page. If it is empty, the layout will
+	 * remain unused.
+	 *
+	 * @var string
+	 */
+	protected $_layout;
 
 	/**
 	 * This is a SiTech_Uri object used in the controller itself.
@@ -40,6 +76,12 @@ abstract class SiTech_Controller_Abstract
 	 * @var SiTech_Uri
 	 */
 	protected $_uri;
+
+	/**
+	 *
+	 * @var SiTech_Template
+	 */
+	protected $_view;
 
 	public function __construct(SiTech_Uri $uri)
 	{
@@ -55,14 +97,59 @@ abstract class SiTech_Controller_Abstract
 			}
 		}
 
+		// Initalize the controller
 		$this->init();
+
+		/**
+		 * If the init() doesn't define its own view, set a generic view.
+		 */
+		if (empty($this->_view)) {
+			$this->_view = new SiTech_Template(SITECH_APP_PATH.PATH_SEPARATOR.'views');
+		}
+
+		/**
+		 * If the action does not exist, this is the same as a 404 error (page
+		 * not found) so we want to relay this to our application for a chance
+		 * to handle the error.
+		 */
 		if (!method_exists($this, $this->_action)) {
 			throw new SiTech_Exception('Method not found', null, 404);
 		}
+
+		// Call the action for the controller.
 		$this->{$this->_action}();
+
+		/**
+		 * If the display has not been initated, we need to call it. It will
+		 * default to using $controller/$action.tpl
+		 */
+		if ($this->_display !== true) {
+			$this->_display($this->_uri->getController().DIRECTORY_SEPARATOR.$this->_action.'.tpl');
+		}
 	}
 
+	/**
+	 * Initalization needed for the controller. We should never override the
+	 * constructor, so this is how we initalize our controller in the application.
+	 */
 	protected function init()
 	{
+	}
+
+	/**
+	 * Built in display method to call the view's display method. This is called
+	 * automatically or by our application. Either way, every action gets the
+	 * view called automatically.
+	 *
+	 * @param string $page Template page to display.
+	 */
+	protected function _display($page)
+	{
+		if (!empty($this->_layout)) {
+			$this->_view->setLayout($this->_layout);
+		}
+
+		$this->_display = true;
+		$this->_view->display($page);
 	}
 }
