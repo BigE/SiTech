@@ -89,7 +89,7 @@ abstract class SiTech_Controller_Abstract
 		
 		$this->_action = $this->_uri->getAction();
 
-		$this->_args = explode('/', $this->_uri->getPath(SiTech_Uri::FLAG_LTRIM | SiTech_Uri::FLAG_CONTROLLER | SiTech_Uri::FLAG_ACTION));
+		$this->_args = explode('/', $this->_uri->getPath(SiTech_Uri::FLAG_REWRITE | SiTech_Uri::FLAG_LTRIM | SiTech_Uri::FLAG_CONTROLLER | SiTech_Uri::FLAG_ACTION));
 
 		if (isset($this->_argMap[$this->_action]) && is_array($this->_argMap[$this->_action])) {
 			foreach ($this->_argMap[$this->_action] as $k => $arg) {

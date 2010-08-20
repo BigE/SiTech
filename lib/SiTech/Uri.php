@@ -35,6 +35,7 @@ class SiTech_Uri
 	const FLAG_LTRIM = 1;
 	const FLAG_CONTROLLER = 2;
 	const FLAG_ACTION = 4;
+	const FLAG_REWRITE = 8;
 
 	protected $_action;
 	protected $_controller;
@@ -83,7 +84,12 @@ class SiTech_Uri
 
 	public function getPath($flags = 0)
 	{
-		$path = $this->_requestUri['path'];
+		if ($flags & SiTech_Uri::FLAG_REWRITE && !empty($this->_requestUri['rewritePath'])) {
+			$path = $this->_requestUri['rewritePath'];
+		} else {
+			$path = $this->_requestUri['path'];
+		}
+
 		if ($flags & SiTech_Uri::FLAG_ACTION) {
 			$path = preg_replace('#^/'.$this->_controller.'/'.$this->_action.'#', '/'.$this->_controller, $path);
 		}
@@ -149,11 +155,16 @@ class SiTech_Uri
 		}
 	}
 
-	public function setPath($path)
+	public function setPath($path, $rewrite = false)
 	{
 		// Make sure the path is valid
 		if (($url = parse_url($path)) !== false) {
-			$this->_requestUri['path'] = $url['path'];
+			if ($rewrite) {
+				$this->_requestUri['rewritePath'] = $url['path'];
+			} else {
+				$this->_requestUri['path'] = $url['path'];
+			}
+
 			return($this->_requestUri['path']);
 		} else {
 			return(false);

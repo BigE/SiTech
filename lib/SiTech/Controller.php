@@ -66,6 +66,11 @@ class SiTech_Controller
 			if (preg_match("#^($regex)$#", $uri->getPath(), $parts)) {
 				$uri->setController($array[0]);
 				$uri->setAction($array[1]);
+				if (!empty($parts[2])) {
+					$uri->setPath('/'.$array[0].'/'.$array[1].'/'.$parts[2], true);
+				} else {
+					$uri->setPath('/'.$array[0].'/'.$array[1], true);
+				}
 				$rewrite = true;
 				break;
 			}
