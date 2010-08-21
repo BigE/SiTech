@@ -117,13 +117,13 @@ abstract class SiTech_Controller_Abstract
 		}
 
 		// Call the action for the controller.
-		$this->{$this->_action}();
+		$ret = $this->{$this->_action}();
 
 		/**
 		 * If the display has not been initated, we need to call it. It will
 		 * default to using $controller/$action.tpl
 		 */
-		if ($this->_display !== true) {
+		if ($this->_display !== true && $ret !== false) {
 			$this->_display($this->_uri->getController().DIRECTORY_SEPARATOR.$this->_action.'.tpl');
 		}
 	}
