@@ -113,7 +113,7 @@ abstract class SiTech_Controller_Abstract
 		 * to handle the error.
 		 */
 		if (!method_exists($this, $this->_action)) {
-			throw new SiTech_Exception('Method not found', null, 404);
+			throw new SiTech_Exception('Method '.get_class($this).'::'.$this->_action.'() not found', null, 404);
 		}
 
 		// Call the action for the controller.
