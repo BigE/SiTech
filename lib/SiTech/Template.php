@@ -141,9 +141,13 @@ class SiTech_Template
 	 *
 	 * @see render
 	 */
-	public function display($page)
+	public function display($page, $type = 'text/html')
 	{
-		echo $this->render($page);
+		header('Content-Type: '.$type);
+		$content = $this->render($page);
+		header('Content-Length: '.strlen($content));
+		echo $content;
+		unset($content);
 	}
 
 	/**

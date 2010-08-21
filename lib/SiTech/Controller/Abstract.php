@@ -143,13 +143,13 @@ abstract class SiTech_Controller_Abstract
 	 *
 	 * @param string $page Template page to display.
 	 */
-	protected function _display($page)
+	protected function _display($page, $type = 'text/html')
 	{
 		if (!empty($this->_layout)) {
 			$this->_view->setLayout($this->_layout);
 		}
 
 		$this->_display = true;
-		$this->_view->display($page);
+		$this->_view->display($page, $type);
 	}
 }
