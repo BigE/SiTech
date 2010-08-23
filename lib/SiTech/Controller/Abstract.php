@@ -93,7 +93,8 @@ abstract class SiTech_Controller_Abstract
 
 		if (isset($this->_argMap[$this->_action]) && is_array($this->_argMap[$this->_action])) {
 			foreach ($this->_argMap[$this->_action] as $k => $arg) {
-				$this->_args[$arg] = $this->_args[$k];
+				if (!isset($this->_args[$k])) $this->_args[$arg] = null;
+				else $this->_args[$arg] = $this->_args[$k];
 			}
 		}
 
@@ -151,5 +152,29 @@ abstract class SiTech_Controller_Abstract
 
 		$this->_display = true;
 		$this->_view->display($page, $type);
+	}
+
+	protected function _paging($totalRecords, $limit, $link, $current = 1)
+	{
+		$totalRecords = 20;
+		$current = (int)$current;
+		$pages = array();
+
+		if ($current < 1) $current = 1;
+
+		$i = 1;
+		do {
+			$pages[] = array(
+				'current' => ($current === $i),
+				'link'    => str_replace('[page]', $i, $link),
+				'next'    => ((($i * $limit) >= $totalRecords)? false : $i + 1),
+				'number'  => $i,
+				'prev'    => (($i > 1)? true : false)
+			);
+
+			$i++;
+		} while (($i * $limit) <= $totalRecords);
+
+		return($pages);
 	}
 }
