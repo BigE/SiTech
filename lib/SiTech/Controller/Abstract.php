@@ -156,7 +156,6 @@ abstract class SiTech_Controller_Abstract
 
 	protected function _paging($totalRecords, $limit, $link, $current = 1)
 	{
-		$totalRecords = 20;
 		$current = (int)$current;
 		$pages = array();
 
@@ -172,8 +171,7 @@ abstract class SiTech_Controller_Abstract
 				'prev'    => (($i > 1)? true : false)
 			);
 
-			$i++;
-		} while (($i * $limit) <= $totalRecords);
+		} while (($i++ * $limit) <= $totalRecords);
 
 		return($pages);
 	}
