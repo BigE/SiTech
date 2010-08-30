@@ -88,6 +88,9 @@ class SiTech_Filter
 	const FLAG_NO_RES_RANGE = 4194304;
 	const FLAG_NO_PRIV_RANGE = 8388608;
 
+	const METHOD_GET = 'get';
+	const METHOD_POST = 'post';
+
 	protected $input = null;
 
 	/**
