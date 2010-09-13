@@ -1,17 +1,43 @@
 <?php
 /**
+ * I've had vodka, and this is the result. pwn.
+ */
+
+/**
  * Description of SiTech_Model_Abstract
  *
  * @author Eric Gach <eric@php-oop.net>
  */
 abstract class SiTech_Model_Abstract
 {
+	/**
+	 * PDO storage holder for the database connection.
+	 *
+	 * @var PDO
+	 */
 	protected static $_db;
 
+	/**
+	 * Fields stored to the database table.
+	 *
+	 * @var array
+	 */
 	protected $_fields = array();
 
+	/**
+	 * Primary key for the table. This must be set for the model to be accessed
+	 * by any of the methods.
+	 *
+	 * @var string
+	 */
 	protected static $_pk;
 
+	/**
+	 * Name of table we're using for the model. This must be set for the model to
+	 * be accessed by any of the methods.
+	 *
+	 * @var string
+	 */
 	protected static $_table;
 
 	/**
