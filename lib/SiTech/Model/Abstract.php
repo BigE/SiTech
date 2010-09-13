@@ -18,6 +18,16 @@ abstract class SiTech_Model_Abstract
 	protected static $_db;
 
 	/**
+	 * Errors produced by record validation. After using validate() or save()
+	 * that returns false, this should be checked for errors. Once all errors
+	 * have been processed, it's reccomended that you clear this array.
+	 *
+	 * @var array
+	 * @see validate
+	 */
+	public $errors = array();
+
+	/**
 	 * Fields stored to the database table.
 	 *
 	 * @var array
@@ -149,6 +159,10 @@ abstract class SiTech_Model_Abstract
 	 */
 	public function save()
 	{
+		if (!$this->validate()) {
+			return(false);
+		}
+
 		if (empty($this->_fields[self::$_pk])) {
 			return($this->_insert());
 		} else {
@@ -156,6 +170,25 @@ abstract class SiTech_Model_Abstract
 		}
 	}
 
+	/**
+	 * Validate data coming in to record before saving. Defaults to return true,
+	 * so if any validation needs to be done, it should be overridden in the
+	 * parent class.
+	 *
+	 * @return bool
+	 */
+	public function validate()
+	{
+		return(true);
+	}
+
+	/**
+	 * Insert the record into the database. This simply builds and executes an
+	 * INSERT query based on the fields specified. If there were rows affected
+	 * by the insert, this returns true, otherwise it returns false.
+	 *
+	 * @return bool
+	 */
 	private function _insert()
 	{
 		$sql = 'INSERT INTO '.self::$_table.' ';
@@ -163,6 +196,7 @@ abstract class SiTech_Model_Abstract
 		$values = array();
 
 		foreach ($this->_fields as $f => $v) {
+			if ($f == self::$_pk) continue;
 			$fields[] = $f;
 			$values[] = $v;
 		}
@@ -174,6 +208,13 @@ abstract class SiTech_Model_Abstract
 		return($stmnt->rowCount());
 	}
 
+	/**
+	 * Update the existing record in the database based on the primary key that
+	 * is specified. If the query returns rows affected, this will return true
+	 * otherwise it will return false if no rows are affected.
+	 *
+	 * @return bool
+	 */
 	private function _update()
 	{
 		$sql = 'UPDATE '.self::$_table.' SET ';
