@@ -78,6 +78,7 @@ class SiTech_Loader
 	public static function loadController($name, SiTech_Uri $uri)
 	{
 		$name = strtolower($name);
+		$class = null;
 
 		if (strstr($name, '/') !== false) {
 			$parts = explode('/', $name);
@@ -102,6 +103,34 @@ class SiTech_Loader
 		}
 
 		return(new $class($uri));
+	}
+
+	public static function loadModel($model)
+	{
+		$name = strtolower($model);
+		$class = null;
+
+		if (strstr($name, '/') !== false) {
+			$parts = explode('/', $name);
+			$parts = array_map('ucfirst', $parts);
+			$class = implode('_', $parts).'Model';
+		} else {
+			$class = ucfirst($name).'Model';
+		}
+
+		if (class_exists($class, false)) return;
+
+		if (is_readable(SITECH_APP_PATH.'/models/'.$name.'.php')) {
+			include_once(SITECH_APP_PATH.'/models/'.$name.'.php');
+		} else {
+			require_once('SiTech/Exception.php');
+			throw new SiTech_Exception('The model "%s" failed to load', array($class));
+		}
+
+		if (!class_exists($class, false)) {
+			require_once('SiTech/Exception.php');
+			throw new SiTech_Exception('The model "%s" failed to load', array($class));
+		}
 	}
 
 	public static function registerAutoload($class = 'SiTech_Loader', $enabled = true)

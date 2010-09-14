@@ -35,6 +35,23 @@ abstract class SiTech_Model_Abstract
 	protected $_fields = array();
 
 	/**
+	 * This is used to tell the model which model to use for specified fields
+	 * that can have a one to many or many to many relationship with another
+	 * model.
+	 *
+	 * @var array
+	 */
+	protected $_hasMany = array();
+
+	/**
+	 * This is used to tell the model which model to use for specified fields
+	 * that can have a one to one relationship with another model.
+	 *
+	 * @var array
+	 */
+	protected $_hasOne = array();
+
+	/**
 	 * Primary key for the table. This must be set for the model to be accessed
 	 * by any of the methods.
 	 *
@@ -61,7 +78,16 @@ abstract class SiTech_Model_Abstract
 		/*if (property_exists($this, $name)) {
 			return($this->$name);
 		} else*/if (isset($this->_fields[$name])) {
-			return($this->_fields[$name]);
+			$value = $this->_fields[$name];
+			
+			if ((isset($this->_hasMany[$name]) || isset($this->_hasOne[$name])) && !is_object($value)) {
+				$class = (isset($this->_hasMany[$name])? $this->_hasMany[$name] : $this->_hasOne[$name]);
+				require_once('SiTech/Loader.php');
+				SiTech_Loader::loadModel($class);
+				$value = new $class.'Model';
+			}
+
+			return($value);
 		} else {
 			return(null);
 		}
@@ -97,11 +123,11 @@ abstract class SiTech_Model_Abstract
 		 * This is kinda like an init class since our internal methods use it,
 		 * so lets do some basic checks.
 		 */
-		if (empty(self::$_pk)) self::$_pk = 'Id';
 		if (empty(self::$_table)) self::$_table = get_parent_class ();
 
 		if (empty($db) && !is_a(self::$_db, 'PDO')) {
-			throw new SiTech_Exception('Cannot get %s::$_db property is not set', array(get_parent_class()));
+			require_once('SiTech/Exception.php');
+			throw new SiTech_Exception('The %s::$_db property is not set. Please use %s::db() to set the PDO connection.', array(get_parent_class(), get_parent_class()));
 		} elseif (empty($db)) {
 			return(self::$_db);
 		} else {
@@ -119,8 +145,10 @@ abstract class SiTech_Model_Abstract
 	public function delete()
 	{
 		$db = self::db();
-		$stmnt = $db->prepare('DELETE FROM '.self::$_table.' WHERE '.self::$_pk.' = ?');
-		$stmnt->execute(array($this->_vars[self::$_pk]));
+		$pk = self::pk();
+
+		$stmnt = $db->prepare('DELETE FROM '.self::$_table.' WHERE '.$pk.' = ?');
+		$stmnt->execute(array($this->_vars[$pk]));
 		return((bool)$stmnt->rowCount());
 	}
 
@@ -147,6 +175,18 @@ abstract class SiTech_Model_Abstract
 			return($stmnt->fetch());
 		} else {
 			return($stmnt->fetchAll());
+		}
+	}
+
+	public static function pk($pk = null)
+	{
+		if (empty($pk) && empty($pk)) {
+			require_once('SiTech/Exception.php');
+			throw new SiTech_Exception('%s::$_pk is not set. Please use %s::pk() to set the primary key field.', array(get_parent_class(), get_parent_class()));
+		} elseif (!empty($pk)) {
+			self::$_pk = $pk;
+		} else {
+			return(self::$_pk);
 		}
 	}
 
@@ -191,12 +231,13 @@ abstract class SiTech_Model_Abstract
 	 */
 	private function _insert()
 	{
+		$pk = self::pk();
 		$sql = 'INSERT INTO '.self::$_table.' ';
 		$fields = array();
 		$values = array();
 
 		foreach ($this->_fields as $f => $v) {
-			if ($f == self::$_pk) continue;
+			if ($f == $pk) continue;
 			$fields[] = $f;
 			$values[] = $v;
 		}
@@ -217,17 +258,18 @@ abstract class SiTech_Model_Abstract
 	 */
 	private function _update()
 	{
+		$pk = self::pk();
 		$sql = 'UPDATE '.self::$_table.' SET ';
 		$values = array();
 
 		foreach ($this->_fields as $f => $v) {
-			if ($f == self::$_pk) continue; // We don't update the value of the pk
+			if ($f == $pk) continue; // We don't update the value of the pk
 			$sql .= $f.' = ? ';
 			$values[] = $v;
 		}
 
-		$sql .= 'WHERE '.self::$_pk.' = ?';
-		$values[] = $this->_fields[self::$_pk];
+		$sql .= 'WHERE '.$pk.' = ?';
+		$values[] = $this->_fields[$pk];
 		$db = self::db();
 		$stmnt = $db->prepare($sql);
 		$stmnt->execute($values);
