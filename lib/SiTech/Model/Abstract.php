@@ -123,15 +123,15 @@ abstract class SiTech_Model_Abstract
 		 * This is kinda like an init class since our internal methods use it,
 		 * so lets do some basic checks.
 		 */
-		if (empty(self::$_table)) self::$_table = get_parent_class ();
+		if (empty(static::$_table)) self::$_table = get_parent_class();
 
-		if (empty($db) && !is_a(self::$_db, 'PDO')) {
+		if (empty($db) && !is_a(static::$_db, 'PDO')) {
 			require_once('SiTech/Exception.php');
 			throw new SiTech_Exception('The %s::$_db property is not set. Please use %s::db() to set the PDO connection.', array(get_parent_class(), get_parent_class()));
 		} elseif (empty($db)) {
-			return(self::$_db);
+			return(static::$_db);
 		} else {
-			self::$_db = $db;
+			static::$_db = $db;
 		}
 	}
 
@@ -147,8 +147,8 @@ abstract class SiTech_Model_Abstract
 		$db = self::db();
 		$pk = self::pk();
 
-		$stmnt = $db->prepare('DELETE FROM '.self::$_table.' WHERE '.$pk.' = ?');
-		$stmnt->execute(array($this->_vars[$pk]));
+		$stmnt = $db->prepare('DELETE FROM '.static::$_table.' WHERE '.$pk.' = ?');
+		$stmnt->execute(array($this->_fields[$pk]));
 		return((bool)$stmnt->rowCount());
 	}
 
@@ -161,15 +161,15 @@ abstract class SiTech_Model_Abstract
 	 */
 	public static function get($where = '1', $only_one = false)
 	{
-		$sql = 'SELECT * FROM '.self::$_table;
+		$sql = 'SELECT * FROM '.static::$_table;
 
 		if (!empty($where)) {
-			$sql .= 'WHERE '.$where;
+			$sql .= ' WHERE '.$where;
 		}
 
 		$db = self::db();
 		$stmnt = $db->query($sql);
-		$stmnt->setFetchMode(PDO::FETCH_CLASS, get_parent_class());
+		$stmnt->setFetchMode(PDO::FETCH_CLASS, get_called_class());
 
 		if ($only_one) {
 			return($stmnt->fetch());
@@ -180,13 +180,13 @@ abstract class SiTech_Model_Abstract
 
 	public static function pk($pk = null)
 	{
-		if (empty($pk) && empty($pk)) {
+		if (empty($pk) && empty(static::$_pk)) {
 			require_once('SiTech/Exception.php');
 			throw new SiTech_Exception('%s::$_pk is not set. Please use %s::pk() to set the primary key field.', array(get_parent_class(), get_parent_class()));
 		} elseif (!empty($pk)) {
-			self::$_pk = $pk;
+			static::$_pk = $pk;
 		} else {
-			return(self::$_pk);
+			return(static::$_pk);
 		}
 	}
 
@@ -203,7 +203,7 @@ abstract class SiTech_Model_Abstract
 			return(false);
 		}
 
-		if (empty($this->_fields[self::$_pk])) {
+		if (empty($this->_fields[self::pk()])) {
 			return($this->_insert());
 		} else {
 			return($this->_update());
@@ -232,7 +232,7 @@ abstract class SiTech_Model_Abstract
 	private function _insert()
 	{
 		$pk = self::pk();
-		$sql = 'INSERT INTO '.self::$_table.' ';
+		$sql = 'INSERT INTO '.static::$_table.' ';
 		$fields = array();
 		$values = array();
 
@@ -245,7 +245,7 @@ abstract class SiTech_Model_Abstract
 		$sql .= '('.implode(',', $fields).') VALUES('.implode(',', $values).')';
 		$db = self::db();
 		$stmnt = $db->prepare($sql);
-		$stmnt->execute(array($values));
+		$stmnt->execute($values);
 		return($stmnt->rowCount());
 	}
 
@@ -259,20 +259,22 @@ abstract class SiTech_Model_Abstract
 	private function _update()
 	{
 		$pk = self::pk();
-		$sql = 'UPDATE '.self::$_table.' SET ';
+		$sql = 'UPDATE '.static::$_table.' SET ';
+		$fields = array();
 		$values = array();
 
 		foreach ($this->_fields as $f => $v) {
 			if ($f == $pk) continue; // We don't update the value of the pk
-			$sql .= $f.' = ? ';
+			$fields[] = $f.' = ?';
 			$values[] = $v;
 		}
 
-		$sql .= 'WHERE '.$pk.' = ?';
+		$sql .= implode(',', $fields);
+		$sql .= ' WHERE '.$pk.' = ?';
 		$values[] = $this->_fields[$pk];
 		$db = self::db();
 		$stmnt = $db->prepare($sql);
 		$stmnt->execute($values);
-		return((bool)$stmnt->rowCount());
+		return(($stmnt->rowCount() === false)? false : true);
 	}
 }

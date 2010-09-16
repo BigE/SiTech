@@ -63,6 +63,14 @@ abstract class SiTech_Controller_Abstract
 	private $_display = false;
 
 	/**
+	 * If $_GET['xhr'] or $_POST['xhr'] is set, the request is a XHR request
+	 * and this will be set to true.
+	 *
+	 * @var boolean
+	 */
+	protected $_isXHR = false;
+
+	/**
 	 * The layout to use for the current page. If it is empty, the layout will
 	 * remain unused.
 	 *
@@ -96,6 +104,11 @@ abstract class SiTech_Controller_Abstract
 				if (!isset($this->_args[$k])) $this->_args[$arg] = null;
 				else $this->_args[$arg] = $this->_args[$k];
 			}
+		}
+
+		// TODO: How reliable is this method?
+		if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') { // || isset($_POST['xhr']) || isset($_GET['xhr'])) {
+			$this->_isXHR = true;
 		}
 
 		// Initalize the controller
