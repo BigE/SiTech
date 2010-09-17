@@ -75,9 +75,7 @@ abstract class SiTech_Model_Abstract
 	 */
 	public function __get($name)
 	{
-		/*if (property_exists($this, $name)) {
-			return($this->$name);
-		} else*/if (isset($this->_fields[$name])) {
+		if (isset($this->_fields[$name])) {
 			$value = $this->_fields[$name];
 			
 			if ((isset($this->_hasMany[$name]) || isset($this->_hasOne[$name])) && !is_object($value)) {
@@ -93,6 +91,15 @@ abstract class SiTech_Model_Abstract
 		}
 	}
 
+	public function __isset($name)
+	{
+		if (isset($this->_fields[$name])) {
+			return(true);
+		} else {
+			return(false);
+		}
+	}
+
 	/**
 	 * Set the value of a field for the record.
 	 *
@@ -101,11 +108,7 @@ abstract class SiTech_Model_Abstract
 	 */
 	public function __set($name, $value)
 	{
-		/*if (property_exists($this, $name)) {
-			$this->$name = $value;
-		} else {*/
-			$this->_fields[$name] = $value;
-		//}
+		$this->_fields[$name] = $value;
 	}
 
 	/**
