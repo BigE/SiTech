@@ -51,12 +51,43 @@ class SiTech_Uri
 	{
 		if (is_null($uri)) {
 			$uri = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on')? 'https://' : 'http://').$_SERVER['HTTP_HOST'].':'.$_SERVER['SERVER_PORT'].$_SERVER['REQUEST_URI'];
+
+			if (!empty($_SERVER['QUERY_STRING'])) {
+				$uri .= '?'.$_SERVER['QUERY_STRING'];
+			}
 		}
 
 		$this->_requestUri = parse_url($uri);
+		if (!empty($this->_requestUri['query'])) {
+			$this->_requestUri['query'] = parse_str($this->_requestUri['query']);
+		} else {
+			$this->_requestUri['query'] = array();
+		}
+
 		$parts = explode('/', ltrim($this->_requestUri['path'], '/'));
 		$this->_controller = (empty($parts[0]))? 'default' : $parts[0];
 		$this->_action = (empty($parts[1]))? 'index' : $parts[1];
+	}
+
+	public function __get($name)
+	{
+		$value = null;
+
+		if (isset($this->_requestUri['query'][$name])) {
+			$value = $this->_requestUri['query'][$name];
+		}
+
+		return($value);
+	}
+
+	public function __isset($name)
+	{
+		return((isset($this->_requestUri['query'][$name]))? true : false);
+	}
+
+	public function __set($name, $value)
+	{
+		$this->_requestUri['query'][$name] = $value;
 	}
 
 	/**
@@ -110,6 +141,11 @@ class SiTech_Uri
 		return($this->_requestUri['port']);
 	}
 
+	public function getQueryString()
+	{
+		return(http_build_query($this->_requestUri['query']));
+	}
+
 	public function getScheme()
 	{
 		return((empty($this->_requestUri['scheme']))? 'http' : $this->_requestUri['scheme']);
@@ -125,7 +161,7 @@ class SiTech_Uri
 		$uri .= $this->_requestUri['path'];
 
 		if (!empty($this->_requestUri['query']) && $withQuery) {
-			$uri .= '?'.$this->_requestUri['query'];
+			$uri .= '?'.$this->getQueryString();
 		}
 
 		if (!empty($this->_requestUri['fragment']) && $withFragment) {
