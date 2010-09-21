@@ -51,15 +51,11 @@ class SiTech_Uri
 	{
 		if (is_null($uri)) {
 			$uri = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on')? 'https://' : 'http://').$_SERVER['HTTP_HOST'].':'.$_SERVER['SERVER_PORT'].$_SERVER['REQUEST_URI'];
-
-			if (!empty($_SERVER['QUERY_STRING'])) {
-				$uri .= '?'.$_SERVER['QUERY_STRING'];
-			}
 		}
 
 		$this->_requestUri = parse_url($uri);
 		if (!empty($this->_requestUri['query'])) {
-			$this->_requestUri['query'] = parse_str($this->_requestUri['query']);
+			parse_str($this->_requestUri['query'], $this->_requestUri['query']);
 		} else {
 			$this->_requestUri['query'] = array();
 		}
