@@ -11,11 +11,26 @@
 abstract class SiTech_Model_Abstract
 {
 	/**
+	 * This is used to tell the model that it belongs to another model. Through
+	 * this you can specify a parent relationship for the model.
+	 *
+	 * @var array
+	 */
+	protected $_belongsTo = array();
+
+	/**
 	 * PDO storage holder for the database connection.
 	 *
 	 * @var PDO
 	 */
-	protected static $_db;
+	protected static $db;
+
+	/**
+	 * Database holder once the object is created.
+	 *
+	 * @var PDO
+	 */
+	protected $_db;
 
 	/**
 	 * Errors produced by record validation. After using validate() or save()
@@ -67,6 +82,15 @@ abstract class SiTech_Model_Abstract
 	 */
 	protected static $_table;
 
+	public function __construct(PDO $db = null)
+	{
+		if (empty($db)) {
+			$this->_db = self::db();
+		} else {
+			$this->_db = $db;
+		}
+	}
+
 	/**
 	 * Get a field from the current record.
 	 *
@@ -75,14 +99,49 @@ abstract class SiTech_Model_Abstract
 	 */
 	public function __get($name)
 	{
-		if (isset($this->_fields[$name])) {
-			$value = $this->_fields[$name];
+		if (isset($this->_fields[$name]) || isset($this->_hasOne[$name]) || isset($this->_hasMany[$name]) || isset($this->_belongsTo[$name])) {
+			$value = (isset($this->_fields[$name]))? $this->_fields[$name] : null;
 			
-			if ((isset($this->_hasMany[$name]) || isset($this->_hasOne[$name])) && !is_object($value)) {
-				$class = (isset($this->_hasMany[$name])? $this->_hasMany[$name] : $this->_hasOne[$name]);
-				require_once('SiTech/Loader.php');
+			if ((isset($this->_hasMany[$name]) || isset($this->_hasOne[$name])) && (!is_object($value) || !is_array($value))) {
+				// Initalize the class with the name of the variable
+				$class = $name;
+				$fk = null;
+				$one = false;
+				// Now check for override settings
+				if (isset($this->_hasMany[$name])) {
+					if (isset($this->_hasMany[$name]['class'])) {
+						$class = $this->_hasMany[$name]['class'];
+					}
+
+					if (isset($this->_hasMany[$name]['foreignKey'])) {
+						$fk = $this->_hasMany[$name]['foreignKey'].'='.$this->_fields[self::pk()];
+					}
+				} elseif (isset($this->_hasOne[$name])) {
+					if (isset($this->_hasOne[$name]['class'])) {
+						$class = $this->_hasOne[$name]['class'];
+					}
+
+					if (isset($this->_hasOne[$name]['foreignKey'])) {
+						$fk = $this->_hasOne[$name]['foreignKey'].'='.$this->_fields[self::pk()];
+					}
+
+					$one = true;
+				} elseif (isset($this->_belongsTo[$name])) {
+					if (isset($this->_belongsTo[$name]['class'])) {
+						$class = $this->_belongsTo[$name]['class'];
+					}
+
+					if (isset($this->_belongsTo[$name]['foreignKey'])) {
+						$fk = $this->_belongsTo[$name]['foreignKey'].'='.$this->_fields[self::pk()];
+					}
+
+					$one = true;
+				}
+
 				SiTech_Loader::loadModel($class);
-				$value = new $class.'Model';
+				$class .= 'Model';
+				$value = $class::get($fk, $one);
+				$this->_fields[$name] = $value;
 			}
 
 			return($value);
@@ -128,13 +187,13 @@ abstract class SiTech_Model_Abstract
 		 */
 		if (empty(static::$_table)) self::$_table = get_parent_class();
 
-		if (empty($db) && !is_a(static::$_db, 'PDO')) {
+		if (empty($db) && !is_a(static::$db, 'PDO')) {
 			require_once('SiTech/Exception.php');
 			throw new SiTech_Exception('The %s::$_db property is not set. Please use %s::db() to set the PDO connection.', array(get_parent_class(), get_parent_class()));
 		} elseif (empty($db)) {
-			return(static::$_db);
+			return(static::$db);
 		} else {
-			static::$_db = $db;
+			static::$db = $db;
 		}
 	}
 
@@ -147,10 +206,9 @@ abstract class SiTech_Model_Abstract
 	 */
 	public function delete()
 	{
-		$db = self::db();
 		$pk = self::pk();
 
-		$stmnt = $db->prepare('DELETE FROM '.static::$_table.' WHERE '.$pk.' = ?');
+		$stmnt = $this->_db->prepare('DELETE FROM '.static::$_table.' WHERE '.$pk.' = ?');
 		$stmnt->execute(array($this->_fields[$pk]));
 		return((bool)$stmnt->rowCount());
 	}
@@ -170,8 +228,7 @@ abstract class SiTech_Model_Abstract
 			$sql .= ' WHERE '.$where;
 		}
 
-		$db = self::db();
-		$stmnt = $db->query($sql);
+		$stmnt = $this->_db->query($sql);
 		$stmnt->setFetchMode(PDO::FETCH_CLASS, get_called_class());
 
 		if ($only_one) {
@@ -246,8 +303,7 @@ abstract class SiTech_Model_Abstract
 		}
 
 		$sql .= '('.implode(',', $fields).') VALUES('.implode(',', $values).')';
-		$db = self::db();
-		$stmnt = $db->prepare($sql);
+		$stmnt = $this->_db->prepare($sql);
 		$stmnt->execute($values);
 		return($stmnt->rowCount());
 	}
@@ -275,8 +331,7 @@ abstract class SiTech_Model_Abstract
 		$sql .= implode(',', $fields);
 		$sql .= ' WHERE '.$pk.' = ?';
 		$values[] = $this->_fields[$pk];
-		$db = self::db();
-		$stmnt = $db->prepare($sql);
+		$stmnt = $this->_db->prepare($sql);
 		$stmnt->execute($values);
 		return(($stmnt->rowCount() === false)? false : true);
 	}
