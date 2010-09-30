@@ -107,7 +107,7 @@ abstract class SiTech_Model_Abstract
 	public function __construct(PDO $db = null)
 	{
 		if (empty($db)) {
-			$this->_db = self::db();
+			$this->_db = static::db();
 		} else {
 			$this->_db = $db;
 		}
@@ -136,7 +136,7 @@ abstract class SiTech_Model_Abstract
 					}
 
 					if (isset($this->_hasMany[$name]['foreignKey'])) {
-						$fk = $this->_hasMany[$name]['foreignKey'].'='.$this->_fields[self::pk()];
+						$fk = $this->_hasMany[$name]['foreignKey'].'='.$this->_fields[static::pk()];
 					}
 				} elseif (isset($this->_hasOne[$name])) {
 					if (isset($this->_hasOne[$name]['class'])) {
@@ -144,7 +144,7 @@ abstract class SiTech_Model_Abstract
 					}
 
 					if (isset($this->_hasOne[$name]['foreignKey'])) {
-						$fk = $this->_hasOne[$name]['foreignKey'].'='.$this->_fields[self::pk()];
+						$fk = $this->_hasOne[$name]['foreignKey'].'='.$this->_fields[static::pk()];
 					}
 
 					$one = true;
@@ -154,7 +154,7 @@ abstract class SiTech_Model_Abstract
 					}
 
 					if (isset($this->_belongsTo[$name]['foreignKey'])) {
-						$fk = $this->_belongsTo[$name]['foreignKey'].'='.$this->_fields[self::pk()];
+						$fk = $this->_belongsTo[$name]['foreignKey'].'='.$this->_fields[static::pk()];
 					}
 
 					$one = true;
@@ -207,7 +207,7 @@ abstract class SiTech_Model_Abstract
 		 * This is kinda like an init class since our internal methods use it,
 		 * so lets do some basic checks.
 		 */
-		if (empty(static::$_table)) self::$_table = get_parent_class();
+		if (empty(static::$_table)) static::$_table = get_parent_class();
 
 		if (empty($db) && !is_a(static::$db, 'PDO')) {
 			require_once('SiTech/Exception.php');
@@ -228,7 +228,7 @@ abstract class SiTech_Model_Abstract
 	 */
 	public function delete()
 	{
-		$pk = self::pk();
+		$pk = static::pk();
 
 		$stmnt = $this->_db->prepare('DELETE FROM '.static::$_table.' WHERE '.$pk.' = ?');
 		$stmnt->execute(array($this->_fields[$pk]));
@@ -248,7 +248,7 @@ abstract class SiTech_Model_Abstract
 
 		if (!empty($where)) {
 			if (is_int($where)) {
-				$sql .= 'WHERE '.static::pk().' = '.$where;
+				$sql .= ' WHERE '.static::pk().' = '.$where;
 			} else {
 				$sql .= ' WHERE '.$where;
 			}
@@ -289,7 +289,7 @@ abstract class SiTech_Model_Abstract
 			return(false);
 		}
 
-		if (empty($this->_fields[self::pk()])) {
+		if (empty($this->_fields[static::pk()])) {
 			return($this->_insert());
 		} else {
 			return($this->_update());
@@ -317,7 +317,7 @@ abstract class SiTech_Model_Abstract
 	 */
 	private function _insert()
 	{
-		$pk = self::pk();
+		$pk = static::pk();
 		$sql = 'INSERT INTO '.static::$_table.' ';
 		$fields = array();
 		$values = array();
@@ -343,7 +343,7 @@ abstract class SiTech_Model_Abstract
 	 */
 	private function _update()
 	{
-		$pk = self::pk();
+		$pk = static::pk();
 		$sql = 'UPDATE '.static::$_table.' SET ';
 		$fields = array();
 		$values = array();
