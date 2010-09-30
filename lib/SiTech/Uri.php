@@ -61,8 +61,8 @@ class SiTech_Uri
 		}
 
 		$parts = explode('/', ltrim($this->_requestUri['path'], '/'));
-		$this->_controller = (empty($parts[0]))? 'default' : $parts[0];
-		$this->_action = (empty($parts[1]))? 'index' : $parts[1];
+		$this->_controller = (empty($parts[0]))? ((defined('SITECH_DEFAULT_CONTROLLER'))? SITECH_DEFAULT_CONTROLLER : 'default') : $parts[0];
+		$this->_action = (empty($parts[1]))? 'index' : ((is_int($parts[1]))? 'view' : $parts[1]);
 	}
 
 	public function __get($name)

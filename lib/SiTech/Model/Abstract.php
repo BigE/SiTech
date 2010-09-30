@@ -228,7 +228,7 @@ abstract class SiTech_Model_Abstract
 			$sql .= ' WHERE '.$where;
 		}
 
-		$stmnt = $this->_db->query($sql);
+		$stmnt = static::db()->query($sql);
 		$stmnt->setFetchMode(PDO::FETCH_CLASS, get_called_class());
 
 		if ($only_one) {
