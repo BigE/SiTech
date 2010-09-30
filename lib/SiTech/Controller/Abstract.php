@@ -118,7 +118,7 @@ abstract class SiTech_Controller_Abstract
 		 * If the init() doesn't define its own view, set a generic view.
 		 */
 		if (empty($this->_view)) {
-			$this->_view = new SiTech_Template(SITECH_APP_PATH.PATH_SEPARATOR.'views');
+			$this->_view = new SiTech_Template(SITECH_APP_PATH.DIRECTORY_SEPARATOR.'views');
 		}
 
 		/**
