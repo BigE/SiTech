@@ -242,12 +242,16 @@ abstract class SiTech_Model_Abstract
 	 * @param bool $only_one Set to true to only return a single record
 	 * @return mixed
 	 */
-	public static function get($where = '1', $only_one = false)
+	public static function get($where = null, $only_one = false)
 	{
 		$sql = 'SELECT * FROM '.static::$_table;
 
 		if (!empty($where)) {
-			$sql .= ' WHERE '.$where;
+			if (is_int($where)) {
+				$sql .= 'WHERE '.static::pk().' = '.$where;
+			} else {
+				$sql .= ' WHERE '.$where;
+			}
 		}
 
 		$stmnt = static::db()->query($sql);
