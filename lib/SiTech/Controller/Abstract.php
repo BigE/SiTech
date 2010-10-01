@@ -111,15 +111,15 @@ abstract class SiTech_Controller_Abstract
 			$this->_isXHR = true;
 		}
 
-		// Initalize the controller
-		$this->init();
-
 		/**
 		 * If the init() doesn't define its own view, set a generic view.
 		 */
 		if (empty($this->_view)) {
 			$this->_view = new SiTech_Template(SITECH_APP_PATH.DIRECTORY_SEPARATOR.'views');
 		}
+
+		// Initalize the controller
+		$this->init();
 
 		/**
 		 * If the action does not exist, this is the same as a 404 error (page
