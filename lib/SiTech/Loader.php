@@ -69,7 +69,7 @@ class SiTech_Loader
 		$file = str_replace('_', DIRECTORY_SEPARATOR, $class).'.php';
 		include_once($file);
 
-		if (!class_exists($class, false) || interface_exists($class, false)) {
+		if (!class_exists($class, false) && !interface_exists($class, false)) {
 			require_once('SiTech/Exception.php');
 			throw new SiTech_Exception('The class "%s" failed to load', array($class));
 		}
