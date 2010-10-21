@@ -50,6 +50,10 @@ class SiTech_Uri
 	public function __construct($uri = null)
 	{
 		if (is_null($uri)) {
+			if (defined('SITECH_BASEURI')) {
+				$base = new SiTech_Uri(SITECH_BASEURI);
+			}
+
 			$uri = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on')? 'https://' : 'http://').$_SERVER['HTTP_HOST'].':'.$_SERVER['SERVER_PORT'].$_SERVER['REQUEST_URI'];
 		}
 
@@ -60,7 +64,12 @@ class SiTech_Uri
 			$this->_requestUri['query'] = array();
 		}
 
-		$parts = explode('/', ltrim($this->_requestUri['path'], '/'));
+		if (isset($base)) {
+			$parts = explode('/', ltrim($this->_requestUri['path'], $base->getPath()));
+		} else {
+			$parts = explode('/', ltrim($this->_requestUri['path'], '/'));
+		}
+
 		$this->_controller = (empty($parts[0]))? ((defined('SITECH_DEFAULT_CONTROLLER'))? SITECH_DEFAULT_CONTROLLER : 'default') : $parts[0];
 		$this->_action = (empty($parts[1]))? 'index' : ((is_int($parts[1]))? 'view' : $parts[1]);
 	}
@@ -111,7 +120,7 @@ class SiTech_Uri
 
 	public function getPath($flags = 0)
 	{
-		if ($flags & SiTech_Uri::FLAG_REWRITE && !empty($this->_requestUri['rewritePath'])) {
+		if ($flags & SiTech_Uri::FLAG_REWRITE && isset($this->_requestUri['rewritePath'])) {
 			$path = $this->_requestUri['rewritePath'];
 		} else {
 			$path = $this->_requestUri['path'];
