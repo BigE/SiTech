@@ -65,7 +65,13 @@ class SiTech_Uri
 		}
 
 		if (isset($base)) {
-			$parts = explode('/', ltrim($this->_requestUri['path'], $base->getPath()));
+			$this->_requestUri['rewritePath'] = preg_replace('#^'.preg_quote($base->getPath(), '#').'#', '', $this->_requestUri['path']);
+
+			if (strlen($this->_requestUri['rewritePath']) > 0 && $this->_requestUri['rewritePath'][0] != '/') {
+				$this->_requestUri['rewritePath'] = '/'.$this->_requestUri['rewritePath'];
+			}
+
+			$parts = explode('/', ltrim($this->_requestUri['rewritePath'], '/'));
 		} else {
 			$parts = explode('/', ltrim($this->_requestUri['path'], '/'));
 		}

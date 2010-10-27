@@ -60,7 +60,7 @@ class SiTech_Controller
 	 */
 	static public function dispatch(SiTech_Uri $uri)
 	{
-		$rewrite = false;
+		$rewrite = (bool)$uri->getPath(SiTech_Uri::FLAG_REWRITE);
 
 		foreach (self::$_routes as $regex => $array) {
 			if (preg_match("#^($regex)$#", $uri->getPath(), $parts)) {
