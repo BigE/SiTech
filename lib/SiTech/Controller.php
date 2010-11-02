@@ -62,8 +62,14 @@ class SiTech_Controller
 	{
 		$rewrite = (bool)$uri->getPath(SiTech_Uri::FLAG_REWRITE);
 
+		if ($rewrite) {
+			$path = $uri->getPath(SiTech_Uri::FLAG_REWRITE);
+		} else {
+			$path = $uri->getPath();
+		}
+
 		foreach (self::$_routes as $regex => $array) {
-			if (preg_match("#^($regex)$#", $uri->getPath(), $parts)) {
+			if (preg_match("#^($regex)$#", $path, $parts)) {
 				$uri->setController($array[0]);
 				$uri->setAction($array[1]);
 				if (!empty($parts[2])) {

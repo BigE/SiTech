@@ -66,6 +66,8 @@ class SiTech_Uri
 
 		if (isset($base)) {
 			$this->_requestUri['rewritePath'] = preg_replace('#^'.preg_quote($base->getPath(), '#').'#', '', $this->_requestUri['path']);
+			/* We need to have a value set for the rewrite path */
+			if (empty($this->_requestUri['rewritePath'])) $this->_requestUri['rewritePath'] = '/';
 
 			if (strlen($this->_requestUri['rewritePath']) > 0 && $this->_requestUri['rewritePath'][0] != '/') {
 				$this->_requestUri['rewritePath'] = '/'.$this->_requestUri['rewritePath'];
