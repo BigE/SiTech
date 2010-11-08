@@ -1,6 +1,6 @@
 <?php
 /**
- * SiTech/DB.php
+ * SiTech/DB/Proxy.php
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,7 +59,8 @@ class SiTech_DB_Proxy extends SiTech_DB
 	protected $_writeConn;
 
 	/**
-	 * Initalize both connections for the reader and writer.
+	 * Initalize both connections for the reader and writer. If no readers are
+	 * initalized, the writer will be default for everything.
 	 *
 	 * @param array $config Array of configuration settings for the connections.
 	 * @param array $readers Array of hosts that are dedicated as "readers"
@@ -68,18 +69,24 @@ class SiTech_DB_Proxy extends SiTech_DB
 	 * @param array $options Options to pass to the connections.
 	 * @see SiTech_DB
 	 */
-	public function __construct(array $config, array $readers, array $writers, $driver = 'SiTech_DB_Driver_MySQL', array $options = array())
+	public function __construct(array $config, array $writers, array $readers = null, $driver = 'SiTech_DB_Driver_MySQL', array $options = array())
 	{
-		$reader = $readers[mt_rand(0, (sizeof($readers) - 1))];
+		// If there are readers available, set one up.
+		if (!empty($readers)) {
+			$reader = $readers[mt_rand(0, (sizeof($readers) - 1))];
+			$rconfig = $config;
+			$rconfig['dsn'] = sprintf($rconfig['dsn'], $reader);
+			$this->_readConn = new SiTech_DB($rconfig, $driver, $options);
+		}
+
+		if (empty($writers)) {
+			throw new SiTech_Exception('No writers specified. You must specify at least one writer to SiTech_DB_Proxy::__construct()');
+		}
+
+		// The writer will be the default if no readers are selected.
 		$writer = $writers[mt_rand(0, (sizeof($writers) - 1))];
-
-		// Set each config and replace the host in the DSN
-		$rconfig = $config;
 		$wconfig = $config;
-		$rconfig['dsn'] = sprintf($rconfig['dsn'], $reader);
 		$wconfig['dsn'] = sprintf($wconfig['dsn'], $writer);
-
-		$this->_readConn = new SiTech_DB($rconfig, $driver, $options);
 		$this->_writeConn = new SiTech_DB($wconfig, $driver, $options);
 	}
 
@@ -124,7 +131,7 @@ class SiTech_DB_Proxy extends SiTech_DB
 	 */
 	public function errorCode() {
 		return(array(
-			'reader' => $this->_readConn->errorCode(),
+			'reader' => ((!empty($this->_readConn))? $this->_readConn->errorCode() : null),
 			'writer' => $this->_writeConn->errorCode()
 		));
 	}
@@ -136,7 +143,7 @@ class SiTech_DB_Proxy extends SiTech_DB
 	 */
 	public function errorInfo() {
 		return(array(
-			'reader' => $this->_readConn->errorInfo(),
+			'reader' => ((!empty($this->_readConn))? $this->_readConn->errorInfo() : null),
 			'writer' => $this->_writeConn->errorInfo()
 		));
 	}
@@ -150,7 +157,10 @@ class SiTech_DB_Proxy extends SiTech_DB
 	}
 
 	public function getAttribute($attribute) {
-		return($this->_readConn->getAttribute($attribute));
+		return(array(
+			'reader' => ((!empty($this->_readConn))? $this->_readConn->getAttribute($attribute) : null),
+			'writer' => $this->_writeConn->getAttribute($attribute)
+		));
 	}
 
 	public function insert($table, array $bind) {
@@ -218,7 +228,7 @@ class SiTech_DB_Proxy extends SiTech_DB
 	 */
 	public function setAttribute($attribute, $value) {
 		return(array(
-			'reader' => $this->_readConn->setAttribute($attribute, $value),
+			'reader' => ((!empty($this->_readConn))? $this->_readConn->setAttribute($attribute, $value) : null),
 			'writer' => $this->_writeConn->setAttribute($attribute, $value)
 		));
 	}
@@ -233,12 +243,16 @@ class SiTech_DB_Proxy extends SiTech_DB
 	{
 		$ret = false;
 
-		if (!$this->_inTransaction) {
+		if (!$this->_inTransaction && !empty($this->_readConn)) {
 			list($type,) = explode($statement, ' ', 1);
 
 			switch ($type) {
+				case 'DESC':
+				case 'DESCRIBE':
+				case 'EXPLAIN':
+				case 'HELP':
 				case 'SELECT':
-				case 'CALL':
+				case 'SHOW':
 					$ret = true;
 					break;
 			}
