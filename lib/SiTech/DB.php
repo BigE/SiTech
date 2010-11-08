@@ -115,6 +115,12 @@ class SiTech_DB extends PDO
 		return($ret);
 	}
 
+	/**
+	 * Get the attribute from the database connection.
+	 *
+	 * @param int $attribute
+	 * @return mixed
+	 */
 	public function getAttribute($attribute)
 	{
 		if ($attribute == self::ATTR_TRACK_QUERIES) {
@@ -122,6 +128,39 @@ class SiTech_DB extends PDO
 		} else {
 			return(parent::getAttribute($attribute));
 		}
+	}
+
+	/**
+	 * Builds a dsn from values given in the configuration. Needs to have the
+	 * array keys of 'driver', 'host', & 'database' defined. The array key
+	 * 'port' is optional.
+	 *
+	 * @param array $config The configuration array from which to pull driver, host, database, & port from.
+	 * @return string A dsn string.
+	 */
+	public static function getDsn(array $config)
+	{
+		$ret = false;
+		if (
+			array_key_exists( 'driver', $config )
+			&& array_key_exists( 'host', $config )
+			&& array_key_exists( 'database', $config )
+		) {
+			if ( array_key_exists( 'port', $config ) ) {
+				$port = ';port=' . $config['port'];
+			}
+			else {
+				$port = '';
+			}
+			$ret = sprintf(
+				'%s:host=%s%s;dbname=%s'
+				,$config['driver']
+				,$config['host']
+				,$port
+				,$config['database']
+			);
+		}
+		return $ret;
 	}
 
 	/**

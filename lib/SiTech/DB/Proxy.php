@@ -69,7 +69,7 @@ class SiTech_DB_Proxy extends SiTech_DB
 	 * @param array $options Options to pass to the connections.
 	 * @see SiTech_DB
 	 */
-	public function __construct(array $config, array $writers, array $readers = null, $driver = 'SiTech_DB_Driver_MySQL', array $options = array())
+	public function __construct(array $config, array $writers, array $readers = array(), $driver = 'SiTech_DB_Driver_MySQL', array $options = array())
 	{
 		// If there are readers available, set one up.
 		if (!empty($readers)) {
@@ -148,7 +148,7 @@ class SiTech_DB_Proxy extends SiTech_DB
 		));
 	}
 
-	public function exec($statement, $args = array()) {
+	public function exec($statement, array $args = array()) {
 		if ($this->_readOnly($statement)) {
 			return($this->_readConn->exec($statement, $args));
 		} else {
@@ -180,7 +180,7 @@ class SiTech_DB_Proxy extends SiTech_DB
 		return($this->_writeConn->lastInsertId($name));
 	}
 
-	public function prepare($statement, array $driver_options = null)
+	public function prepare($statement, $driver_options = array())
 	{
 		if ($this->_readOnly($statement)) {
 			return($this->_readConn->prepare($statement, $driver_options));
@@ -233,6 +233,17 @@ class SiTech_DB_Proxy extends SiTech_DB
 		));
 	}
 
+	/**
+	 * Send an update query to the database.
+	 *
+	 * @param string $table
+	 * @param array $bind
+	 * @param string $where
+	 * @return int
+	 */
+	public function  update($table, array $bind, $where = null) {
+		return($this->_writeConn->update($table, $bind, $where));
+	}
 	/**
 	 * Check if the query can be executed on a read-only server.
 	 *
