@@ -54,6 +54,8 @@ abstract class SiTech_Controller_Abstract
 	 */
 	protected $_args;
 
+	protected $_components = array();
+
 	/**
 	 * This tells if _display() has been called yet. If it hasn't then we call
 	 * it automatically.
@@ -109,6 +111,20 @@ abstract class SiTech_Controller_Abstract
 		// TODO: How reliable is this method?
 		if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') { // || isset($_POST['xhr']) || isset($_GET['xhr'])) {
 			$this->_isXHR = true;
+		}
+
+		// Load components
+		if (!empty($this->_components)) {
+			foreach ($this->_components as $component) {
+				if (class_exists($component, false)) continue;
+
+				require_once(SITECH_APP_PATH.'/controllers/components/'.$component.'.php');
+				if (!class_exists($component, false)) {
+					throw new SiTech_Exception('Failed to load component %s', array($component));
+				}
+
+				$this->$component = new $component($this);
+			}
 		}
 
 		/**
