@@ -104,12 +104,15 @@ class SiTech_DB extends PDO
 	 */
 	public function exec($statement, $args = array())
 	{
+		$ret = false;
 		$stmnt = $this->query($statement, $args);
+
 		if ($stmnt) {
-			return($stmnt->rowCount());
-		} else {
-			return(false);
+			$ret = $stmnt->rowCount();
+			$stmnt->closeCursor();
 		}
+
+		return($ret);
 	}
 
 	public function getAttribute($attribute)
