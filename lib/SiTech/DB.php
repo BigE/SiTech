@@ -102,7 +102,7 @@ class SiTech_DB extends PDO
 	 *             the SQL statement. If no rows were affected 0 is returned. If
 	 *             the function fails FALSE will be returned.
 	 */
-	public function exec($statement, $args = array())
+	public function exec($statement, array $args = array())
 	{
 		$ret = false;
 		$stmnt = $this->query($statement, $args);
