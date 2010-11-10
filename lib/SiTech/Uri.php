@@ -111,9 +111,15 @@ class SiTech_Uri
 		return($this->getUri());
 	}
 
-	public function getAction()
+	public function getAction($clean = false)
 	{
-		return($this->_action);
+		$ret = $this->_action;
+		
+		if ( $clean ) {
+			$ret = strtr($ret, '-', '_');
+		}
+		
+		return($ret);
 	}
 
 	public function getController()

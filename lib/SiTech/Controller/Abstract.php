@@ -97,7 +97,7 @@ abstract class SiTech_Controller_Abstract
 	{
 		$this->_uri = $uri;
 		
-		$this->_action = $this->_uri->getAction();
+		$this->_action = $this->_uri->getAction(true);
 
 		$this->_args = explode('/', $this->_uri->getPath(SiTech_Uri::FLAG_REWRITE | SiTech_Uri::FLAG_LTRIM | SiTech_Uri::FLAG_CONTROLLER | SiTech_Uri::FLAG_ACTION));
 
