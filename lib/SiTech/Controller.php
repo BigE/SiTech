@@ -60,7 +60,7 @@ class SiTech_Controller
 	 */
 	static public function dispatch(SiTech_Uri $uri)
 	{
-		$rewrite = (bool)$uri->getPath(SiTech_Uri::FLAG_REWRITE);
+		$rewrite = $uri->isRewrite();
 
 		if ($rewrite) {
 			$path = $uri->getPath(SiTech_Uri::FLAG_REWRITE);
@@ -94,9 +94,10 @@ class SiTech_Controller
 
 		if (sizeof($parts) > 1) {
 			$i = 1;
-			while (is_dir(SITECH_APP_PATH.DIRECTORY_SEPARATOR.'controllers'.DIRECTORY_SEPARATOR.$controller)) {
-				$path .= $parts[$i];
-				if (!$rewrite) $controller .= '/'.$parts[$i++];
+			while (is_dir(SITECH_APP_PATH.DIRECTORY_SEPARATOR.'controllers'.DIRECTORY_SEPARATOR.$path)) {
+				$path .= DIRECTORY_SEPARATOR.$parts[$i];
+				if (!empty($action) && $parts[$i] == $action) unset($action);
+				if (!$rewrite) $controller .= DIRECTORY_SEPARATOR.$parts[$i++];
 			}
 
 			if (empty($parts[$i])) {
