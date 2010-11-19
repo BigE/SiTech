@@ -71,8 +71,13 @@ class SiTech_DB_Statement_FileWriter extends SiTech_DB_Statement
 	 *
 	 * @param array $input_parameters
 	 */
-	public function execute(array $input_parameters = array())
+	public function execute(array $input_parameters = array(), $execute = false)
 	{
+		// Ugh.
+		if ($execute === true) {
+			return(parent::execute($input_parameters));
+		}
+
 		$sql = $this->queryString;
 
 		if (!empty($input_parameters)) {
