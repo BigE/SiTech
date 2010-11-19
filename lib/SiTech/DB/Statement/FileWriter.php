@@ -37,7 +37,7 @@ class SiTech_DB_Statement_FileWriter extends SiTech_DB_Statement
 	protected function __construct(SiTech_DB $conn, $output = 'php://stdout')
 	{
 		$this->_conn = $conn;
-		if (!($this->_output = fopen('a', $output))) {
+		if (!($this->_output = fopen($output, 'a'))) {
 			throw new SiTech_Exception('Failed to open output file \''.$output.'\' for writing');
 		}
 	}
