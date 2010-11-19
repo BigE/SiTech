@@ -73,7 +73,7 @@ class SiTech_DB_Statement_FileWriter extends SiTech_DB_Statement
 		if (!empty($input_parameters)) {
 			foreach ($input_parameters as $key => $val) {
 				if (is_int($key)) {
-					$sql = str_replace('?', $this->_conn->quote($val), $sql, 1);
+					$sql = preg_replace('#\?#', $this->_conn->quote($val), $sql, 1);
 				} else {
 					$sql = str_replace($key, $this->_conn->quote($val), $sql);
 				}
@@ -94,9 +94,9 @@ class SiTech_DB_Statement_FileWriter extends SiTech_DB_Statement
 
 				if (is_int($key)) {
 					if (!is_null($value)) {
-						$sql = str_replace('?', $this->connection->quote($value), $sql, 1);
+						$sql = preg_replace('#\?#', $this->connection->quote($value), $sql, 1);
 					} else {
-						$sql = str_replace('?', 'NULL', $sql, 1);
+						$sql = preg_replace('#\?#', 'NULL', $sql, 1);
 					}
 				} else {
 					if (!is_null($value)) {
