@@ -111,9 +111,9 @@ class SiTech_DB_Statement_FileWriter extends SiTech_DB_Statement
 					}
 				}
 			}
-
-			fwrite($this->_output, $sql);
-			return(true);
 		}
+
+		fwrite($this->_output, $sql);
+		return(true);
 	}
 }
