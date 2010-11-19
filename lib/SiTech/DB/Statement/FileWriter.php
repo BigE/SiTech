@@ -113,7 +113,7 @@ class SiTech_DB_Statement_FileWriter extends SiTech_DB_Statement
 			}
 		}
 
-		fwrite($this->_output, $sql);
+		fwrite($this->_output, $sql.';'.PHP_EOL);
 		return(true);
 	}
 }
