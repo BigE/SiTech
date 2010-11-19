@@ -34,7 +34,7 @@ class SiTech_DB_Statement_FileWriter extends SiTech_DB_Statement
 	 * @param SiTech_DB $conn
 	 * @param string $output Path to file for output. Default is stdout.
 	 */
-	public function __construct(SiTech_DB $conn, $output = 'php://stdout')
+	protected function __construct(SiTech_DB $conn, $output = 'php://stdout')
 	{
 		$this->_conn = $conn;
 		if (!($this->_output = fopen('a', $output))) {
