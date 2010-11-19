@@ -42,6 +42,11 @@ class SiTech_DB_Statement_FileWriter extends SiTech_DB_Statement
 		}
 	}
 
+	public function  __destruct() {
+		if ($this->_output !== false)
+			fclose($this->_output);
+	}
+
 	public function bindParam($parameter, &$variable, $data_type = null, $length = null, $driver_options = null) {
 		$this->_boundParams[$parameter] = array(
 			'length'  => $length,
@@ -108,6 +113,7 @@ class SiTech_DB_Statement_FileWriter extends SiTech_DB_Statement
 			}
 
 			fwrite($this->_output, $sql);
+			return(true);
 		}
 	}
 }
