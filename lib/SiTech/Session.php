@@ -112,25 +112,25 @@ class SiTech_Session extends ArrayObject
 	 */
 	public function __construct()
 	{
-		if (self::$internal == false) {
+		if (static::$internal == false) {
 			trigger_error('Call to protected '.__METHOD__.' from invalid context', E_USER_ERROR);
 		}
 
 		// Set internal to false, then set the instance
-		self::$internal = false;
-		self::$instance = $this;
+		static::$internal = false;
+		static::$instance = $this;
 		if (isset($_SERVER['HTTP_HOST'])) {
 			$this->setAttribute(self::ATTR_COOKIE_DOMAIN, '.'.$_SERVER['HTTP_HOST']);
 		}
 		$this->setAttribute(self::ATTR_COOKIE_PATH, '/');
 
-		if (!self::$handler) {
+		if (!static::$handler) {
 			$handler = self::HANDLER_FILE;
 			require_once(str_replace('_', '/', $handler).'.php');
 			self::registerHandler(new $handler());
 		}
 
-		if (self::$handler instanceof SiTech_Session_Handler_File) {
+		if (static::$handler instanceof SiTech_Session_Handler_File) {
 			/* default locking timeout */
 			$this->setAttribute(self::ATTR_FILE_TIMEOUT, 100);
 		}
@@ -255,7 +255,7 @@ class SiTech_Session extends ArrayObject
 			throw new Exception('The session handler must implement SiTech_Session_Handler_Interface');
 		}
 
-		self::$handler = true;
+		static::$handler = true;
 
 		session_set_save_handler(
 			array($object, 'open'),
@@ -337,11 +337,11 @@ class SiTech_Session extends ArrayObject
 	 */
 	static public function singleton()
 	{
-		if (empty(self::$instance)) {
-			throw new Exception('Session not started yet. Please call SiTech_Session::start() first.');
+		if (empty(static::$instance)) {
+			throw new Exception('Session not started yet. Please call '.get_called_class().'::start() first.');
 		}
 
-		return(self::$instance);
+		return(static::$instance);
 	}
 
 	/**
@@ -359,7 +359,7 @@ class SiTech_Session extends ArrayObject
 			throw new Exception('A session has already been started using session_start() or session.auto-start');
 		}
 
-		self::$internal = true;
-		new SiTech_Session();
+		static::$internal = true;
+		new ${get_called_class()}();
 	}
 }
