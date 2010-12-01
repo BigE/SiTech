@@ -360,6 +360,7 @@ class SiTech_Session extends ArrayObject
 		}
 
 		static::$internal = true;
-		new ${get_called_class()}();
+		$class = get_called_class();
+		new $class();
 	}
 }
