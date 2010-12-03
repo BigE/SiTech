@@ -54,7 +54,7 @@ class SiTech_Session_Handler_File implements SiTech_Session_Handler_Interface
 
 	public function __construct()
 	{
-		if (ini_get('session.save_handler') == 'memcached') {
+		if (ini_get('session.save_handler') == 'memcache') {
 			$this->_memcached = true;
 		}
 	}
