@@ -37,27 +37,12 @@ require_once('SiTech/Session/Handler/Interface.php');
  */
 class SiTech_Session_Handler_File implements SiTech_Session_Handler_Interface
 {
-	protected $_memcached = false;
-
-	/**
-	 *
-	 * @var SiTech_Session
-	 */
-	protected $_session;
-
 	/**
 	 * Folder path to save sessions in.
 	 *
 	 * @var string
 	 */
 	protected $_savePath;
-
-	public function __construct()
-	{
-		if (ini_get('session.save_handler') == 'memcache') {
-			$this->_memcached = true;
-		}
-	}
 
 	/**
 	 * Close the session.
@@ -77,12 +62,8 @@ class SiTech_Session_Handler_File implements SiTech_Session_Handler_Interface
 	 */
 	public function destroy ($id)
 	{
-		if ($this->_memcached) {
-			return(Memcache::delete('sessions/'.$id));
-		} else {
-			$file = $this->_savePath.DIRECTORY_SEPARATOR.'sess_'.$id;
-			return(@unlink($file));
-		}
+		$file = $this->_savePath.DIRECTORY_SEPARATOR.'sess_'.$id;
+		return(@unlink($file));
 	}
 
 	/**
@@ -92,16 +73,14 @@ class SiTech_Session_Handler_File implements SiTech_Session_Handler_Interface
 	 */
 	public function gc ($maxLife)
 	{
-		if (!$this->_memcached) {
-			foreach (glob($this->_savePath.DIRECTORY_SEPARATOR.'sess_*') as $file) {
-				if (filemtime($file) + $maxLife < time()) {
-					$fp = @fopen($file);
-					if (is_resource($file)) {
-						$r = trim(@fgets($fp, 4));
-						@fclose($fp);
-						if ($r == '0') {
-							@unlink($file);
-						}
+		foreach (glob($this->_savePath.DIRECTORY_SEPARATOR.'sess_*') as $file) {
+			if (filemtime($file) + $maxLife < time()) {
+                $fp = @fopen($file);
+				if (is_resource($file)) {
+					$r = trim(@fgets($fp, 4));
+					@fclose($fp);
+					if ($r == '0') {
+						@unlink($file);
 					}
 				}
 			}
@@ -119,13 +98,10 @@ class SiTech_Session_Handler_File implements SiTech_Session_Handler_Interface
 	 */
 	public function open ($path, $name)
 	{
-		if (!$this->_memcached) {
-			if (empty($path)) { $path = '/tmp'; }
-			$this->_savePath = realpath($path);
-		}
-
-		$this->_session = SiTech_Session::singleton();
-		$this->_session->setAttribute(SiTech_Session::ATTR_SESSION_NAME, $name);
+		if (empty($path)) { $path = '/tmp'; }
+		$this->_savePath = realpath($path);
+		$session = SiTech_Session::singleton();
+		$session->setAttribute(SiTech_Session::ATTR_SESSION_NAME, $name);
 		return(true);
 	}
 
@@ -137,45 +113,41 @@ class SiTech_Session_Handler_File implements SiTech_Session_Handler_Interface
 	 */
 	public function read ($id)
 	{
-		if ($this->_memcached) {
-			return(Memcache::get('sessions/'.$id));
-		} else {
-			$file = $this->_savePath.DIRECTORY_SEPARATOR.'sess_'.$id;
+		$file = $this->_savePath.DIRECTORY_SEPARATOR.'sess_'.$id;
 
-			if (file_exists($file) && ($fp = fopen($file, 'r')) !== false) {
-				$time = microtime();
-				$data = '';
-				$str = '';
-				$session = SiTech_Session::singleton();
-				$timeout = $session->getAttribute(SiTech_Session::ATTR_FILE_TIMEOUT);
+		if (file_exists($file) && ($fp = fopen($file, 'r')) !== false) {
+			$time = microtime();
+			$data = '';
+			$str = '';
+			$session = SiTech_Session::singleton();
+			$timeout = $session->getAttribute(SiTech_Session::ATTR_FILE_TIMEOUT);
 
-				do {
-					$canRead = flock($fp, LOCK_SH + LOCK_NB);
-				} while (!$canRead && (microtime() - $time) < $timeout);
+			do {
+				$canRead = flock($fp, LOCK_SH + LOCK_NB);
+			} while (!$canRead && (microtime() - $time) < $timeout);
 
-				if (!$canRead) {
-					fclose($fp);
-					return('');
-				}
-
-				while (!feof($fp) && $str !== false) {
-					$str = fread($fp, 1024);
-					if ($str) {
-						$data .= $str;
-					}
-				}
-				flock($fp, LOCK_UN);
+			if (!$canRead) {
 				fclose($fp);
-
-				list($r, $s, $data) = explode("\n", $data, 3);
-
-				$session->setAttribute(SiTech_Session::ATTR_REMEMBER, (bool)$r);
-				$session->setAttribute(SiTech_Session::ATTR_STRICT, (bool)$s);
-
-				return((string)$data);
-			} else {
 				return('');
 			}
+
+			while (!feof($fp) && $str !== false) {
+				$str = fread($fp, 1024);
+				if ($str) {
+					$data .= $str;
+				}
+			}
+			flock($fp, LOCK_UN);
+			fclose($fp);
+
+			list($r, $s, $data) = explode("\n", $data, 3);
+
+			$session->setAttribute(SiTech_Session::ATTR_REMEMBER, (bool)$r);
+			$session->setAttribute(SiTech_Session::ATTR_STRICT, (bool)$s);
+
+			return((string)$data);
+		} else {
+			return('');
 		}
 	}
 
@@ -188,38 +160,34 @@ class SiTech_Session_Handler_File implements SiTech_Session_Handler_Interface
 	 */
 	public function write ($id, $data)
 	{
-		if ($this->_memcached) {
-			Memcache::set('sessions/'.$id, $data, ini_get('session.gc_maxlifetime'));
-		} else {
-			$file = 'sess_'.$id;
-			$file = $this->_savePath.DIRECTORY_SEPARATOR.$file;
+		$file = 'sess_'.$id;
+		$file = $this->_savePath.DIRECTORY_SEPARATOR.$file;
 
+		$session = SiTech_Session::singleton();
+		$data = sprintf("%d\n%d\n%s", $session->getAttribute(SiTech_Session::ATTR_REMEMBER), $session->getAttribute(SiTech_Session::ATTR_STRICT), $data);
+
+		if (($fp = fopen($file, 'a')) !== false) {
+			$time = microtime();
 			$session = SiTech_Session::singleton();
-			$data = sprintf("%d\n%d\n%s", $session->getAttribute(SiTech_Session::ATTR_REMEMBER), $session->getAttribute(SiTech_Session::ATTR_STRICT), $data);
+			$timeout = $session->getAttribute(SiTech_Session::ATTR_FILE_TIMEOUT);
 
-			if (($fp = fopen($file, 'a')) !== false) {
-				$time = microtime();
-				$session = SiTech_Session::singleton();
-				$timeout = $session->getAttribute(SiTech_Session::ATTR_FILE_TIMEOUT);
+			do {
+				$canWrite = flock($fp, LOCK_EX + LOCK_NB);
+			} while (!$canWrite && (microtime() - $time) < $timeout);
 
-				do {
-					$canWrite = flock($fp, LOCK_EX + LOCK_NB);
-				} while (!$canWrite && (microtime() - $time) < $timeout);
-
-				if (!$canWrite) {
-					fclose($fp);
-					return(false);
-				}
-
-				ftruncate($fp, 0);
-				fputs($fp, $data);
-				flock($fp, LOCK_UN);
+			if (!$canWrite) {
 				fclose($fp);
-
-				return(true);
-			} else {
 				return(false);
 			}
+
+			ftruncate($fp, 0);
+			fputs($fp, $data);
+			flock($fp, LOCK_UN);
+			fclose($fp);
+
+			return(true);
+		} else {
+			return(false);
 		}
 	}
 }
