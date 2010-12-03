@@ -75,6 +75,11 @@ class SiTech_Session extends ArrayObject
 	 */
 	const HANDLER_FILE = 'SiTech_Session_Handler_File';
 
+	/**
+	 * Memcache handler for session.
+	 */
+	const HANDLER_MEMCACHE = 'SiTech_Session_Handler_Memcache';
+
 	const STATE_STARTED = 1;
 
 	const STATE_CLOSED = 2;
@@ -251,7 +256,7 @@ class SiTech_Session extends ArrayObject
 	{
 		if (isset($_SESSION)) {
 			throw new Exception('You cannot register a handler after the session has been started');
-		} elseif (!($object instanceof SiTech_Session_Handler_Interface)) {
+		} elseif (!($object instanceof SiTech_Session_Handler_Interface) || !($object instanceof Memcache)) {
 			throw new Exception('The session handler must implement SiTech_Session_Handler_Interface');
 		}
 
