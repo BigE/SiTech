@@ -78,7 +78,7 @@ class SiTech_Session_Handler_File implements SiTech_Session_Handler_Interface
 	public function destroy ($id)
 	{
 		if ($this->_memcached) {
-			return(memcached::delete('sessions/'.$id));
+			return(Memcache::delete('sessions/'.$id));
 		} else {
 			$file = $this->_savePath.DIRECTORY_SEPARATOR.'sess_'.$id;
 			return(@unlink($file));
@@ -138,7 +138,7 @@ class SiTech_Session_Handler_File implements SiTech_Session_Handler_Interface
 	public function read ($id)
 	{
 		if ($this->_memcached) {
-			return(memcached::get('sessions/'.$id));
+			return(Memcache::get('sessions/'.$id));
 		} else {
 			$file = $this->_savePath.DIRECTORY_SEPARATOR.'sess_'.$id;
 
@@ -189,7 +189,7 @@ class SiTech_Session_Handler_File implements SiTech_Session_Handler_Interface
 	public function write ($id, $data)
 	{
 		if ($this->_memcached) {
-			memcached::set('sessions/'.$id, $data, ini_get('session.gc_maxlifetime'));
+			Memcache::set('sessions/'.$id, $data, ini_get('session.gc_maxlifetime'));
 		} else {
 			$file = 'sess_'.$id;
 			$file = $this->_savePath.DIRECTORY_SEPARATOR.$file;
