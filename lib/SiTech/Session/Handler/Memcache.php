@@ -68,7 +68,7 @@ class SiTech_Session_Handler_Memcache implements SiTech_Session_Handler_Interfac
 	 *
 	 * @return bool
 	 */
-	public function open()
+	public function open($path, $name)
 	{
 		return(true);
 	}
