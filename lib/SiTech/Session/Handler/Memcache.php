@@ -4,6 +4,10 @@
  * and open the template in the editor.
  */
 
+if (!extension_loaded('memcache')) {
+	throw new SiTech_Exception('You must have the memcache extension to use this handler.');
+}
+
 /**
  * Description of MemCache
  *
