@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * @author Eric Gach <eric@php-oop.net>
- * @copyright SiTech Group (c) 2008-2009
+ * @copyright SiTech Group (c) 2008-2010
  * @filesource
  * @package SiTech
  * @subpackage SiTech_Session
