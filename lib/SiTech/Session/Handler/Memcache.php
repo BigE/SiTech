@@ -1,17 +1,43 @@
 <?php
-/* 
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * SiTech/Session/Handler/Memcache.php
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ * @author Eric Gach <eric@php-oop.net>
+ * @copyright SiTech Group (c) 2008-2009
+ * @filesource
+ * @package SiTech
+ * @subpackage SiTech_Session
+ * @version $Id$
  */
+
+/**
+ * @see SiTech_Session_Handler_Interface
+ */
+require_once('SiTech/Session/Handler/Interface.php');
 
 if (!extension_loaded('memcache')) {
 	throw new SiTech_Exception('You must have the memcache extension to use this handler.');
 }
 
 /**
- * Description of MemCache
+ * SiTech session handler for memcache based session storage.
  *
- * @author eric
+ * @package SiTech_Session
+ * @subpackage SiTech_Session_Handler
  */
 class SiTech_Session_Handler_Memcache implements SiTech_Session_Handler_Interface
 {
@@ -77,13 +103,21 @@ class SiTech_Session_Handler_Memcache implements SiTech_Session_Handler_Interfac
 		return(true);
 	}
 
+	/**
+	 *
+	 * @param string $id Session ID
+	 * @return string
+	 */
 	public function read($id)
 	{
-		$data = $this->_memcache->get('session/'.$id);
-		list($r, $s, $data) = explode("\n", $data);
-		$session = SiTech_Session::singleton();
+		if (($data = $this->_memcache->get('session/'.$id)) !== false) {
+			list($r, $s, $data) = explode("\n", $data);
+			$session = SiTech_Session::singleton();
+			$session->setAttribute(SiTech_Session::ATTR_REMEMBER, (bool)$r);
+			$session->setAttribute(SiTech_Session::ATTR_STRICT, (bool)$s);
+		}
 
-		return($data);
+		return((string)$data);
 	}
 
 	public function write($id, $data)
