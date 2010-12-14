@@ -264,6 +264,22 @@ abstract class SiTech_Model_Abstract
 		}
 	}
 
+	public static function getCount($where = null)
+	{
+		$sql = 'SELECT COUNT('.static::pk().') FROM '.static::$_table;
+
+		if (!empty($where)) {
+			if (is_int($where)) {
+				$sql .= ' WHERE '.static::pk().' = '.$where;
+			} else {
+				$sql .= ' WHERE '.$where;
+			}
+		}
+
+		$stmnt = static::db()->query($sql);
+		return((int)$stmnt->fetchColumn());
+	}
+
 	public static function pk($pk = null)
 	{
 		if (empty($pk) && empty(static::$_pk)) {
