@@ -97,7 +97,9 @@ class SiTech_Controller
 			while (is_dir(SITECH_APP_PATH.DIRECTORY_SEPARATOR.'controllers'.DIRECTORY_SEPARATOR.$path)) {
 				$path .= DIRECTORY_SEPARATOR.$parts[$i];
 				if (!empty($action) && $parts[$i] == $action) unset($action);
-				if (!$rewrite) $controller .= DIRECTORY_SEPARATOR.$parts[$i++];
+				if (!$rewrite) $controller .= DIRECTORY_SEPARATOR.$parts[$i];
+				// This has to be incremented here no matter what
+				$i++;
 			}
 
 			if (empty($parts[$i])) {
