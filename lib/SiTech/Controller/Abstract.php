@@ -81,6 +81,14 @@ abstract class SiTech_Controller_Abstract
 	protected $_layout;
 
 	/**
+	 * Models to load during the constructor. These are loaded before the
+	 * components are loaded.
+	 *
+	 * @var array
+	 */
+	protected $_models = array();
+
+	/**
 	 * This is a SiTech_Uri object used in the controller itself.
 	 *
 	 * @var SiTech_Uri
@@ -111,6 +119,11 @@ abstract class SiTech_Controller_Abstract
 		// TODO: How reliable is this method?
 		if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') { // || isset($_POST['xhr']) || isset($_GET['xhr'])) {
 			$this->_isXHR = true;
+		}
+
+		// Load models
+		if (!empty($this->_models)) {
+			array_walk($this->_models, array('SiTech_Loader', 'loadModel'));
 		}
 
 		// Load components
