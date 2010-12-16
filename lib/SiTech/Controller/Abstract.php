@@ -110,9 +110,32 @@ abstract class SiTech_Controller_Abstract
 		$this->_args = explode('/', $this->_uri->getPath(SiTech_Uri::FLAG_REWRITE | SiTech_Uri::FLAG_LTRIM | SiTech_Uri::FLAG_CONTROLLER | SiTech_Uri::FLAG_ACTION));
 
 		if (isset($this->_argMap[$this->_action]) && is_array($this->_argMap[$this->_action])) {
+			$fill = false;
 			foreach ($this->_argMap[$this->_action] as $k => $arg) {
+				if (is_array($arg)) {
+					$tmp = $arg;
+					$arg = $tmp['name'];
+					$fill = (isset($tmp['fill']) && $tmp['fill'] === true);
+					if (isset($tmp['qsa'])) {
+						foreach ($tmp['qsa'] as $getK => $getV) {
+							if (is_numeric($getK)) $getK = $getV;
+							$this->_argMap[$getK] = (isset($_GET[$getV])? $_GET[$getV] : null);
+						}
+					}
+				}
+
 				if (!isset($this->_args[$k])) $this->_args[$arg] = null;
 				else $this->_args[$arg] = $this->_args[$k];
+
+				if ($fill) {
+					foreach ($this->_args as $argK => $argV) {
+						if (is_numeric($argK) && $argK > $k) {
+							$this->_args[$arg] .= '/'.$argV;
+						}
+					}
+
+					break;
+				}
 			}
 		}
 
