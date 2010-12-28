@@ -54,8 +54,8 @@ class SiTech_Uri
 				$base = new SiTech_Uri(SITECH_BASEURI);
 			}
 
-			$host = parse_url($_SERVER['HTTP_HOST']);
-			$uri = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on')? 'https://' : 'http://').$host['host'].':'.$_SERVER['SERVER_PORT'].$_SERVER['REQUEST_URI'];
+			$host = parse_url(((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on')? 'https://' : 'http://').$_SERVER['HTTP_HOST']);
+			$uri = $host['scheme'].'://'.$host['host'].':'.$_SERVER['SERVER_PORT'].$_SERVER['REQUEST_URI'];
 		}
 
 		$this->_requestUri = parse_url($uri);
