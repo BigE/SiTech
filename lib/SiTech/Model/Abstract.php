@@ -341,10 +341,10 @@ abstract class SiTech_Model_Abstract
 		foreach ($this->_fields as $f => $v) {
 			if ($f == $pk) continue;
 			$fields[] = $f;
-			$values[] = $v;
+			$values[$f] = $v;
 		}
 
-		$sql .= '('.implode(',', $fields).') VALUES('.implode(',', $values).')';
+		$sql .= '('.implode(',', $fields).') VALUES(:'.implode(',:', $fields).')';
 		$stmnt = $this->_db->prepare($sql);
 		$stmnt->execute($values);
 		return($stmnt->rowCount());
