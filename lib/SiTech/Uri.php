@@ -187,13 +187,26 @@ class SiTech_Uri
 		if (!empty($this->_requestUri['fragment']) && $withFragment) {
 			$uri .= '#'.$this->_requestUri['fragment'];
 		}
-		
+
 		return($uri);
 	}
 
 	public function isRewrite()
 	{
 		return(empty($this->_requestUri['rewritePath'])? false : true);
+	}
+
+	public function internalRedirect($path)
+	{
+		if (!defined('SITECH_BASEURI')) {
+			require_once('SiTech/Exception.php');
+			throw new SiTech_Exception('SITECH_BASEURI is not defined. Cannot redirect.');
+		}
+
+		$uri = rtrim(SITECH_BASEURI, '/');
+		$path = ltrim($path, '/');
+		header('Location: '.$uri.'/'.$path);
+		exit;
 	}
 
 	public function setAction($action)

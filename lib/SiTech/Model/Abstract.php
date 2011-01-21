@@ -312,6 +312,11 @@ abstract class SiTech_Model_Abstract
 		}
 	}
 
+	public function toJson()
+	{
+		return(json_encode($this->_fields));
+	}
+
 	/**
 	 * Validate data coming in to record before saving. Defaults to return true,
 	 * so if any validation needs to be done, it should be overridden in the
@@ -346,7 +351,10 @@ abstract class SiTech_Model_Abstract
 
 		$sql .= '('.implode(',', $fields).') VALUES(:'.implode(',:', $fields).')';
 		$stmnt = $this->_db->prepare($sql);
-		$stmnt->execute($values);
+		if ($stmnt->execute($values)) {
+			// Assign the PK once the row is inserted
+			$this->_fields[$pk] = $this->_db->lastInsertId();
+		}
 		return($stmnt->rowCount());
 	}
 
