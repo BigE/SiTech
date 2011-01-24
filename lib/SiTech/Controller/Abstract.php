@@ -169,6 +169,7 @@ abstract class SiTech_Controller_Abstract
 		if (empty($this->_view)) {
 			$this->_view = new SiTech_Template(SITECH_APP_PATH.DIRECTORY_SEPARATOR.'views');
 		}
+		$this->_view->assign('_isXHR', $this->_isXHR);
 
 		// Initalize the controller
 		$this->init();
