@@ -46,6 +46,8 @@ class SiTech_DB_Proxy extends SiTech_DB
 	 */
 	protected $_inTransaction = false;
 
+	protected $_useWriteOnly = false;
+
 	/**
 	 * Holder for "read-only" connection.
 	 *
@@ -159,10 +161,14 @@ class SiTech_DB_Proxy extends SiTech_DB
 	}
 
 	public function getAttribute($attribute) {
-		return(array(
-			'reader' => ((!empty($this->_readConn))? $this->_readConn->getAttribute($attribute) : null),
-			'writer' => $this->_writeConn->getAttribute($attribute)
-		));
+		if ($attribute == SiTech_DB_Proxy::ATTR_WRITEONLY) {
+			return($this->_useWriteOnly);
+		} else {
+			return(array(
+				'reader' => ((!empty($this->_readConn))? $this->_readConn->getAttribute($attribute) : null),
+				'writer' => $this->_writeConn->getAttribute($attribute)
+			));
+		}
 	}
 
 	public function insert($table, array $bind) {
@@ -229,10 +235,16 @@ class SiTech_DB_Proxy extends SiTech_DB
 	 * @return array
 	 */
 	public function setAttribute($attribute, $value) {
-		return(array(
-			'reader' => ((!empty($this->_readConn))? $this->_readConn->setAttribute($attribute, $value) : null),
-			'writer' => $this->_writeConn->setAttribute($attribute, $value)
-		));
+		if ($attribute == SiTech_DB_Proxy::ATTR_WRITEONLY) {
+			$ret = $this->_isWriteOnly;
+			$this->_useWriteOnly = (bool)$value;
+			return($ret);
+		} else {
+			return(array(
+				'reader' => ((!empty($this->_readConn))? $this->_readConn->setAttribute($attribute, $value) : null),
+				'writer' => $this->_writeConn->setAttribute($attribute, $value)
+			));
+		}
 	}
 
 	/**
