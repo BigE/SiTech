@@ -73,7 +73,6 @@ class SiTech_DB_Proxy extends SiTech_DB
 	 */
 	public function __construct(array $config, array $writers, array $readers = array(), $driver = 'SiTech_DB_Driver_MySQL', array $options = array())
 	{
-		$this->setAttribute(SiTech_DB_Proxy::ATTR_WRITEONLY, false);
 		// If there are readers available, set one up.
 		if (!empty($readers)) {
 			$reader = $readers[mt_rand(0, (sizeof($readers) - 1))];
@@ -257,7 +256,7 @@ class SiTech_DB_Proxy extends SiTech_DB
 	{
 		$ret = false;
 
-		if (!$this->_inTransaction && $this->getAttribute(SiTech_DB_Proxy::ATTR_WRITEONLY) === false && !empty($this->_readConn)) {
+		if (!$this->_inTransaction && $this->getAttribute(SiTech_DB_Proxy::ATTR_WRITEONLY) !== true && !empty($this->_readConn)) {
 			list($type,) = explode($statement, ' ', 1);
 
 			switch ($type) {
