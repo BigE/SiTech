@@ -21,7 +21,7 @@
  * Description of Controller
  *
  * @author Eric Gach <eric@php-oop.net>
- * @copyright SiTech Group (c) 2008-2009
+ * @copyright SiTech Group (c) 2008-2011
  * @filesource
  * @package SiTech_Controller
  * @version $Id$
