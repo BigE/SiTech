@@ -1,7 +1,5 @@
 <?php
 /**
- * SiTech/DB/Proxy.php
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -15,26 +13,29 @@
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+
+namespace SiTech\DB;
+
+/**
+ * @see SiTech\DB
+ */
+require_once('SiTech/DB.php');
+
+/**
+ * This is a class that extends the base SiTech_DB class and adds a "proxy"
+ * ability. It will detect the type of query coming through and assign the right
+ * connection (reader or writer) to it.
  *
  * @author Eric Gach <eric@php-oop.net>
  * @copyright SiTech Group (c) 2008-2010
  * @filesource
  * @package SiTech_DB
  * @subpackage SiTech_DB_Proxy
+ * @todo Finish documentation
  * @version $Id$
  */
-
-/**
- * SiTech_DB_Proxy
- *
- * This is a class that extends the base SiTech_DB class and adds a "proxy"
- * ability. It will detect the type of query coming through and assign the right
- * connection (reader or writer) to it.
- *
- * @package SiTech_DB_Proxy
- * @todo Finish documentation
- */
-class SiTech_DB_Proxy extends SiTech_DB
+class Proxy extends \SiTech\DB
 {
 	const ATTR_WRITEONLY = 12345678900;
 
@@ -73,25 +74,25 @@ class SiTech_DB_Proxy extends SiTech_DB
 	 * @param array $options Options to pass to the connections.
 	 * @see SiTech_DB
 	 */
-	public function __construct(array $config, array $writers, array $readers = array(), $driver = 'SiTech_DB_Driver_MySQL', array $options = array())
+	public function __construct(array $config, array $writers, array $readers = array(), $driver = 'SiTech\DB\Driver\MySQL', array $options = array())
 	{
 		// If there are readers available, set one up.
 		if (!empty($readers)) {
-			$reader = $readers[mt_rand(0, (sizeof($readers) - 1))];
+			$reader = $readers[\mt_rand(0, (\sizeof($readers) - 1))];
 			$rconfig = $config;
-			$rconfig['dsn'] = sprintf($rconfig['dsn'], $reader);
-			$this->_readConn = new SiTech_DB($rconfig, $driver, $options);
+			$rconfig['dsn'] = \sprintf($rconfig['dsn'], $reader);
+			$this->_readConn = new \SiTech\DB($rconfig, $driver, $options);
 		}
 
 		if (empty($writers)) {
-			throw new SiTech_Exception('No writers specified. You must specify at least one writer to SiTech_DB_Proxy::__construct()');
+			throw new Exception('No writers specified. You must specify at least one writer to SiTech_DB_Proxy::__construct()');
 		}
 
 		// The writer will be the default if no readers are selected.
-		$writer = $writers[mt_rand(0, (sizeof($writers) - 1))];
+		$writer = $writers[\mt_rand(0, (\sizeof($writers) - 1))];
 		$wconfig = $config;
-		$wconfig['dsn'] = sprintf($wconfig['dsn'], $writer);
-		$this->_writeConn = new SiTech_DB($wconfig, $driver, $options);
+		$wconfig['dsn'] = \sprintf($wconfig['dsn'], $writer);
+		$this->_writeConn = new \SiTech\DB($wconfig, $driver, $options);
 	}
 
 	/**
@@ -161,7 +162,7 @@ class SiTech_DB_Proxy extends SiTech_DB
 	}
 
 	public function getAttribute($attribute) {
-		if ($attribute == SiTech_DB_Proxy::ATTR_WRITEONLY) {
+		if ($attribute == self::ATTR_WRITEONLY) {
 			return($this->_useWriteOnly);
 		} else {
 			return(array(
@@ -177,7 +178,7 @@ class SiTech_DB_Proxy extends SiTech_DB
 
 	public function inTransaction()
 	{
-		if (method_exists($this->_writeConn, 'inTransaction')) {
+		if (\method_exists($this->_writeConn, 'inTransaction')) {
 			return($this->_writeConn->inTransaction());
 		} else {
 			return($this->_inTransaction);
@@ -235,7 +236,7 @@ class SiTech_DB_Proxy extends SiTech_DB
 	 * @return array
 	 */
 	public function setAttribute($attribute, $value) {
-		if ($attribute == SiTech_DB_Proxy::ATTR_WRITEONLY) {
+		if ($attribute == self::ATTR_WRITEONLY) {
 			$ret = $this->_isWriteOnly;
 			$this->_useWriteOnly = (bool)$value;
 			return($ret);
@@ -268,8 +269,8 @@ class SiTech_DB_Proxy extends SiTech_DB
 	{
 		$ret = false;
 
-		if (!$this->_inTransaction && $this->getAttribute(SiTech_DB_Proxy::ATTR_WRITEONLY) !== true && !empty($this->_readConn)) {
-			list($type,) = explode($statement, ' ', 1);
+		if (!$this->_inTransaction && $this->getAttribute(self::ATTR_WRITEONLY) !== true && !empty($this->_readConn)) {
+			list($type,) = \explode($statement, ' ', 1);
 
 			switch ($type) {
 				case 'DESC':
@@ -286,3 +287,7 @@ class SiTech_DB_Proxy extends SiTech_DB
 		return($ret);
 	}
 }
+
+namespace SiTech\DB\Proxy;
+
+class Exception extends \SiTech\DB\Exception {}

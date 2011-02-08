@@ -1,15 +1,38 @@
 <?php
-/* 
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
+
+namespace SiTech\DB\Statement;
+
+/**
+ * @see SiTech\DB\Statement
+ */
+require_once('SiTech/DB/Statement.php');
 
 /**
  * This is made to write queries out instead of executing them.
  *
  * @author Eric Gach <eric@php-oop.net>
+ * @copyright SiTech Group © 2008-2011
+ * @filesource
+ * @package SiTech\DB
+ * @subpackage SiTech\DB\Statement
+ * @version $Id$
  */
-class SiTech_DB_Statement_FileWriter extends SiTech_DB_Statement
+class FileWriter extends \SiTech\DB\Statement
 {
 	/**
 	 *
@@ -38,13 +61,13 @@ class SiTech_DB_Statement_FileWriter extends SiTech_DB_Statement
 	{
 		$this->_conn = $conn;
 		if (!($this->_output = fopen($output, 'a'))) {
-			throw new SiTech_Exception('Failed to open output file \''.$output.'\' for writing');
+			throw new FileWriter\Exception('Failed to open output file \''.$output.'\' for writing');
 		}
 	}
 
 	public function  __destruct() {
 		if ($this->_output !== false)
-			fclose($this->_output);
+			\fclose($this->_output);
 	}
 
 	public function bindParam($parameter, &$variable, $data_type = null, $length = null, $driver_options = null) {
@@ -82,10 +105,10 @@ class SiTech_DB_Statement_FileWriter extends SiTech_DB_Statement
 
 		if (!empty($input_parameters)) {
 			foreach ($input_parameters as $key => $val) {
-				if (is_int($key)) {
-					$sql = preg_replace('#\?#', $this->_conn->quote($val), $sql, 1);
+				if (\is_int($key)) {
+					$sql = \preg_replace('#\?#', $this->_conn->quote($val), $sql, 1);
 				} else {
-					$sql = str_replace($key, $this->_conn->quote($val), $sql);
+					$sql = \str_replace($key, $this->_conn->quote($val), $sql);
 				}
 			}
 		}
@@ -94,7 +117,7 @@ class SiTech_DB_Statement_FileWriter extends SiTech_DB_Statement
 			foreach ($this->_boundParams as $key => $array) {
 				$value = $array['value'];
 
-				if (!is_null($param['type'])) {
+				if (!\is_null($param['type'])) {
 					$value = self::cast($value, $param['type']);
 				}
 
@@ -102,23 +125,27 @@ class SiTech_DB_Statement_FileWriter extends SiTech_DB_Statement
 					$value = self::truncate($value, $param['maxlen']);
 				}
 
-				if (is_int($key)) {
-					if (!is_null($value)) {
-						$sql = preg_replace('#\?#', $this->connection->quote($value), $sql, 1);
+				if (\is_int($key)) {
+					if (!\is_null($value)) {
+						$sql = \preg_replace('#\?#', $this->connection->quote($value), $sql, 1);
 					} else {
-						$sql = preg_replace('#\?#', 'NULL', $sql, 1);
+						$sql = \preg_replace('#\?#', 'NULL', $sql, 1);
 					}
 				} else {
-					if (!is_null($value)) {
-						$sql = str_replace($key, $this->connection->quote($value), $sql);
+					if (!\is_null($value)) {
+						$sql = \str_replace($key, $this->connection->quote($value), $sql);
 					} else {
-						$sql = str_replace($key, 'NULL', $sql);
+						$sql = \str_replace($key, 'NULL', $sql);
 					}
 				}
 			}
 		}
 
-		fwrite($this->_output, $sql.';'.PHP_EOL);
+		\fwrite($this->_output, $sql.';'.\PHP_EOL);
 		return(true);
 	}
 }
+
+namespace SiTech\DB\Statement\FileWriter;
+
+class Exception extends \SiTech\DB\Statement\Exception {}

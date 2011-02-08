@@ -1,7 +1,5 @@
 <?php
 /**
- * SiTech/DB.php
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -15,29 +13,23 @@
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+
+namespace SiTech;
+
+/**
+ * Database class that extends PDO and adds additional functionality. We also
+ * override a few of the PDO methods to, in our opinion, improve them.
  *
  * @author Eric Gach <eric@php-oop.net>
  * @copyright SiTech Group (c) 2008-2010
  * @filesource
- * @package SiTech
- * @subpackage SiTech_DB
+ * @package SiTech\DB
  * @version $Id$
  */
-
-/**
- * SiTech_DB
- *
- * Database class that extends PDO and adds additional functionality. We also
- * override a few of the PDO methods to, in our opinion, improve them.
- *
- * @package SiTech_DB
- */
-class SiTech_DB extends PDO
+class DB extends \PDO
 {
 	const ATTR_TRACK_QUERIES = 1234567890;
-
-	const DRIVER_MYSQL = 'SiTech_DB_Driver_MySQL';
-	const DRIVER_SQLITE = 'SiTech_DB_Driver_SQLite';
 
 	/**
 	 * Instance of class implementing SiTech_DB_Driver_Interface
@@ -62,8 +54,7 @@ class SiTech_DB extends PDO
 	public function __construct(array $config, $driver = 'SiTech_DB_Driver_MySQL', array $options = array())
 	{
 		if (empty($config['dsn'])) {
-			require_once('SiTech/Exception.php');
-			throw new SiTech_Exception('Missing required DSN from config');
+			throw new DB\Exception('Missing required DSN from config');
 		}
 
 		$username = empty($config['user'])? null : $config['user'];
@@ -73,12 +64,12 @@ class SiTech_DB extends PDO
 		/* This can be reset in user code, but we prefer exceptions */
 		$this->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-		if (!class_exists($driver)) {
-			require_once(str_replace('_', '/', $driver).'.php');
+		if (!\class_exists($driver)) {
+			require_once(\str_replace(array('_', '\\'), '/', $driver).'.php');
 		}
 
 		/* We use a singleton to simplify things. */
-		$this->driver = call_user_func_array(array($driver, 'singleton'), array($this));
+		$this->driver = \call_user_func_array(array($driver, 'singleton'), array($this));
 	}
 
 	public function delete($table, $where=null)
@@ -142,17 +133,17 @@ class SiTech_DB extends PDO
 	{
 		$ret = false;
 		if (
-			array_key_exists( 'driver', $config )
-			&& array_key_exists( 'host', $config )
-			&& array_key_exists( 'database', $config )
+			\array_key_exists( 'driver', $config )
+			&& \array_key_exists( 'host', $config )
+			&& \array_key_exists( 'database', $config )
 		) {
-			if ( array_key_exists( 'port', $config ) ) {
+			if ( \array_key_exists( 'port', $config ) ) {
 				$port = ';port=' . $config['port'];
 			}
 			else {
 				$port = '';
 			}
-			$ret = sprintf(
+			$ret = \sprintf(
 				'%s:host=%s%s;dbname=%s'
 				,$config['driver']
 				,$config['host']
@@ -183,7 +174,7 @@ class SiTech_DB extends PDO
 
 	public function getQueryCount()
 	{
-		return(sizeof($this->_queries));
+		return(\sizeof($this->_queries));
 	}
 
 	/**
@@ -206,13 +197,13 @@ class SiTech_DB extends PDO
 	public function insert($table, array $bind)
 	{
 		$vals = array();
-		$cols = array_keys($bind);
-		for ($i = 0; $i < sizeof($cols); $i++) {
+		$cols = \array_keys($bind);
+		for ($i = 0; $i < \sizeof($cols); $i++) {
 			$vals[$i] = '?';
 		}
 
-		$sql = 'INSERT INTO '.$table.' ('.implode(', ', $cols).') VALUES('.implode(', ', $vals).')';
-		if ($this->exec($sql, array_values($bind))) {
+		$sql = 'INSERT INTO '.$table.' ('.\implode(', ', $cols).') VALUES('.\implode(', ', $vals).')';
+		if ($this->exec($sql, \array_values($bind))) {
 			return($this->lastInsertId());
 		} else {
 			return(false);
@@ -249,7 +240,7 @@ class SiTech_DB extends PDO
 	 */
 	public function setStatementClass($class)
 	{
-		if ($class == 'SiTech_DB_Statement' || is_subclass_of($class, 'SiTech_DB_Statement')) {
+		if ($class == 'SiTech\DB\Statement' || \is_subclass_of($class, 'SiTech\DB\Statement')) {
 			$this->setAttribute(PDO::ATTR_STATEMENT_CLASS, array($class, array($this)));
 			return(true);
 		}
@@ -271,11 +262,16 @@ class SiTech_DB extends PDO
 			$values[] = $key . '=?';
 		}
 
-		$sql = 'UPDATE '.$table.' SET '.implode(', ', $values);
+		$sql = 'UPDATE '.$table.' SET '.\implode(', ', $values);
 		if (!empty($where)) {
 			$sql .= ' WHERE '.$where;
 		}
 
-		return($this->exec($sql, array_values($bind)));
+		return($this->exec($sql, \array_values($bind)));
 	}
 }
+
+namespace SiTech\DB;
+
+require_once('Exception.php');
+class Exception extends \SiTech\Exception {}

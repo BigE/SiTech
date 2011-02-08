@@ -15,6 +15,16 @@
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+
+namespace SiTech\DB\Privilege\Record;
+/**
+ * @see SiTech\DB\Privilege\Record\RecordAbstract
+ */
+require_once('SiTech/DB/Privilege/Record/Abstract.php');
+
+/**
+ * MySQL class for each privilege record that is retreived from MySQL.
  *
  * @author Eric Gach <eric@php-oop.net>
  * @copyright SiTech Group (c) 2008-2009
@@ -24,20 +34,7 @@
  * @todo Finish documentation for file
  * @version $Id$
  */
-
-/**
- * @see SiTech_DB_Privilege_Record_Abstract
- */
-require_once('SiTech/DB/Privilege/Record/Abstract.php');
-
-/**
- * SiTech_DB_Privilege_Record_MySQL - MySQL class for each privilege record that
- * is retreived from MySQL.
- *
- * @package SiTech_DB
- * @subpackage SiTech_DB_Privilege_Record
- */
-class SiTech_DB_Privilege_Record_MySQL extends SiTech_DB_Privilege_Record_Abstract
+class MySQL extends ARecord
 {
 	/**
 	 * ALL [PRIVILEGES]	Grants all privileges at specified access level except GRANT OPTION
@@ -196,7 +193,7 @@ class SiTech_DB_Privilege_Record_MySQL extends SiTech_DB_Privilege_Record_Abstra
 
 	public function __set($name, $val)
 	{
-		if (strstr($name, 'Grants for') === false) {
+		if (\strstr($name, 'Grants for') === false) {
 			/* not sure what this would be? */
 			return;
 		}
@@ -204,7 +201,7 @@ class SiTech_DB_Privilege_Record_MySQL extends SiTech_DB_Privilege_Record_Abstra
 		/* At this point, I don't forsee a need to match any further. We just get the
 		   permissions of the current user. */
 		$matches = array();
-		if (preg_match('#^GRANT (.*) ON ([^\s]+) TO \'([^\']*)\'@\'([^\']*)\'(.*)$#i', $val, $matches)) {
+		if (\preg_match('#^GRANT (.*) ON ([^\s]+) TO \'([^\']*)\'@\'([^\']*)\'(.*)$#i', $val, $matches)) {
 			$this->_parseTargets($matches[2]);
 			$this->_parsePrivs($matches[1]);
 			$this->user = $matches[3];
@@ -255,7 +252,7 @@ class SiTech_DB_Privilege_Record_MySQL extends SiTech_DB_Privilege_Record_Abstra
 
 	protected function _parsePrivs($privs)
 	{
-		$privs = explode(', ', $privs);
+		$privs = \explode(', ', $privs);
 
 		foreach ($privs as $priv) {
 			switch ($priv) {
@@ -270,10 +267,10 @@ class SiTech_DB_Privilege_Record_MySQL extends SiTech_DB_Privilege_Record_Abstra
 
 	protected function _parseTargets($targets)
 	{
-		$targets = explode(', ', $targets);
+		$targets = \explode(', ', $targets);
 
 		foreach ($targets as $target) {
-			if (preg_match('#^`?([^`]+|\*)`?\.`?([^`]+|\*)`?$#', $target, $matches)) {
+			if (\preg_match('#^`?([^`]+|\*)`?\.`?([^`]+|\*)`?$#', $target, $matches)) {
 				if ($matches[1] == '*') {
 					$this->database = true;
 				} else {

@@ -15,30 +15,29 @@
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
- *
- * @author Eric Gach <eric@php-oop.net>
- * @copyright SiTech Group (c) 2008-2009
- * @filesource
- * @package SiTech_DB
- * @subpackage SiTech_DB_Driver
- * @version $Id$
  */
 
-/**
- * @see SiTech_DB_Driver_Abstract
- */
-require_once('SiTech/DB/Driver/Abstract.php');
+namespace SiTech\DB\Driver;
+
+const DRIVER_SQLITE = 'SiTech\DB\Driver\SQLite';
 
 /**
- * SiTech_DB_Driver_SQLite - For use with SQLite databases.
- *
+ * @see SiTech\DB\Driver\Abstract
+ */
+require_once('SiTech/DB/Driver/ADriver.php');
+
+/**
  * Driver that contains special methods and instructions for SQLite database
  * connections.
  *
- * @package SiTech_DB
- * @subpackage SiTech_DB_Driver
+ * @author Eric Gach <eric@php-oop.net>
+ * @copyright SiTech Group (c) 2008-2011
+ * @filesource
+ * @package SiTech\DB
+ * @subpackage SiTech\DB\Driver
+ * @version $Id$
  */
-class SiTech_DB_Driver_SQLite extends SiTech_DB_Driver_Abstract
+class SQLite extends ADriver
 {
 	/**
 	 * Singleton method to get the instance of the driver.

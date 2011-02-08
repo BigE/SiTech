@@ -1,7 +1,5 @@
 <?php
 /**
- * SiTech/DB/Privilege/MySQL.php
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -15,36 +13,34 @@
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
- *
- * @author Eric Gach <eric@php-oop.net>
- * @copyright SiTech Group (c) 2008-2009
- * @filesource
- * @package SiTech_DB
- * @subpackage SiTech_DB_Privilege
- * @todo Finish documentation for file
- * @version $Id$
  */
 
+namespace SiTech\DB\Privilege;
+
 /**
- * @see SiTech_DB_Privilege_Abstract
+ * @see SiTech\DB\Privilege\PrivilegeAbstract
  */
 require_once('SiTech/DB/Privilege/Abstract.php');
 
 /**
- * @see SiTech_DB_Privilege_Record_MySQL
+ * @see SiTech\DB\Privilege\Record\MySQL
  */
 require_once('SiTech/DB/Privilege/Record/MySQL.php');
 
 /**
- * SiTech_DB_Privilege_MySQL - MySQL class for getting privileges from the mysql
- * table.
+ * MySQL class for getting privileges from the mysql table.
  *
- * @package SiTech_DB
- * @subpackage SiTech_DB_Privilege
+ * @author Eric Gach <eric@php-oop.net>
+ * @copyright SiTech Group (c) 2008-2011
+ * @filesource
+ * @package SiTech\DB
+ * @subpackage SiTech\DB\Privilege
+ * @todo Finish documentation for file
+ * @version $Id$
  */
-class SiTech_DB_Privilege_MySQL extends SiTech_DB_Privilege_Abstract
+class MySQL extends PrivilegeAbstract
 {
-	public function __construct(SiTech_DB $pdo, $user=null, $host=null)
+	public function __construct(\SiTech\DB $pdo, $user=null, $host=null)
 	{
 		parent::__construct($pdo);
 		$stmnt = $this->pdo->prepare('SHOW GRANTS');

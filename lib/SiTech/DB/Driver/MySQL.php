@@ -1,7 +1,5 @@
 <?php
 /**
- * SiTech/DB/Driver/MySQL.php
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -15,19 +13,16 @@
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
- *
- * @author Eric Gach <eric@php-oop.net>
- * @copyright SiTech Group (c) 2008-2010
- * @filesource
- * @package SiTech_DB
- * @subpackage SiTech_DB_Driver
- * @version $Id$
  */
 
+namespace SiTech\DB\Driver;
+
+const DRIVER_MYSQL = 'SiTech\DB\Driver\MySQL';
+
 /**
- * @see SiTech_DB_Driver_Abstract
+ * @see SiTech\DB\Driver\Abstract
  */
-require_once('SiTech/DB/Driver/Abstract.php');
+require_once('SiTech/DB/Driver/ADriver.php');
 
 /**
  * SiTech_DB_Driver_MySQL - For use with MySQL databases.
@@ -35,15 +30,19 @@ require_once('SiTech/DB/Driver/Abstract.php');
  * Driver that contains special methods and instructions for MySQL database
  * connections.
  *
- * @package SiTech_DB
- * @subpackage SiTech_DB_Driver
+ * @author Eric Gach <eric@php-oop.net>
+ * @copyright SiTech Group (c) 2008-2011
+ * @filesource
+ * @package SiTech\DB
+ * @subpackage SiTech\DB\Driver
+ * @version $Id$
  */
-class SiTech_DB_Driver_MySQL extends SiTech_DB_Driver_Abstract
+class MySQL extends ADriver
 {
 	public function getPrivileges($user=null, $host=null)
 	{
 		require_once('SiTech/DB/Privilege/MySQL.php');
-		return(new SiTech_DB_Privilege_MySQL($this->pdo));
+		return(new \SiTech\DB\Privilege\MySQL($this->pdo));
 	}
 
 	/**
