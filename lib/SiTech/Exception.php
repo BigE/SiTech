@@ -1,7 +1,5 @@
 <?php
 /**
- * SiTech/Exception.php
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -15,26 +13,23 @@
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
- *
- * @author Eric Gach <eric@php-oop.net>
- * @copyright SiTech Group (c) 2008-2009
- * @filesource
- * @package SiTech
- * @subpackage SiTech_Exception
- * @version $Id$
  */
 
+namespace SiTech;
+
  /**
-  * SiTech_Exception
-  *
   * This class extends the base Exception class to add minor improvments to make
   * it easier to use. This means that exceptions will now take a formatted string
   * just like printf/sprintf will.
-  *
-  * @package SiTech_Exception
+ *
+ * @author Eric Gach <eric@php-oop.net>
+ * @copyright SiTech Group (c) 2008-2011
+ * @filesource
+ * @subpackage SiTech\Exception
+ * @version $Id$
   * @see http://php.net/exception
   */
-class SiTech_Exception extends Exception
+class Exception extends \Exception
 {
 	/**
 	 * This constructor takes a formatted string and arguments. It uses vsprintf
@@ -44,9 +39,10 @@ class SiTech_Exception extends Exception
 	 *                    for documentation of formatting.
 	 * @param array $args Array of arguments to pass for formatting, like sprintf.
 	 * @param int $code Error code to pass to internal Exception class.
+	 * @param Exception $previous Previous exception encountered in the stack.
 	 */
-	public function __construct($msg, $args = array(), $code = 0)
+	public function __construct($msg, $args = array(), $code = 0, \Exception $previous = null)
 	{
-		parent::__construct(vsprintf($msg, $args), $code);
+		parent::__construct(vsprintf($msg, $args), $code, $previous);
 	}
 }
