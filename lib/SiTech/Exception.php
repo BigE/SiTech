@@ -27,8 +27,8 @@ namespace SiTech;
  * @filesource
  * @subpackage SiTech\Exception
  * @version $Id$
-  * @see http://php.net/exception
-  */
+ * @see http://php.net/exception
+ */
 class Exception extends \Exception
 {
 	/**

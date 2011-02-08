@@ -1,7 +1,5 @@
 <?php
 /**
- * SiTech/Controller/Abstract.php
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -15,20 +13,20 @@
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
- *
- * @author Eric Gach <eric@php-oop.net>
- * @copyright SiTech Group (c) 2008-2009
- * @filesource
- * @package SiTech_Controller
- * @version $Id$
  */
+
+namespace SiTech\Controller;
 
 /**
  * Description of Abstract
  *
- * @package SiTech_Controller
+ * @author Eric Gach <eric@php-oop.net>
+ * @copyright SiTech Group © 2008-2011
+ * @filesource
+ * @package SiTech\Controller
+ * @version $Id$
  */
-abstract class SiTech_Controller_Abstract
+abstract class AbstractController
 {
 	/**
 	 * Internal use for the action of the controller.
@@ -54,6 +52,12 @@ abstract class SiTech_Controller_Abstract
 	 */
 	protected $_args;
 
+	/**
+	 * Names of components to load when the controller is initalized. These
+	 * should exist inside of the controllers/components folder.
+	 *
+	 * @var array
+	 */
 	protected $_components = array();
 
 	/**
@@ -101,24 +105,34 @@ abstract class SiTech_Controller_Abstract
 	 */
 	protected $_view;
 
-	public function __construct(SiTech_Uri $uri)
+	/**
+	 * This is the guts of the controller. Once here, we do all the processing
+	 * and setup needed. Once that is complete, we call the action specified
+	 * and then display the template for that action. By default we look at
+	 * application/views/<controller>/<action>.tpl but this can be overriden
+	 * by returning false or using _display()
+	 *
+	 * @param SiTech_Uri $uri
+	 * @see _display
+	 */
+	public function __construct(\SiTech\Uri $uri)
 	{
 		$this->_uri = $uri;
 		
 		$this->_action = $this->_uri->getAction(true);
 
-		$this->_args = explode('/', $this->_uri->getPath(SiTech_Uri::FLAG_REWRITE | SiTech_Uri::FLAG_LTRIM | SiTech_Uri::FLAG_CONTROLLER | SiTech_Uri::FLAG_ACTION));
+		$this->_args = \explode('/', $this->_uri->getPath(\SiTech\Uri\FLAG_REWRITE | \SiTech\Uri\FLAG_LTRIM | \SiTech\Uri\FLAG_CONTROLLER | \SiTech\Uri\FLAG_ACTION));
 
-		if (isset($this->_argMap[$this->_action]) && is_array($this->_argMap[$this->_action])) {
+		if (isset($this->_argMap[$this->_action]) && \is_array($this->_argMap[$this->_action])) {
 			$fill = false;
 			foreach ($this->_argMap[$this->_action] as $k => $arg) {
-				if (is_array($arg)) {
+				if (\is_array($arg)) {
 					$tmp = $arg;
 					$arg = $tmp['name'];
 					$fill = (isset($tmp['fill']) && $tmp['fill'] === true);
 					if (isset($tmp['qsa'])) {
 						foreach ($tmp['qsa'] as $getK => $getV) {
-							if (is_numeric($getK)) $getK = $getV;
+							if (\is_numeric($getK)) $getK = $getV;
 							$this->_argMap[$getK] = (isset($_GET[$getV])? $_GET[$getV] : null);
 						}
 					}
@@ -129,7 +143,7 @@ abstract class SiTech_Controller_Abstract
 
 				if ($fill) {
 					foreach ($this->_args as $argK => $argV) {
-						if (is_numeric($argK) && $argK > $k) {
+						if (\is_numeric($argK) && $argK > $k) {
 							$this->_args[$arg] .= '/'.$argV;
 						}
 					}
@@ -139,24 +153,25 @@ abstract class SiTech_Controller_Abstract
 			}
 		}
 
-		// TODO: How reliable is this method?
-		if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') { // || isset($_POST['xhr']) || isset($_GET['xhr'])) {
+		if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && \strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
 			$this->_isXHR = true;
 		}
 
 		// Load models
 		if (!empty($this->_models)) {
-			array_walk($this->_models, array('SiTech_Loader', 'loadModel'));
+			require_once('SiTech/Loader.php');
+			\array_walk($this->_models, array('\SiTech\Loader', 'loadModel'));
 		}
 
 		// Load components
 		if (!empty($this->_components)) {
 			foreach ($this->_components as $component) {
-				if (class_exists($component, false)) continue;
+				if (\class_exists($component, false)) continue;
 
-				require_once(SITECH_APP_PATH.'/controllers/components/'.$component.'.php');
-				if (!class_exists($component, false)) {
-					throw new SiTech_Exception('Failed to load component %s', array($component));
+				require_once(\SITECH_APP_PATH.'/controllers/components/'.$component.'.php');
+				if (!\class_exists($component, false)) {
+					require_once('SiTech/Controller.php');
+					throw new Exception('Failed to load component %s', array($component));
 				}
 
 				$this->$component = new $component($this);
@@ -167,7 +182,8 @@ abstract class SiTech_Controller_Abstract
 		 * If the init() doesn't define its own view, set a generic view.
 		 */
 		if (empty($this->_view)) {
-			$this->_view = new SiTech_Template(SITECH_APP_PATH.DIRECTORY_SEPARATOR.'views');
+			require_once('../Template.php');
+			$this->_view = new \SiTech_Template(\SITECH_APP_PATH.\DIRECTORY_SEPARATOR.'views');
 		}
 		$this->_view->assign('_isXHR', $this->_isXHR);
 
@@ -179,8 +195,9 @@ abstract class SiTech_Controller_Abstract
 		 * not found) so we want to relay this to our application for a chance
 		 * to handle the error.
 		 */
-		if (!method_exists($this, $this->_action)) {
-			throw new SiTech_Exception('Method '.get_class($this).'::'.$this->_action.'() not found', null, 404);
+		if (!\method_exists($this, $this->_action)) {
+			require_once('SiTech/Controller.php');
+			throw new Exception('Method '.\get_class($this).'::'.$this->_action.'() not found', null, 404);
 		}
 
 		// Call the action for the controller.
@@ -191,7 +208,7 @@ abstract class SiTech_Controller_Abstract
 		 * default to using $controller/$action.tpl
 		 */
 		if ($this->_display !== true && $ret !== false) {
-			$this->_display($this->_uri->getController().DIRECTORY_SEPARATOR.$this->_action.'.tpl');
+			$this->_display($this->_uri->getController().\DIRECTORY_SEPARATOR.$this->_action.'.tpl');
 		}
 	}
 
@@ -220,6 +237,18 @@ abstract class SiTech_Controller_Abstract
 		$this->_view->display($page, $type);
 	}
 
+	/**
+	 * Create an array for paging results. This will return an array of all pages
+	 * with a url to each and a "prev" and "next" value set to true/false if
+	 * there is a prev/next page. Pass [page] into the link where the page
+	 * number should be in the URL.
+	 *
+	 * @param int $totalRecords
+	 * @param int $limit
+	 * @param string $link
+	 * @param int $current
+	 * @return array
+	 */
 	protected function _paging($totalRecords, $limit, $link, $current = 1)
 	{
 		$current = (int)$current;
@@ -231,7 +260,7 @@ abstract class SiTech_Controller_Abstract
 		do {
 			$pages[] = array(
 				'current' => ($current === $i),
-				'link'    => str_replace('[page]', $i, $link),
+				'link'    => \str_replace('[page]', $i, $link),
 				'next'    => ((($i * $limit) >= $totalRecords)? false : $i + 1),
 				'number'  => $i,
 				'prev'    => (($i > 1)? true : false)

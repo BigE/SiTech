@@ -1,7 +1,5 @@
 <?php
 /**
- * SiTech/Controller.php
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -17,16 +15,18 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+namespace SiTech;
+
 /**
  * Description of Controller
  *
  * @author Eric Gach <eric@php-oop.net>
  * @copyright SiTech Group (c) 2008-2011
  * @filesource
- * @package SiTech_Controller
+ * @package SiTech\Controller
  * @version $Id$
  */
-class SiTech_Controller
+class Controller
 {
 	protected static $_routes = array();
 
@@ -39,7 +39,7 @@ class SiTech_Controller
 	 */
 	static public function addRoute($path, $controller, $action)
 	{
-		if (is_array($path)) {
+		if (\is_array($path)) {
 			foreach ($path as $item) {
 				self::$_routes[$item] = array($controller, $action);
 			}
@@ -55,7 +55,7 @@ class SiTech_Controller
 	 *
 	 * @param SiTech_Uri $uri
 	 */
-	static public function dispatch(SiTech_Uri $uri)
+	static public function dispatch(\SiTech\Uri $uri)
 	{
 		$rewrite = $uri->isRewrite();
 
@@ -66,7 +66,7 @@ class SiTech_Controller
 		}
 
 		foreach (self::$_routes as $regex => $array) {
-			if (preg_match("#^($regex)$#", $path, $parts)) {
+			if (\preg_match("#^($regex)$#", $path, $parts)) {
 				$uri->setController($array[0]);
 				$uri->setAction($array[1]);
 				if (!empty($parts[2])) {
@@ -82,19 +82,19 @@ class SiTech_Controller
 
 		$controller = $uri->getController();
 		$action = $uri->getAction();
-		$parts = explode('/', $uri->getPath(true));
+		$parts = \explode('/', $uri->getPath(true));
 		if (isset($parts[0])) {
 			$path = '/'.$parts[0];
 		} else {
 			$path = '';
 		}
 
-		if (sizeof($parts) > 1) {
+		if (\sizeof($parts) > 1) {
 			$i = 1;
-			while (is_dir(SITECH_APP_PATH.DIRECTORY_SEPARATOR.'controllers'.DIRECTORY_SEPARATOR.$path)) {
-				$path .= DIRECTORY_SEPARATOR.$parts[$i];
+			while (\is_dir(\SITECH_APP_PATH.\DIRECTORY_SEPARATOR.'controllers'.\DIRECTORY_SEPARATOR.$path)) {
+				$path .= \DIRECTORY_SEPARATOR.$parts[$i];
 				if (!empty($action) && $parts[$i] == $action) unset($action);
-				if (!$rewrite) $controller .= DIRECTORY_SEPARATOR.$parts[$i];
+				if (!$rewrite) $controller .= \DIRECTORY_SEPARATOR.$parts[$i];
 				// This has to be incremented here no matter what
 				$i++;
 			}
@@ -104,7 +104,7 @@ class SiTech_Controller
 			} else {
 				if (!$rewrite) $action = $parts[$i];
 				$path .= '/'.$parts[$i];
-				for (++$i; $i < sizeof($parts); $i++) {
+				for (++$i; $i < \sizeof($parts); $i++) {
 					$path .= '/'.$parts[$i];
 				}
 			}
@@ -117,6 +117,12 @@ class SiTech_Controller
 		$uri->setController($controller);
 		$uri->setAction($action);
 		$uri->setPath($path);
-		$obj = SiTech_Loader::loadController($controller, $uri);
+		require_once('Loader.php');
+		$obj = SiTech\Loader::loadController($controller, $uri);
 	}
 }
+
+namespace SiTech\Controller;
+
+require_once('Exception.php');
+class Exception extends \SiTech\Exception {}

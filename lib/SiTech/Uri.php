@@ -29,10 +29,6 @@ namespace SiTech;
  */
 class Uri
 {
-	const FLAG_LTRIM = 1;
-	const FLAG_CONTROLLER = 2;
-	const FLAG_ACTION = 4;
-	const FLAG_REWRITE = 8;
 
 	protected $_action;
 	protected $_controller;
@@ -243,6 +239,11 @@ class Uri
 }
 
 namespace SiTech\Uri;
+
+const FLAG_LTRIM = 1;
+const FLAG_CONTROLLER = 2;
+const FLAG_ACTION = 4;
+const FLAG_REWRITE = 8;
 
 require_once('Exception.php');
 class Exception extends \SiTech\Exception {}
