@@ -56,7 +56,6 @@ class Loader
 	{
 		if (empty($file)) {
 			if (!\defined('SITECH_APP_PATH')) {
-				require_once('SiTech/Exception.php');
 				throw new Loader\Exception('SITECH_APP_PATH not defined. Unable to detect path to find bootstrap file');
 			} else {
 				$file = \SITECH_APP_PATH.'/bootstrap.php';
@@ -64,7 +63,6 @@ class Loader
 		}
 
 		if (!\is_readable($file)) {
-			require_once('SiTech/Exception.php');
 			throw new Loader\Exception('Unable to load bootsrap file "%s"', array($file));
 		}
 
@@ -89,7 +87,6 @@ class Loader
 		include_once($file);
 
 		if (!\class_exists($class, false) && !\interface_exists($class, false)) {
-			require_once('SiTech/Exception.php');
 			throw new Loader\Exception('The class "%s" failed to load', array($class));
 		}
 	}
@@ -122,12 +119,10 @@ class Loader
 		if (\is_readable(\SITECH_APP_PATH.'/controllers/'.$name.'.php')) {
 			include_once(\SITECH_APP_PATH.'/controllers/'.$name.'.php');
 		} else {
-			require_once('SiTech/Exception.php');
 			throw new Loader\Exception('The controller "%s" failed to load', array($class), 404);
 		}
 
 		if (!\class_exists($class, false)) {
-			require_once('SiTech/Exception.php');
 			throw new Loader\Exception('The controller "%s" failed to load', array($class), 500);
 		}
 
@@ -160,12 +155,10 @@ class Loader
 		if (\is_readable(\SITECH_APP_PATH.'/models/'.$name.'.php')) {
 			include_once(\SITECH_APP_PATH.'/models/'.$name.'.php');
 		} else {
-			require_once('SiTech/Exception.php');
 			throw new Loader\Exception('The model "%s" failed to load', array($class));
 		}
 
 		if (!\class_exists($class, false)) {
-			require_once('SiTech/Exception.php');
 			throw new Loader\Exception('The model "%s" failed to load', array($class));
 		}
 	}
@@ -182,14 +175,12 @@ class Loader
 	public static function registerAutoload($class = 'SiTech_Loader', $enabled = true)
 	{
 		if (!\function_exists('spl_autoload_register')) {
-			require_once 'SiTech/Exception.php';
 			throw new Loader\Exception('spl_autoload does not exist in this PHP installation');
 		}
 
 		self::loadClass($class);
 		$methods = \get_class_methods($class);
 		if (!\in_array('autoload', (array)$methods)) {
-			require_once 'SiTech/Exception.php';
 			throw new Loader\Exception('The class "%s" does not have an autoload() method', array($class));
 		}
 
