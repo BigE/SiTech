@@ -1,7 +1,5 @@
 <?php
 /**
- * SiTech/ConfigParser.php
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -15,25 +13,24 @@
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
- *
- * @author Eric Gach <eric@php-oop.net>
- * @copyright SiTech Group (c) 2008-2009
- * @filesource
- * @package SiTech
- * @subpackage SiTech_ConfigParser
- * @version $Id$
  */
 
+namespace SiTech;
+
 /**
- * SiTech_ConfigParser - Configuration management class.
+ * SiTech/ConfigParser - Configuration management class.
  *
  * This configuration class was closely modeled after the ConfigParser module
  * that is found in Python. I found it to be a very useful class and decided to
  * port the functionality over to this library.
  *
+ * @author Eric Gach <eric@php-oop.net>
+ * @copyright SiTech Group © 2008-2011
+ * @filesource
  * @package SiTech_ConfigParser
+ * @version $Id$
  */
-class SiTech_ConfigParser
+class ConfigParser
 {
 	const ATTR_STRICT = 0;
 
@@ -47,12 +44,6 @@ class SiTech_ConfigParser
 
 	const ERRMODE_EXCEPTION = 2;
 
-	const HANDLER_ARRAY = 'SiTech_ConfigParser_Handler_Array';
-
-	const HANDLER_INI = 'SiTech_ConfigParser_Handler_INI';
-
-	const HANDLER_XML = 'SiTech_ConfigParser_Handler_XML';
-
 	protected $_attributes = array();
 
 	protected $_config = array();
@@ -60,7 +51,7 @@ class SiTech_ConfigParser
 	/**
 	 * Constructor for config parser.
 	 *
-	 * @param array $options Array of SiTech_ConfigParser::ATTR_* options to set.
+	 * @param array $options Array of self::ATTR_* options to set.
 	 */
 	protected function __construct(array $options = array())
 	{
@@ -140,7 +131,7 @@ class SiTech_ConfigParser
 	/**
 	 * Get the value for an attribute of the config parser.
 	 *
-	 * @param int $attr SiTech_ConfigParser::ATTR_* constant
+	 * @param int $attr self::ATTR_* constant
 	 * @return mixed
 	 */
 	public function getAttribute($attr)
@@ -240,7 +231,7 @@ class SiTech_ConfigParser
 	 * Load a new instance of the config parser. All options should be passed
 	 * in through the array.
 	 *
-	 * @param array $options Array of SiTech_ConfigParser::ATTR_* options to set.
+	 * @param array $options Array of self::ATTR_* options to set.
 	 * @return SiTech_ConfigParser A new config parser instance.
 	 */
 	static public function load(array $options = array())
@@ -400,7 +391,7 @@ class SiTech_ConfigParser
 	/**
 	 * Set an attribute for the configuration parser.
 	 *
-	 * @param int $attr SiTech_ConfigParser::ATTR_* constant
+	 * @param int $attr self::ATTR_* constant
 	 * @param mixed $value
 	 * @return bool
 	 */
@@ -410,15 +401,15 @@ class SiTech_ConfigParser
 
 		switch ($attr)
 		{
-			case SiTech_ConfigParser::ATTR_STRICT:
+			case self::ATTR_STRICT:
 				$this->_attributes[$attr] = (bool)$value;
 				break;
 
 			case self::ATTR_HANDLER:
-				if (!is_object($value)) {
+				if (!\is_object($value)) {
 					$this->_handleError('Failed to set config handler. The handler must be an object');
 					$ret = false;
-				} elseif (!($value instanceof SiTech_ConfigParser_Handler_Interface)) {
+				} elseif (!($value instanceof \SiTech\ConfigParser\Handler\HandlerInterface)) {
 					$this->_handleError('Failed to set config handler. The handler must implement SiTech_ConfigParser_Handler_Interface');
 					$ret = false;
 				} else {
@@ -426,11 +417,11 @@ class SiTech_ConfigParser
 				}
 				break;
 
-			case SiTech_ConfigParser::ATTR_ERRMODE:
+			case self::ATTR_ERRMODE:
 				switch ($value) {
-					case SiTech_ConfigParser::ERRMODE_EXCEPTION:
-					case SiTech_ConfigParser::ERRMODE_SILENT:
-					case SiTech_ConfigParser::ERRMODE_WARNING:
+					case self::ERRMODE_EXCEPTION:
+					case self::ERRMODE_SILENT:
+					case self::ERRMODE_WARNING:
 						$this->_attributes[$attr] = $value;
 						break;
 
@@ -468,12 +459,12 @@ class SiTech_ConfigParser
 	 */
 	protected function _handleError($string, array $array = array())
 	{
-		if ($this->getAttribute(SiTech_ConfigParser::ATTR_ERRMODE) === SiTech_ConfigParser::ERRMODE_EXCEPTION) {
-			throw new SiTech_Exception($string, $array);
-		} elseif ($this->getAttribute(SiTech_ConfigParser::ATTR_ERRMODE) === SiTech_ConfigParser::ERRMODE_WARNING) {
-			trigger_error(vsprintf($string, $array), E_USER_WARNING);
+		if ($this->getAttribute(self::ATTR_ERRMODE) === self::ERRMODE_EXCEPTION) {
+			throw new Exception($string, $array);
+		} elseif ($this->getAttribute(self::ATTR_ERRMODE) === self::ERRMODE_WARNING) {
+			\trigger_error(\vsprintf($string, $array), \E_USER_WARNING);
 		}
 
-		$this->_error = vsprintf($string, $array);
+		$this->_error = \vsprintf($string, $array);
 	}
 }

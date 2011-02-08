@@ -1,7 +1,5 @@
 <?php
 /**
- * SiTech/ConfigParser/Handler/INI.php
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -15,14 +13,12 @@
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
- *
- * @author Eric Gach <eric@php-oop.net>
- * @copyright SiTech Group (c) 2008-2009
- * @filesource
- * @package SiTech_ConfigParser
- * @subpackage SiTech_ConfigParser_Handler
- * @version $Id$
  */
+
+namespace SiTech\ConfigParser\Handler;
+
+// Define the handler
+const HANDLER_INI = 'SiTech\ConfigParser\Handler\INI';
 
 /**
  * @see SiTech_ConfigParser_Handler_Interface
@@ -30,13 +26,17 @@
 require_once('SiTech/ConfigParser/Handler/Interface.php');
 
 /**
- * SiTech_ConfigParser_Handler_INI - Reads and writes configuration files that
+ * SiTech\ConfigParser\Handler\INI - Reads and writes configuration files that
  * are in INI format.
  *
- * @package SiTech_ConfigParser
- * @subpackage SiTech_ConfigParser_Handler
+ * @author Eric Gach <eric@php-oop.net>
+ * @copyright SiTech Group © 2008-2011
+ * @filesource
+ * @package SiTech\ConfigParser
+ * @subpackage SiTech\ConfigParser\Handler
+ * @version $Id$
  */
-class SiTech_ConfigParser_Handler_INI implements SiTech_ConfigParser_Handler_Interface
+class INI implements IFace
 {
 	/**
 	 * Read the specified file(s) into the configuration. Return value
@@ -47,8 +47,8 @@ class SiTech_ConfigParser_Handler_INI implements SiTech_ConfigParser_Handler_Int
 	 */
 	public function read($file)
 	{
-		if (file_exists($file)) {
-			$config = parse_ini_file($file, true);
+		if (\file_exists($file)) {
+			$config = \parse_ini_file($file, true);
 			$ret = true;
 		} else {
 			$config = array();
@@ -57,8 +57,13 @@ class SiTech_ConfigParser_Handler_INI implements SiTech_ConfigParser_Handler_Int
 
 		/* now loop through the config options and unserialize items */
 		foreach ($config as $section => $options) {
-			foreach ($options as $option => $value) {
-				$config[$section][$option] = urldecode($value);
+			foreach ($options as $option => &$value) {
+				$value = \stripslashes($value);
+				if (\substr($value, -2) === '==') {
+					if (\base64_decode($value, true) !== false) {
+						$value = \base64_decode($value);
+					}
+				}
 			}
 		}
 
@@ -73,21 +78,21 @@ class SiTech_ConfigParser_Handler_INI implements SiTech_ConfigParser_Handler_Int
 	 */
 	public function write($file, $config)
 	{
-		if ((file_exists($file) && is_writeable($file)) || (!file_exists($file) && is_writeable(dirname($file)))) {
-			$fp = @fopen($file, 'w');
+		if ((\file_exists($file) && \is_writeable($file)) || (!\file_exists($file) && \is_writeable(\dirname($file)))) {
+			$fp = @\fopen($file, 'w');
 			if ($fp !== false) {
 				foreach ($config as $section => $options) {
-					@fwrite($fp, "[$section]\n");
+					@\fwrite($fp, "[$section]\n");
 					foreach ($options as $option => $value) {
-						if (is_array($value) || is_object($value)) {
-							$value = serialize($value);
+						if (\is_array($value) || \is_object($value)) {
+							$value = \base64_encode(\serialize($value));
 						}
 
-						$value = urlencode($value);
-						@fwrite($fp, "$option=$value\n");
+						$value = addslashes($value);
+						@\fwrite($fp, "$option=\"$value\"\n");
 					}
 				}
-				@fclose($fp);
+				@\fclose($fp);
 			} else {
 				return(array(false, 'Failed to open config file "'.$file.'" for writing'));
 			}
