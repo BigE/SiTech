@@ -15,15 +15,9 @@
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
- *
- * @author Eric Gach <eric@php-oop.net>
- * @copyright SiTech Group (c) 2008-2009
- * @filesource
- * @package SiTech_Console
- * @subpackage SiTech_Console_GetOpts
- * @todo Create documentation for all methods, variables and constants.
- * @version $Id$
  */
+
+namespace SiTech\Console;
 
 /**
  * This class is a replacement for the getopts() function. It adds a lot of
@@ -31,32 +25,74 @@
  * will automatically parse -h or --help and -v or --version to output the
  * proper information.
  *
- * @package SiTech_Console_GetOpts
+ * @author Eric Gach <eric@php-oop.net>
+ * @copyright SiTech Group (c) 2008-2011
+ * @filesource
+ * @package SiTech\Console
+ * @version $Id$
  */
-class SiTech_Console_GetOpts
+class GetOpts
 {
 	const TYPE_STRING = 1;
 
 	const TYPE_INT = 2;
 
 	const TYPE_FLOAT = 3;
-	
+
+	/**
+	 * Long options that we can parse out when checking input.
+	 *
+	 * @var array
+	 */
 	protected $long = array();
 
+	/**
+	 * Parameters that will be parsed out when checking input.
+	 *
+	 * @var array
+	 */
 	protected $params = array();
-	
+
+	/**
+	 * Program name of the current program.
+	 *
+	 * @var string
+	 */
 	protected $program;
 
+	/**
+	 * Options that the class looks for when checking input.
+	 *
+	 * @var array
+	 */
 	protected $options = array();
 
+	/**
+	 * Short options that will be parsed out when checking input.
+	 *
+	 * @var array
+	 */
 	protected $short = array();
 
+	/**
+	 * Current version of the program.
+	 *
+	 * @var string
+	 */
 	protected $version;
 
+	/**
+	 * Usage of the program.
+	 *
+	 * @var string
+	 */
 	protected $usage;
 
 	/**
-	 * Constructor.
+	 * Here you can specify the specific usage, the version and the description
+	 * for the help output.
+	 *
+	 * @see setUsage,setVersion
 	 */
 	public function __construct($usage = '%prog [options]', $version = null, $description = null)
 	{
@@ -66,6 +102,14 @@ class SiTech_Console_GetOpts
 		$this->setVersion($version);
 	}
 
+	/**
+	 * Add an option to the list. You can use the following settings:
+	 * 	short:	Short tag for option, a single letter.
+	 * 	long:	Long tag for option.
+	 * 	desc:	Description to show when help is called.
+	 *
+	 * @param array $option
+	 */
 	public function addOption(array $option)
 	{
 		if (!isset($option['short']) && !isset($option['long'])) {
@@ -81,6 +125,13 @@ class SiTech_Console_GetOpts
 		}
 	}
 
+	/**
+	 * Display the help message from the options that have been added to the
+	 * class. This will also display the usage. If exit is true, the program
+	 * will automatically exit after the help message is displayed.
+	 *
+	 * @param bool $exit
+	 */
 	public function displayHelp($exit = true)
 	{
 		$this->displayUsage(false);
@@ -108,6 +159,13 @@ class SiTech_Console_GetOpts
 		if ($exit) exit;
 	}
 
+	/**
+	 * Display the usage for the program. This is shorter than the help and just
+	 * shows how to use the program, none of the options are displayed. If exit
+	 * is true, the program will exit automatically after the usage is displayed.
+	 *
+	 * @param bool $exit
+	 */
 	public function displayUsage($exit = true)
 	{
 		echo "Usage: $this->usage";
@@ -122,12 +180,26 @@ class SiTech_Console_GetOpts
 		if ($exit) exit;
 	}
 
+	/**
+	 * Display the current set version of the program. If exit is true, the
+	 * program will exit automatically after the version is displayed.
+	 *
+	 * @param bool $exit
+	 */
 	public function displayVersion($exit = true)
 	{
 		echo $this->version,"\n";
 		if ($exit) exit;
 	}
 
+	/**
+	 * Parse the options sent to the program. This will parse out arguments,
+	 * values, and parameters. It will return an array of each item that is
+	 * set, and if applicable the value that was set for it. This does no value
+	 * checking before returning.
+	 *
+	 * @return array
+	 */
 	public function parse()
 	{
 		$options = array();
@@ -199,34 +271,56 @@ class SiTech_Console_GetOpts
 		return($options);
 	}
 
+	/**
+	 * Set the program usage. Using %prog in the string will show the program
+	 * name in the string.
+	 *
+	 * @param string $usage
+	 */
 	public function setUsage($usage)
 	{
 		$this->usage = rtrim(str_replace('%prog', $this->program, $usage));
 	}
 
+	/**
+	 * Set the version string for the current program.
+	 *
+	 * @param string $version
+	 */
 	public function setVersion($version)
 	{
 		$this->version = $version;
 	}
 
+	/**
+	 * Internal test to see if the option is a long option.
+	 *
+	 * @param string $arg
+	 * @return bool
+	 */
 	protected function _isLongOpt($arg)
 	{
-		if (substr($arg, 0, 2) == '--') {
-			return(true);
-		} else {
-			return(false);
-		}
+		return(substr($arg, 0, 2) == '--');
 	}
 
+	/**
+	 * Internal test to see if the option is a short option.
+	 *
+	 * @param string $arg
+	 * @return bool
+	 */
 	protected function _isShortOpt($arg)
 	{
-		if ($arg[0] == '-' && $arg[1] != '-') {
-			return(true);
-		} else {
-			return(false);
-		}
+		return($arg[0] == '-' && $arg[1] != '-');
 	}
 
+	/**
+	 * Get class variables. Currently the only one that can be retreived is the
+	 * program variable.
+	 *
+	 * @param string $name
+	 * @return string
+	 */
 	public function __get($name)
 	{
 		switch ($name) {
