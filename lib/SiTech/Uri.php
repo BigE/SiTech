@@ -1,7 +1,5 @@
 <?php
 /**
- * SiTech/Uri.php
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -15,22 +13,21 @@
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
- *
- * @author Eric Gach <eric@php-oop.net>
- * @copyright SiTech Group (c) 2009
- * @filesource
- * @package SiTech
- * @subpackage SiTech_Uri
- * @todo Finish documentation of SiTech_Uri class.
- * @version $Id$
  */
+
+namespace SiTech;
 
 /**
  * SiTech_Uri
  *
- * @package SiTech_Uri
+ * @author Eric Gach <eric@php-oop.net>
+ * @copyright SiTech Group (c) 2009
+ * @filesource
+ * @package SiTech\Uri
+ * @todo Finish documentation of SiTech_Uri class.
+ * @version $Id$
  */
-class SiTech_Uri
+class Uri
 {
 	const FLAG_LTRIM = 1;
 	const FLAG_CONTROLLER = 2;
@@ -49,38 +46,38 @@ class SiTech_Uri
 	 */
 	public function __construct($uri = null)
 	{
-		if (is_null($uri)) {
+		if (\is_null($uri)) {
 			if (defined('SITECH_BASEURI')) {
-				$base = new SiTech_Uri(SITECH_BASEURI);
+				$base = new Uri(\SITECH_BASEURI);
 			}
 
-			$host = parse_url(((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on')? 'https://' : 'http://').$_SERVER['HTTP_HOST']);
+			$host = \parse_url(((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on')? 'https://' : 'http://').$_SERVER['HTTP_HOST']);
 			$uri = $host['scheme'].'://'.$host['host'].':'.$_SERVER['SERVER_PORT'].$_SERVER['REQUEST_URI'];
 		}
 
-		$this->_requestUri = parse_url($uri);
+		$this->_requestUri = \parse_url($uri);
 		if (!empty($this->_requestUri['query'])) {
-			parse_str($this->_requestUri['query'], $this->_requestUri['query']);
+			\parse_str($this->_requestUri['query'], $this->_requestUri['query']);
 		} else {
 			$this->_requestUri['query'] = array();
 		}
 
 		if (isset($base) && $base->getPath() != '/') {
-			$this->_requestUri['rewritePath'] = preg_replace('#^'.preg_quote($base->getPath(), '#').'#', '', $this->_requestUri['path']);
+			$this->_requestUri['rewritePath'] = \preg_replace('#^'.\preg_quote($base->getPath(), '#').'#', '', $this->_requestUri['path']);
 			/* We need to have a value set for the rewrite path */
 			if (empty($this->_requestUri['rewritePath'])) $this->_requestUri['rewritePath'] = '/';
 
-			if (strlen($this->_requestUri['rewritePath']) > 0 && $this->_requestUri['rewritePath'][0] != '/') {
+			if (\strlen($this->_requestUri['rewritePath']) > 0 && $this->_requestUri['rewritePath'][0] != '/') {
 				$this->_requestUri['rewritePath'] = '/'.$this->_requestUri['rewritePath'];
 			}
 
-			$parts = explode('/', ltrim($this->_requestUri['rewritePath'], '/'));
+			$parts = \explode('/', \ltrim($this->_requestUri['rewritePath'], '/'));
 		} else {
-			$parts = explode('/', ltrim($this->_requestUri['path'], '/'));
+			$parts = \explode('/', \ltrim($this->_requestUri['path'], '/'));
 		}
 
-		$this->_controller = (empty($parts[0]))? ((defined('SITECH_DEFAULT_CONTROLLER'))? SITECH_DEFAULT_CONTROLLER : 'default') : $parts[0];
-		$this->_action = (empty($parts[1]))? 'index' : ((is_int($parts[1]))? 'view' : $parts[1]);
+		$this->_controller = (empty($parts[0]))? ((\defined('SITECH_DEFAULT_CONTROLLER'))? \SITECH_DEFAULT_CONTROLLER : 'default') : $parts[0];
+		$this->_action = (empty($parts[1]))? 'index' : ((\is_int($parts[1]))? 'view' : $parts[1]);
 	}
 
 	public function __get($name)
@@ -117,7 +114,7 @@ class SiTech_Uri
 		$ret = $this->_action;
 		
 		if ( $clean ) {
-			$ret = strtr($ret, '-', '_');
+			$ret = \strtr($ret, '-', '_');
 		}
 		
 		return($ret);
@@ -135,22 +132,22 @@ class SiTech_Uri
 
 	public function getPath($flags = 0)
 	{
-		if ($flags & SiTech_Uri::FLAG_REWRITE && isset($this->_requestUri['rewritePath'])) {
+		if ($flags & self::FLAG_REWRITE && isset($this->_requestUri['rewritePath'])) {
 			$path = $this->_requestUri['rewritePath'];
 		} else {
 			$path = $this->_requestUri['path'];
 		}
 
-		if ($flags & SiTech_Uri::FLAG_ACTION) {
-			$path = preg_replace('#^/'.$this->_controller.'/'.$this->_action.'#', '/'.$this->_controller, $path);
+		if ($flags & self::FLAG_ACTION) {
+			$path = \preg_replace('#^/'.$this->_controller.'/'.$this->_action.'#', '/'.$this->_controller, $path);
 		}
 
-		if ($flags & SiTech_Uri::FLAG_CONTROLLER) {
-			$path = preg_replace('#^/('.$this->_controller.')#', '', $path);
+		if ($flags & self::FLAG_CONTROLLER) {
+			$path = \preg_replace('#^/('.$this->_controller.')#', '', $path);
 		}
 
-		if ($flags & SiTech_Uri::FLAG_LTRIM) {
-			$path = ltrim($path, '/');
+		if ($flags & self::FLAG_LTRIM) {
+			$path = \ltrim($path, '/');
 		}
 
 		return($path);
@@ -163,7 +160,7 @@ class SiTech_Uri
 
 	public function getQueryString()
 	{
-		return(http_build_query($this->_requestUri['query']));
+		return(\http_build_query($this->_requestUri['query']));
 	}
 
 	public function getScheme()
@@ -198,20 +195,19 @@ class SiTech_Uri
 
 	public function internalRedirect($path)
 	{
-		if (!defined('SITECH_BASEURI')) {
-			require_once('SiTech/Exception.php');
-			throw new SiTech_Exception('SITECH_BASEURI is not defined. Cannot redirect.');
+		if (!\defined('SITECH_BASEURI')) {
+			throw new Uri\Exception('SITECH_BASEURI is not defined. Cannot redirect.');
 		}
 
-		$uri = rtrim(SITECH_BASEURI, '/');
-		$path = ltrim($path, '/');
-		header('Location: '.$uri.'/'.$path);
+		$uri = \rtrim(\SITECH_BASEURI, '/');
+		$path = \ltrim($path, '/');
+		\header('Location: '.$uri.'/'.$path);
 		exit;
 	}
 
 	public function setAction($action)
 	{
-		if (parse_url($action) !== false) {
+		if (\parse_url($action) !== false) {
 			$this->_action = $action;
 			return($action);
 		} else {
@@ -221,7 +217,7 @@ class SiTech_Uri
 
 	public function setController($controller)
 	{
-		if (parse_url($controller) !== false) {
+		if (\parse_url($controller) !== false) {
 			$this->_controller = $controller;
 			return($controller);
 		} else {
@@ -232,7 +228,7 @@ class SiTech_Uri
 	public function setPath($path, $rewrite = false)
 	{
 		// Make sure the path is valid
-		if (($url = parse_url($path)) !== false) {
+		if (($url = \parse_url($path)) !== false) {
 			if ($rewrite) {
 				$this->_requestUri['rewritePath'] = $url['path'];
 			} else {
@@ -245,3 +241,8 @@ class SiTech_Uri
 		}
 	}
 }
+
+namespace SiTech\Uri;
+
+require_once('Exception.php');
+class Exception extends \SiTech\Exception {}
