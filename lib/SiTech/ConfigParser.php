@@ -61,9 +61,8 @@ class ConfigParser
 
 		if (empty($this->_attributes[self::ATTR_HANDLER])) {
 			/* default to INI files */
-			$handler = self::HANDLER_INI;
-			require_once(str_replace('_', DIRECTORY_SEPARATOR, $handler).'.php');
-			$this->setAttribute(self::ATTR_HANDLER, new $handler);
+			require_once('SiTech/ConfigParser/Handler/INI.php');
+			$this->setAttribute(self::ATTR_HANDLER, new SiTech\ConfigParser\Handler\INI());
 		}
 	}
 
