@@ -1,7 +1,5 @@
 <?php
 /**
- * SiTech/Filter.php
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -15,26 +13,23 @@
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
- *
- * @author Eric Gach <eric@php-oop.net>
- * @copyright SiTech Group (c) 2008-2009
- * @filesource
- * @package SiTech
- * @subpackage SiTech_Filter
- * @version $Id$
  */
 
+namespace SiTech;
+
 /**
- * SiTech_Filter
- *
  * The filter class is a wrapper for the filter extension. This approach makes
  * the filter extension more object oriented.
  *
- * @package SiTech_Filter
+ * @author Eric Gach <eric@php-oop.net>
+ * @copyright SiTech Group (c) 2008-2011
+ * @filesource
+ * @package SiTech\Filter
  * @todo Add code to use when filter extension is not available making a
  *       suitable replacement for the extension.
+ * @version $Id$
  */
-class SiTech_Filter
+class Filter
 {
 	const INPUT_POST = 0;
 	const INPUT_GET = 1;
@@ -102,8 +97,8 @@ class SiTech_Filter
 	 */
 	public function __construct($input = null)
 	{
-		if (!extension_loaded('filter')) {
-			throw new Exception('The filter extesion is required');
+		if (!\extension_loaded('filter')) {
+			throw new Filter\Exception('The filter extesion is required');
 		}
 
 		if ($input === 0 || !empty($input)) {
@@ -118,11 +113,11 @@ class SiTech_Filter
 	public function filter($value, $filter=null, $options=array())
 	{
 		if (empty($filter)) {
-			return(filter_var($value));
+			return(\filter_var($value));
 		} elseif (empty($options)) {
-			return(filter_var($value, $filter));
+			return(\filter_var($value, $filter));
 		} else {
-			return(filter_var($value, $filter, $options));
+			return(\filter_var($value, $filter, $options));
 		}
 	}
 
@@ -142,7 +137,7 @@ class SiTech_Filter
 				return(isset($_SESSION[$varName]));
 
 			default:
-				return(filter_has_var($this->input, $varName));
+				return(\filter_has_var($this->input, $varName));
 		}
 	}
 
@@ -154,7 +149,7 @@ class SiTech_Filter
 	 */
 	public function listFilters()
 	{
-		return(filter_list());
+		return(\filter_list());
 	}
 
 	/**
@@ -164,9 +159,9 @@ class SiTech_Filter
 		if ($filter == null) {
 			switch ($this->input) {
 				case self::INPUT_REQUEST:
-					$var = filter_input(self::INPUT_GET, $varName);
+					$var = \filter_input(self::INPUT_GET, $varName);
 					if (empty($var)) {
-						$var = filter_input(self::INPUT_POST, $varName);
+						$var = \filter_input(self::INPUT_POST, $varName);
 					}
 
 					return($var);
@@ -175,14 +170,14 @@ class SiTech_Filter
 					return(false);
 
 				default:
-					return(filter_input($this->input, $varName));
+					return(\filter_input($this->input, $varName));
 			}
 		} elseif (!empty($options)) {
 			switch ($this->input) {
 				case self::INPUT_REQUEST:
-					$var = filter_input(self::INPUT_GET, $varName, $filter, $options);
+					$var = \filter_input(self::INPUT_GET, $varName, $filter, $options);
 					if (empty($var)) {
-						$var = filter_input(self::INPUT_POST, $varName, $filter, $options);
+						$var = \filter_input(self::INPUT_POST, $varName, $filter, $options);
 					}
 
 					return($var);
@@ -191,14 +186,14 @@ class SiTech_Filter
 					return(false);
 
 				default:
-					return(filter_input($this->input, $varName, $filter, $options));
+					return(\filter_input($this->input, $varName, $filter, $options));
 			}
 		} else {
 			switch ($this->input) {
 				case self::INPUT_REQUEST:
-					$var = filter_input(self::INPUT_GET, $varName, $filter);
+					$var = \filter_input(self::INPUT_GET, $varName, $filter);
 					if (empty($var)) {
-						$var = filter_input(self::INPUT_POST, $varName, $filter);
+						$var = \filter_input(self::INPUT_POST, $varName, $filter);
 					}
 
 					return($var);
@@ -207,7 +202,7 @@ class SiTech_Filter
 					return(false);
 
 				default:
-					return(filter_input($this->input, $varName, $filter));
+					return(\filter_input($this->input, $varName, $filter));
 			}
 		}
 	}
@@ -224,6 +219,10 @@ class SiTech_Filter
 
 	public function requestMethod()
 	{
-		return(strtolower($_SERVER['REQUEST_METHOD']));
+		return(\strtolower($_SERVER['REQUEST_METHOD']));
 	}
 }
+
+namespace SiTech\Filter;
+require_once('Exception.php');
+class Exception extends SiTech\Exception {}
