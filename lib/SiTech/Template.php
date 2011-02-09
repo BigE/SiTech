@@ -1,7 +1,5 @@
 <?php
 /**
- * SiTech/Template.php
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -15,24 +13,21 @@
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
- *
- * @author Eric Gach <eric@php-oop.net>
- * @copyright SiTech Group (c) 2008-2009
- * @filesource
- * @package SiTech
- * @subpackage SiTech_Template
- * @version $Id$
  */
 
+namespace SiTech;
+
 /**
- * SiTech_Template
- *
  * This is the template class for all templates. Here you can
  * assign variables, render the page, and even display the full output.
  *
- * @package SiTech_Template
+ * @author Eric Gach <eric@php-oop.net>
+ * @copyright SiTech Group (c) 2008-2011
+ * @filesource
+ * @package SiTech\Template
+ * @version $Id$
  */
-class SiTech_Template
+class Template
 {
 	/**
 	 * Toggles if the template should be in strict mode or not. When a template
@@ -98,7 +93,7 @@ class SiTech_Template
 	public function __construct($path = null, array $options = array())
 	{
 		if (!empty($path)) {
-			$this->path = realpath($path);
+			$this->path = \realpath($path);
 		}
 
 		if (!empty($options)) {
@@ -143,9 +138,9 @@ class SiTech_Template
 	 */
 	public function display($page, $type = 'text/html')
 	{
-		header('Content-Type: '.$type);
+		\header('Content-Type: '.$type);
 		$content = $this->render($page);
-		header('Content-Length: '.strlen($content));
+		\header('Content-Length: '.\strlen($content));
 		echo $content;
 		unset($content);
 	}
@@ -175,22 +170,22 @@ class SiTech_Template
 				break;
 			
 			case 'XHTML_10_STRICT':
-				$doctype = '<?xml version="1.0" encoding="utf-8"?>'.PHP_EOL.'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+				$doctype = '<?xml version="1.0" encoding="utf-8"?>'.\PHP_EOL.'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">';
 				break;
 
 			case 'XHTML_10_TRANS':
-				$doctype = '<?xml version="1.0" encoding="utf-8"?>'.PHP_EOL.'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+				$doctype = '<?xml version="1.0" encoding="utf-8"?>'.\PHP_EOL.'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">';
 				break;
 
 			case 'XHTML_10_FRAME':
-				$doctype = '<?xml version="1.0" encoding="utf-8"?>'.PHP_EOL.'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN"
+				$doctype = '<?xml version="1.0" encoding="utf-8"?>'.\PHP_EOL.'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN"
    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">';
 				break;
 
 			case 'XHTML_11':
-				$doctype = '<?xml version="1.0" encoding="utf-8"?>'.PHP_EOL.'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+				$doctype = '<?xml version="1.0" encoding="utf-8"?>'.\PHP_EOL.'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">';
 				break;
 		}
@@ -235,22 +230,22 @@ class SiTech_Template
 	{
 		$engine = $this->getAttribute(self::ATTR_RENDER_ENGINE);
 		if (empty($engine)) {
-			$engine = 'SiTech_Template_Renderer_PHP';
-			require_once(str_replace('_', DIRECTORY_SEPARATOR, $engine).'.php');
+			$engine = 'SiTech\Template\Renderer\PHP';
+			require_once(\str_replace(array('_', '\\'), \DIRECTORY_SEPARATOR, $engine).'.php');
 		}
 
 		if ($this->getAttribute(self::ATTR_STRICT)) {
-			$error_reporting = error_reporting(E_ALL);
+			$error_reporting = \error_reporting(\E_ALL);
 		} else {
-			$error_reporting = error_reporting(E_ALL ^ E_NOTICE);
+			$error_reporting = \error_reporting(\E_ALL ^ \E_NOTICE);
 		}
 
-		$rendered = call_user_func_array(array($engine, 'render'), array($this, $page, $this->path, $this->vars));
+		$rendered = \call_user_func_array(array($engine, 'render'), array($this, $page, $this->path, $this->vars));
 		if ($rendered === false) {
-			$this->_handleError(call_user_func(array($engine, 'getError')));
+			$this->_handleError(\call_user_func(array($engine, 'getError')));
 		}
 
-		error_reporting($error_reporting);
+		\error_reporting($error_reporting);
 		return($rendered);
 	}
 
@@ -296,12 +291,16 @@ class SiTech_Template
 	 */
 	public function _handleError($msg, $array = array())
 	{
-		if ($this->getAttribute(SiTech_Template::ATTR_ERRMODE) === SiTech_Template::ERRMODE_EXCEPTION) {
-			throw new Exception(vsprintf($msg, $array));
-		} elseif ($this->getAttribute(SiTech_Template::ATTR_ERRMODE) === SiTech_Template::ERRMODE_WARNING) {
-			trigger_error(vsprintf($msg, $array), E_USER_WARNING);
+		if ($this->getAttribute(self::ATTR_ERRMODE) === self::ERRMODE_EXCEPTION) {
+			throw new Exception(\vsprintf($msg, $array));
+		} elseif ($this->getAttribute(self::ATTR_ERRMODE) === self::ERRMODE_WARNING) {
+			\trigger_error(\vsprintf($msg, $array), \E_USER_WARNING);
 		}
 
-		$this->_error = vsprintf($msg, $array);
+		$this->_error = \vsprintf($msg, $array);
 	}
 }
+
+namespace SiTech\Template;
+require_once('SiTech/Exception.php');
+class Exception extends \SiTech\Exception {}
