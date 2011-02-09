@@ -17,7 +17,7 @@
 
 namespace SiTech\DB\Driver;
 
-const DRIVER_MYSQL = 'SiTech\DB\Driver\MySQL';
+const MYSQL = 'SiTech\DB\Driver\MySQL';
 
 /**
  * @see SiTech\DB\Driver\Abstract

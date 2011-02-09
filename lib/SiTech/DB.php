@@ -62,7 +62,7 @@ class DB extends \PDO
 		parent::__construct($config['dsn'], $username, $password, $options);
 
 		/* This can be reset in user code, but we prefer exceptions */
-		$this->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+		$this->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
 		if (!\class_exists($driver)) {
 			require_once(\str_replace(array('_', '\\'), '/', $driver).'.php');
@@ -184,7 +184,7 @@ class DB extends \PDO
 	 */
 	public function getStatementClass()
 	{
-		return($this->getAttribute(PDO::ATTR_STATEMENT_CLASS));
+		return($this->getAttribute(\PDO::ATTR_STATEMENT_CLASS));
 	}
 
 	/**
@@ -241,7 +241,7 @@ class DB extends \PDO
 	public function setStatementClass($class)
 	{
 		if ($class == 'SiTech\DB\Statement' || \is_subclass_of($class, 'SiTech\DB\Statement')) {
-			$this->setAttribute(PDO::ATTR_STATEMENT_CLASS, array($class, array($this)));
+			$this->setAttribute(\PDO::ATTR_STATEMENT_CLASS, array($class, array($this)));
 			return(true);
 		}
 

@@ -19,7 +19,7 @@
 
 namespace SiTech\DB\Driver;
 
-const DRIVER_SQLITE = 'SiTech\DB\Driver\SQLite';
+const SQLITE = 'SiTech\DB\Driver\SQLite';
 
 /**
  * @see SiTech\DB\Driver\Abstract
