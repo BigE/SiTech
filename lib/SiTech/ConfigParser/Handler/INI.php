@@ -23,7 +23,7 @@ const HANDLER_INI = 'SiTech\ConfigParser\Handler\INI';
 /**
  * @see SiTech_ConfigParser_Handler_Interface
  */
-require_once('SiTech/ConfigParser/Handler/Interface.php');
+require_once('SiTech/ConfigParser/Handler/IHandler.php');
 
 /**
  * SiTech\ConfigParser\Handler\INI - Reads and writes configuration files that
@@ -36,7 +36,7 @@ require_once('SiTech/ConfigParser/Handler/Interface.php');
  * @subpackage SiTech\ConfigParser\Handler
  * @version $Id$
  */
-class INI implements IFace
+class INI implements IHandler
 {
 	/**
 	 * Read the specified file(s) into the configuration. Return value

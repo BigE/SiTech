@@ -408,8 +408,8 @@ class ConfigParser
 				if (!\is_object($value)) {
 					$this->_handleError('Failed to set config handler. The handler must be an object');
 					$ret = false;
-				} elseif (!($value instanceof \SiTech\ConfigParser\Handler\HandlerInterface)) {
-					$this->_handleError('Failed to set config handler. The handler must implement SiTech_ConfigParser_Handler_Interface');
+				} elseif (!($value instanceof \SiTech\ConfigParser\Handler\IHandler)) {
+					$this->_handleError('Failed to set config handler. The handler must implement SiTech\ConfigParser\Handler\IHandler');
 					$ret = false;
 				} else {
 					$this->_attributes[$attr] = $value;
@@ -459,7 +459,7 @@ class ConfigParser
 	protected function _handleError($string, array $array = array())
 	{
 		if ($this->getAttribute(self::ATTR_ERRMODE) === self::ERRMODE_EXCEPTION) {
-			throw new Exception($string, $array);
+			throw new ConfigParser\Exception($string, $array);
 		} elseif ($this->getAttribute(self::ATTR_ERRMODE) === self::ERRMODE_WARNING) {
 			\trigger_error(\vsprintf($string, $array), \E_USER_WARNING);
 		}
@@ -467,3 +467,7 @@ class ConfigParser
 		$this->_error = \vsprintf($string, $array);
 	}
 }
+
+namespace SiTech\ConfigParser;
+require_once('SiTech/Exception.php');
+class Exception extends \SiTech\Exception {}

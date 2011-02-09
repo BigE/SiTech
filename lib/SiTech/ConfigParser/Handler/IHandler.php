@@ -28,7 +28,7 @@ namespace SiTech\ConfigParser\Handler;
  * @subpackage SiTech_ConfigParser_Handler
  * @version $Id$
  */
-interface IFace
+interface IHandler
 {
 	/**
 	 * Read the specified item(s)/file(s) into the configuration. Return value

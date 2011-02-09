@@ -23,7 +23,7 @@ const HANDLER_ARRAY = 'SiTech\ConfigParser\Handler\Array';
 /**
  * @see SiTech\ConfigParser\Handler\Interface
  */
-require_once('SiTech/ConfigParser/Handler/Interface.php');
+require_once('SiTech/ConfigParser/Handler/IHandler.php');
 
 /**
  * SiTech\ConfigParser\Handler\Array - Reads and writes configuration files that
@@ -36,7 +36,7 @@ require_once('SiTech/ConfigParser/Handler/Interface.php');
  * @subpackage SiTech_ConfigParser_Handler
  * @version $Id$
  */
-class _Array implements IFace
+class _Array implements IHandler
 {
 	/**
 	 * Read the specified file(s) into the configuration. Return value
