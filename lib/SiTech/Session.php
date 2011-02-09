@@ -1,7 +1,5 @@
 <?php
 /**
- * SiTech/Session.php
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -15,25 +13,22 @@
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
- *
- * @author Eric Gach <eric@php-oop.net>
- * @copyright SiTech Group (c) 2008-2009
- * @filesource
- * @package SiTech
- * @subpackage SiTech_Session
- * @version $Id$
  */
 
+namespace SiTech;
+
 /**
- * SiTech_Session - A wrapper for sessions that uses $_SESSION
- *
  * We use a very different method of session handling with this class. It extends
  * ArrayObject to make access to session variables much easier to access, and
  * it also turns the $_SESSION superglobal into an object of SiTech_Session.
  *
- * @package SiTech_Session
+ * @author Eric Gach <eric@php-oop.net>
+ * @copyright SiTech Group (c) 2008-2011
+ * @filesource
+ * @package SiTech\Session
+ * @version $Id$
  */
-class SiTech_Session extends ArrayObject
+class Session extends \ArrayObject
 {
 	/**
 	 * This is the cookie domain for the session. The attribute value should be
@@ -64,21 +59,6 @@ class SiTech_Session extends ArrayObject
 	const ATTR_STRICT = 8;
 
 	const ATTR_FILE_TIMEOUT = 9;
-
-	/**
-	 * Database handler for session.
-	 */
-	const HANDLER_DB = 'SiTech_Session_Handler_DB';
-
-	/**
-	 * File handler for session.
-	 */
-	const HANDLER_FILE = 'SiTech_Session_Handler_File';
-
-	/**
-	 * Memcache handler for session.
-	 */
-	const HANDLER_MEMCACHE = 'SiTech_Session_Handler_Memcache';
 
 	const STATE_STARTED = 1;
 
@@ -118,7 +98,7 @@ class SiTech_Session extends ArrayObject
 	public function __construct()
 	{
 		if (static::$internal == false) {
-			trigger_error('Call to protected '.__METHOD__.' from invalid context', E_USER_ERROR);
+			\trigger_error('Call to protected '.__METHOD__.' from invalid context', \E_USER_ERROR);
 		}
 
 		// Set internal to false, then set the instance
@@ -131,18 +111,18 @@ class SiTech_Session extends ArrayObject
 
 		if (!static::$handler) {
 			$handler = self::HANDLER_FILE;
-			require_once(str_replace('_', '/', $handler).'.php');
+			require_once(\str_replace('_', '/', $handler).'.php');
 			self::registerHandler(new $handler());
 		}
 
-		if (static::$handler instanceof SiTech_Session_Handler_File) {
+		if (static::$handler instanceof \SiTech\Session\Handler\File) {
 			/* default locking timeout */
 			$this->setAttribute(self::ATTR_FILE_TIMEOUT, 100);
 		}
 
-		session_start();
+		\session_start();
 		$this->state = $this->state | self::STATE_STARTED;
-		parent::__construct($_SESSION, ArrayObject::ARRAY_AS_PROPS);
+		parent::__construct($_SESSION, \ArrayObject::ARRAY_AS_PROPS);
 		/* Assign the object to $_SESSION */
 		/**
 		 * This used to cause a segfault with Xdebug, but that's now fixed in
@@ -174,7 +154,7 @@ class SiTech_Session extends ArrayObject
 		$obj = $this;
 		$array = $this->getArrayCopy();
 		$_SESSION = $array;
-		session_write_close();
+		\session_write_close();
 		$this->state = $this->state | self::STATE_CLOSED;
 		$_SESSION = $obj;
 	}
@@ -191,11 +171,11 @@ class SiTech_Session extends ArrayObject
 			return;
 		}
 
-		session_destroy();
+		\session_destroy();
 		$this->state = $this->state | self::STATE_DESTROYED;
-		$cookie = session_get_cookie_params();
-		setcookie(session_name(), false, 419666400, $cookie['path'], $cookie['domain'], $cookie['secure']);
-		output_reset_rewrite_vars();
+		$cookie = \session_get_cookie_params();
+		\setcookie(\session_name(), false, 419666400, $cookie['path'], $cookie['domain'], $cookie['secure']);
+		\output_reset_rewrite_vars();
 	}
 
 	/**
@@ -255,14 +235,14 @@ class SiTech_Session extends ArrayObject
 	static public function registerHandler($object)
 	{
 		if (isset($_SESSION)) {
-			throw new Exception('You cannot register a handler after the session has been started');
-		} elseif (!($object instanceof SiTech_Session_Handler_Interface) && !($object instanceof Memcache)) {
-			throw new Exception('The session handler must implement SiTech_Session_Handler_Interface');
+			throw new Session\Exception('You cannot register a handler after the session has been started');
+		} elseif (!($object instanceof \SiTech\Session\Handler\IHandler) && !($object instanceof \Memcache)) {
+			throw new Session\Exception('The session handler must implement SiTech_Session_Handler_Interface');
 		}
 
 		static::$handler = true;
 
-		session_set_save_handler(
+		\session_set_save_handler(
 			array($object, 'open'),
 			array($object, 'close'),
 			array($object, 'read'),
@@ -286,9 +266,9 @@ class SiTech_Session extends ArrayObject
 			case self::ATTR_COOKIE_DOMAIN:
 			case self::ATTR_COOKIE_PATH:
 				$this->attributes[$attr] = (string)$value;
-				setcookie(
+				\setcookie(
 						$this->getAttribute(self::ATTR_SESSION_NAME),
-						session_id(),
+						\session_id(),
 						$this->getAttribute(self::ATTR_COOKIE_TIME),
 						$this->getAttribute(self::ATTR_COOKIE_PATH),
 						$this->getAttribute(self::ATTR_COOKIE_DOMAIN)
@@ -302,9 +282,9 @@ class SiTech_Session extends ArrayObject
 
 			case self::ATTR_COOKIE_TIME:
 				$this->attributes[$attr] = (int)$value;
-				setcookie(
+				\setcookie(
 						$this->getAttribute(self::ATTR_SESSION_NAME),
-						session_id(),
+						\session_id(),
 						$this->getAttribute(self::ATTR_COOKIE_TIME),
 						$this->getAttribute(self::ATTR_COOKIE_PATH),
 						$this->getAttribute(self::ATTR_COOKIE_DOMAIN)
@@ -312,7 +292,7 @@ class SiTech_Session extends ArrayObject
 				break;
 
 			case self::ATTR_DB_CONN:
-				if (!is_object($value) || (!is_a($value, 'SiTech_DB') && !is_subclass_of($value, 'SiTech_DB'))) {
+				if (!\is_object($value) || (!\is_a($value, 'SiTech_DB') && !\is_subclass_of($value, 'SiTech_DB'))) {
 					throw new Exception('Invalid class for database connection, object must be a sub class or the main class of SiTech_DB');
 				}
 
@@ -321,7 +301,7 @@ class SiTech_Session extends ArrayObject
 
 			case self::ATTR_REMEMBER:
 				if ((bool)$value === true) {
-					$this->setAttribute(self::ATTR_COOKIE_TIME, time() + (86400 * 365));
+					$this->setAttribute(self::ATTR_COOKIE_TIME, \time() + (86400 * 365));
 				}
 			case self::ATTR_STRICT:
 				$this->attributes[$attr] = (bool)$value;
@@ -343,7 +323,7 @@ class SiTech_Session extends ArrayObject
 	static public function singleton()
 	{
 		if (empty(static::$instance)) {
-			throw new Exception('Session not started yet. Please call '.get_called_class().'::start() first.');
+			throw new Session\Exception('Session not started yet. Please call '.\get_called_class().'::start() first.');
 		}
 
 		return(static::$instance);
@@ -358,14 +338,18 @@ class SiTech_Session extends ArrayObject
 	 */
 	static public function start()
 	{
-		if (isset($_SESSION) && $_SESSION instanceof SiTech_Session && $_SESSION->isActive()) {
+		if (isset($_SESSION) && $_SESSION instanceof \SiTech\Session && $_SESSION->isActive()) {
 			return;
 		} elseif (isset($_SESSION) && !($_SESSION instanceof Session)) {
-			throw new Exception('A session has already been started using session_start() or session.auto-start');
+			throw new Session\Exception('A session has already been started using session_start() or session.auto-start');
 		}
 
 		static::$internal = true;
-		$class = get_called_class();
+		$class = \get_called_class();
 		new $class();
 	}
 }
+
+namespace SiTech\Session;
+require_once('SiTech/Exception.php');
+class Exception extends \SiTech\Exception {}

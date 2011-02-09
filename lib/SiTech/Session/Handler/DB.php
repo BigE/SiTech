@@ -1,7 +1,5 @@
 <?php
 /**
- * SiTech/Session/Handler/DB.php
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -15,27 +13,32 @@
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
- *
- * @author Eric Gach <eric@php-oop.net>
- * @copyright SiTech Group (c) 2008-2009
- * @filesource
- * @package SiTech
- * @subpackage SiTech_Session
- * @version $Id$
  */
 
+namespace SiTech\Session\Handler;
+
+const DB = 'SiTech\Session\Handler\DB';
+
 /**
- * @see SiTech_Session_Handler_Interface
+ * @see SiTech\Session\Handler\IHandler
  */
-require_once('SiTech/Session/Handler/Interface.php');
+require_once('SiTech/Session/Handler/IHandler.php');
+/**
+ * @see SiTech\Session
+ */
+require_once('SiTech/Session.php');
 
 /**
  * Interface for all session handlers.
  *
- * @package SiTech_Session
- * @subpackage SiTech_Session_Handler
+ * @author Eric Gach <eric@php-oop.net>
+ * @copyright SiTech Group (c) 2008-2011
+ * @filesource
+ * @package SiTech\Session
+ * @subpackage SiTech\Session\Handler
+ * @version $Id$
  */
-class SiTech_Session_Handler_DB implements SiTech_Session_Handler_Interface
+class DB implements IHandler
 {
 	/**
 	 * Database object holder.
@@ -63,8 +66,8 @@ class SiTech_Session_Handler_DB implements SiTech_Session_Handler_Interface
 	public function __construct($dbObj, $table)
 	{
 		/* sanity checks */
-		if (!is_object($dbObj) && !is_a($dbObj, 'SiTech_DB')) {
-			throw new Exception('The DB connection must be an instance or subclass of SiTech_DB');
+		if (!\is_object($dbObj) && !\is_a($dbObj, 'SiTech\DB')) {
+			throw new \SiTech\Session\Handler\Exception('The DB connection must be an instance or subclass of SiTech\DB');
 		}
 
 		$this->db = $dbObj;
@@ -90,8 +93,8 @@ class SiTech_Session_Handler_DB implements SiTech_Session_Handler_Interface
 	public function destroy ($id)
 	{
 		$stmnt = $this->db->prepare('DELETE FROM '.$this->table.' WHERE Name = :name AND Id = :id');
-		$session = SiTech_Session::singleton();
-		return($stmnt->execute(array(':name' => $session->getAttribute(SiTech_Session::ATTR_SESSION_NAME), ':id' => $id)));
+		$session = \SiTech\Session::singleton();
+		return($stmnt->execute(array(':name' => $session->getAttribute(\SiTech\Session::ATTR_SESSION_NAME), ':id' => $id)));
 	}
 
 	/**
@@ -101,7 +104,7 @@ class SiTech_Session_Handler_DB implements SiTech_Session_Handler_Interface
 	 */
 	public function gc ($maxLife)
 	{
-		$maxLife = date('Y-m-d G:i:s', time() - $maxLife);
+		$maxLife = date('Y-m-d G:i:s', \time() - $maxLife);
 		$stmnt = $this->db->prepare('DELETE FROM '.$this->table.' WHERE Started < \''.$maxLife.'\' AND Remember = 0');
 		$stmnt->execute();
 
@@ -118,8 +121,8 @@ class SiTech_Session_Handler_DB implements SiTech_Session_Handler_Interface
 	public function open ($path, $name)
 	{
 		$this->_savePath = $path;
-		$session = SiTech_Session::singleton();
-		$session->setAttribute(SiTech_Session::ATTR_SESSION_NAME, $name);
+		$session = \SiTech\Session::singleton();
+		$session->setAttribute(\SiTech\Session::ATTR_SESSION_NAME, $name);
 		return(true);
 	}
 
@@ -132,13 +135,12 @@ class SiTech_Session_Handler_DB implements SiTech_Session_Handler_Interface
 	public function read ($id)
 	{
 		$stmnt = $this->db->prepare('SELECT Id, Name, Data, Remember, Strict, RemoteAddr FROM '.$this->table.' WHERE Name=:name AND Id=:id');
-		$session = SiTech_Session::singleton();
-		if ($stmnt->execute(array(':name' => $session->getAttribute(SiTech_Session::ATTR_SESSION_NAME), ':id' => $id))) {
+		$session = \SiTech\Session::singleton();
+		if ($stmnt->execute(array(':name' => $session->getAttribute(\SiTech\Session::ATTR_SESSION_NAME), ':id' => $id))) {
 			$row = $stmnt->fetch();
-			$session = SiTech_Session::singleton();
-			$session->setAttribute(SiTech_Session::ATTR_REMEMBER, (bool)$row['Remember']);
-			$session->setAttribute(SiTech_Session::ATTR_STRICT, (bool)$row['Strict']);
-			return(unserialize($row['Data']));
+			$session->setAttribute(\SiTech\Session::ATTR_REMEMBER, (bool)$row['Remember']);
+			$session->setAttribute(\SiTech\Session::ATTR_STRICT, (bool)$row['Strict']);
+			return(\unserialize($row['Data']));
 		} else {
 			return('');
 		}
@@ -153,11 +155,12 @@ class SiTech_Session_Handler_DB implements SiTech_Session_Handler_Interface
 	 */
 	public function write ($id, $data)
 	{
-        $old_mode = $this->db->getAttribute(SiTech_DB::ATTR_ERRMODE);
-		$this->db->setAttribute(SiTech_DB::ATTR_ERRMODE, SiTech_DB::ERR_NONE);
+		require_once('SiTech/DB.php');
+        $old_mode = $this->db->getAttribute(\SiTech\DB::ATTR_ERRMODE);
+		$this->db->setAttribute(\SiTech\DB::ATTR_ERRMODE, \SiTech\DB::ERR_NONE);
 		$stmnt = $this->db->prepare('SELECT Id FROM '.$this->table.' WHERE Name=:name AND Id=:id');
-		$session = SiTech_Session::singleton();
-		$stmnt->execute(array(':name' => $session->getAttribute(SiTech_Session::ATTR_SESSION_NAME), ':id' => $id));
+		$session = \SiTech\Session::singleton();
+		$stmnt->execute(array(':name' => $session->getAttribute(\SiTech\Session::ATTR_SESSION_NAME), ':id' => $id));
 		if ($stmnt->rowCount() > 0) {
 			$stmnt = $this->db->prepare('UPDATE '.$this->table.' SET Data=:data, Remember=:remember, Strict=:strict, RemoteAddr=:remote WHERE Id=:id AND Name=:name');
 		} else {
@@ -165,8 +168,8 @@ class SiTech_Session_Handler_DB implements SiTech_Session_Handler_Interface
 		}
 
 		$remote = (isset($_SERVER['REMOTE_ADDR']))? $_SERVER['REMOTE_ADDR'] : null;
-		$ret = $stmnt->execute(array(':id' => $id, ':name' => $session->getAttribute(SiTech_Session::ATTR_SESSION_NAME), ':data' => serialize($data), ':remember' => (int)$session->getAttribute(SiTech_Session::ATTR_REMEMBER), ':strict' => (int)$session->getAttribute(SiTech_Session::ATTR_STRICT), ':remote' => $remote));
-        $this->db->setAttribute(SiTech_DB::ATTR_ERRMODE, $old_mode);
+		$ret = $stmnt->execute(array(':id' => $id, ':name' => $session->getAttribute(\SiTech\Session::ATTR_SESSION_NAME), ':data' => \serialize($data), ':remember' => (int)$session->getAttribute(\SiTech\Session::ATTR_REMEMBER), ':strict' => (int)$session->getAttribute(\SiTech\Session::ATTR_STRICT), ':remote' => $remote));
+        $this->db->setAttribute(\SiTech\DB::ATTR_ERRMODE, $old_mode);
 		return($ret);
 	}
 }

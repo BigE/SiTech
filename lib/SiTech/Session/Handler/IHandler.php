@@ -1,7 +1,5 @@
 <?php
 /**
- * SiTech/Session/Handler/Interface.php
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -15,22 +13,21 @@
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
- *
- * @author Eric Gach <eric@php-oop.net>
- * @copyright SiTech Group (c) 2008-2009
- * @filesource
- * @package SiTech
- * @subpackage SiTech_Session
- * @version $Id$
  */
+
+namespace SiTech\Session\Handler;
 
 /**
  * Interface for all session handlers.
  *
- * @package SiTech_Session
- * @subpackage SiTech_Session_Handler
+ * @author Eric Gach <eric@php-oop.net>
+ * @copyright SiTech Group (c) 2008-2011
+ * @filesource
+ * @package SiTech\Session
+ * @subpackage SiTech\Session\Handler
+ * @version $Id$
  */
-interface SiTech_Session_Handler_Interface
+interface IHandler
 {
 	/**
 	 * Close the currently open session.
@@ -80,3 +77,6 @@ interface SiTech_Session_Handler_Interface
 	 */
 	public function write($id, $data);
 }
+
+require_once('SiTech/Session.php');
+class Exception extends \SiTech\Session\Exception {}

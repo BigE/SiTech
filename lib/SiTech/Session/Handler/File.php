@@ -1,7 +1,5 @@
 <?php
 /**
- * SiTech/Session/Handler/File.php
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -15,27 +13,32 @@
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
- *
- * @author Eric Gach <eric@php-oop.net>
- * @copyright SiTech Group (c) 2008-2009
- * @filesource
- * @package SiTech
- * @subpackage SiTech_Session
- * @version $Id$
  */
 
+namespace SiTech\Session\Handler;
+
+const FILE = 'SiTech\Session\Handler\File';
+
 /**
- * @see SiTech_Session_Handler_Interface
+ * @see SiTech\Session\Handler\IHandler
  */
-require_once('SiTech/Session/Handler/Interface.php');
+require_once('SiTech/Session/Handler/IHandler.php');
+/**
+ * @see SiTech\Session
+ */
+require_once('SiTech/Session.php');
 
 /**
  * SiTech session handler for file based session storage.
  *
- * @package SiTech_Session
- * @subpackage SiTech_Session_Handler
+ * @author Eric Gach <eric@php-oop.net>
+ * @copyright SiTech Group (c) 2008-2011
+ * @filesource
+ * @package SiTech\Session
+ * @subpackage SiTech\Session\Handler
+ * @version $Id$
  */
-class SiTech_Session_Handler_File implements SiTech_Session_Handler_Interface
+class File implements IHandler
 {
 	/**
 	 * Folder path to save sessions in.
@@ -62,8 +65,8 @@ class SiTech_Session_Handler_File implements SiTech_Session_Handler_Interface
 	 */
 	public function destroy ($id)
 	{
-		$file = $this->_savePath.DIRECTORY_SEPARATOR.'sess_'.$id;
-		return(@unlink($file));
+		$file = $this->_savePath.\DIRECTORY_SEPARATOR.'sess_'.$id;
+		return(@\unlink($file));
 	}
 
 	/**
@@ -73,14 +76,14 @@ class SiTech_Session_Handler_File implements SiTech_Session_Handler_Interface
 	 */
 	public function gc ($maxLife)
 	{
-		foreach (glob($this->_savePath.DIRECTORY_SEPARATOR.'sess_*') as $file) {
-			if (filemtime($file) + $maxLife < time()) {
-                $fp = @fopen($file);
-				if (is_resource($file)) {
-					$r = trim(@fgets($fp, 4));
-					@fclose($fp);
+		foreach (\glob($this->_savePath.\DIRECTORY_SEPARATOR.'sess_*') as $file) {
+			if (\filemtime($file) + $maxLife < \time()) {
+                $fp = @\fopen($file);
+				if (\is_resource($file)) {
+					$r = \trim(@\fgets($fp, 4));
+					@\fclose($fp);
 					if ($r == '0') {
-						@unlink($file);
+						@\unlink($file);
 					}
 				}
 			}
@@ -99,9 +102,9 @@ class SiTech_Session_Handler_File implements SiTech_Session_Handler_Interface
 	public function open ($path, $name)
 	{
 		if (empty($path)) { $path = '/tmp'; }
-		$this->_savePath = realpath($path);
-		$session = SiTech_Session::singleton();
-		$session->setAttribute(SiTech_Session::ATTR_SESSION_NAME, $name);
+		$this->_savePath = \realpath($path);
+		$session = \SiTech\Session::singleton();
+		$session->setAttribute(\SiTech\Session::ATTR_SESSION_NAME, $name);
 		return(true);
 	}
 
@@ -113,37 +116,37 @@ class SiTech_Session_Handler_File implements SiTech_Session_Handler_Interface
 	 */
 	public function read ($id)
 	{
-		$file = $this->_savePath.DIRECTORY_SEPARATOR.'sess_'.$id;
+		$file = $this->_savePath.\DIRECTORY_SEPARATOR.'sess_'.$id;
 
-		if (file_exists($file) && ($fp = fopen($file, 'r')) !== false) {
-			$time = microtime();
+		if (\file_exists($file) && ($fp = \fopen($file, 'r')) !== false) {
+			$time = \microtime();
 			$data = '';
 			$str = '';
-			$session = SiTech_Session::singleton();
-			$timeout = $session->getAttribute(SiTech_Session::ATTR_FILE_TIMEOUT);
+			$session = \SiTech\Session::singleton();
+			$timeout = $session->getAttribute(\SiTech\Session::ATTR_FILE_TIMEOUT);
 
 			do {
-				$canRead = flock($fp, LOCK_SH + LOCK_NB);
-			} while (!$canRead && (microtime() - $time) < $timeout);
+				$canRead = \flock($fp, \LOCK_SH + \LOCK_NB);
+			} while (!$canRead && (\microtime() - $time) < $timeout);
 
 			if (!$canRead) {
-				fclose($fp);
+				\fclose($fp);
 				return('');
 			}
 
-			while (!feof($fp) && $str !== false) {
-				$str = fread($fp, 1024);
+			while (!\feof($fp) && $str !== false) {
+				$str = \fread($fp, 1024);
 				if ($str) {
 					$data .= $str;
 				}
 			}
-			flock($fp, LOCK_UN);
-			fclose($fp);
+			\flock($fp, \LOCK_UN);
+			\fclose($fp);
 
-			list($r, $s, $data) = explode("\n", $data, 3);
+			list($r, $s, $data) = \explode("\n", $data, 3);
 
-			$session->setAttribute(SiTech_Session::ATTR_REMEMBER, (bool)$r);
-			$session->setAttribute(SiTech_Session::ATTR_STRICT, (bool)$s);
+			$session->setAttribute(\SiTech\Session::ATTR_REMEMBER, (bool)$r);
+			$session->setAttribute(\SiTech\Session::ATTR_STRICT, (bool)$s);
 
 			return((string)$data);
 		} else {
@@ -161,29 +164,29 @@ class SiTech_Session_Handler_File implements SiTech_Session_Handler_Interface
 	public function write ($id, $data)
 	{
 		$file = 'sess_'.$id;
-		$file = $this->_savePath.DIRECTORY_SEPARATOR.$file;
+		$file = $this->_savePath.\DIRECTORY_SEPARATOR.$file;
 
-		$session = SiTech_Session::singleton();
-		$data = sprintf("%d\n%d\n%s", $session->getAttribute(SiTech_Session::ATTR_REMEMBER), $session->getAttribute(SiTech_Session::ATTR_STRICT), $data);
+		$session = \SiTech\Session::singleton();
+		$data = \sprintf("%d\n%d\n%s", $session->getAttribute(\SiTech\Session::ATTR_REMEMBER), $session->getAttribute(\SiTech\Session::ATTR_STRICT), $data);
 
-		if (($fp = fopen($file, 'a')) !== false) {
-			$time = microtime();
-			$session = SiTech_Session::singleton();
-			$timeout = $session->getAttribute(SiTech_Session::ATTR_FILE_TIMEOUT);
+		if (($fp = \fopen($file, 'a')) !== false) {
+			$time = \microtime();
+			$session = \SiTech\Session::singleton();
+			$timeout = $session->getAttribute(\SiTech\Session::ATTR_FILE_TIMEOUT);
 
 			do {
-				$canWrite = flock($fp, LOCK_EX + LOCK_NB);
-			} while (!$canWrite && (microtime() - $time) < $timeout);
+				$canWrite = \flock($fp, \LOCK_EX + \LOCK_NB);
+			} while (!$canWrite && (\microtime() - $time) < $timeout);
 
 			if (!$canWrite) {
-				fclose($fp);
+				\fclose($fp);
 				return(false);
 			}
 
-			ftruncate($fp, 0);
-			fputs($fp, $data);
-			flock($fp, LOCK_UN);
-			fclose($fp);
+			\ftruncate($fp, 0);
+			\fputs($fp, $data);
+			\flock($fp, \LOCK_UN);
+			\fclose($fp);
 
 			return(true);
 		} else {

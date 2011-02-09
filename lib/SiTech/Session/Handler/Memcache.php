@@ -1,7 +1,5 @@
 <?php
 /**
- * SiTech/Session/Handler/Memcache.php
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -15,31 +13,36 @@
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
- *
- * @author Eric Gach <eric@php-oop.net>
- * @copyright SiTech Group (c) 2008-2010
- * @filesource
- * @package SiTech
- * @subpackage SiTech_Session
- * @version $Id$
  */
+
+namespace SiTech\Session\Handler;
+
+const MEMCACHE = 'SiTech\Session\Handler\Memcache';
 
 /**
- * @see SiTech_Session_Handler_Interface
+ * @see SiTech\Session\Handler\IHandler
  */
-require_once('SiTech/Session/Handler/Interface.php');
+require_once('SiTech/Session/Handler/IHandler.php');
+/**
+ * @see SiTech\Session
+ */
+require_once('SiTech/Session.php');
 
 if (!extension_loaded('memcache')) {
-	throw new SiTech_Exception('You must have the memcache extension to use this handler.');
+	throw new Exception('You must have the memcache extension to use this handler.');
 }
 
 /**
  * SiTech session handler for memcache based session storage.
  *
- * @package SiTech_Session
- * @subpackage SiTech_Session_Handler
+ * @author Eric Gach <eric@php-oop.net>
+ * @copyright SiTech Group (c) 2008-2011
+ * @filesource
+ * @package SiTech\Session
+ * @subpackage SiTech\Session\Handler
+ * @version $Id$
  */
-class SiTech_Session_Handler_Memcache implements SiTech_Session_Handler_Interface
+class Memcache implements IHandler
 {
 	/**
 	 *
@@ -47,17 +50,17 @@ class SiTech_Session_Handler_Memcache implements SiTech_Session_Handler_Interfac
 	 */
 	protected $_memcache;
 
-	public function __construct(Memcache $memcache = null)
+	public function __construct(\Memcache $memcache = null)
 	{
-		if (empty($memcache) && ini_get('session.save_handler') == 'memcache') {
-			$memcache = new Memcache();
-			$memcache->connect(ini_get('session.save_path'));
+		if (empty($memcache) && \ini_get('session.save_handler') == 'memcache') {
+			$memcache = new \Memcache();
+			$memcache->connect(\ini_get('session.save_path'));
 		} elseif (empty($memcache) || $memcache->getversion() === false) {
-			throw new SiTech_Exception('Cannot auto detect memcache settings. Please send an already connected object to this handler.');
+			throw new Exception('Cannot auto detect memcache settings. Please send an already connected object to this handler.');
 		}
 
 		// By default memchache sets the save_handler to memcache
-		ini_set('session.save_handler', 'user');
+		\ini_set('session.save_handler', 'user');
 		$this->_memcache = $memcache;
 	}
 
@@ -111,10 +114,10 @@ class SiTech_Session_Handler_Memcache implements SiTech_Session_Handler_Interfac
 	public function read($id)
 	{
 		if (($data = $this->_memcache->get('session/'.$id)) !== false) {
-			list($r, $s, $data) = explode("\n", $data);
-			$session = SiTech_Session::singleton();
-			$session->setAttribute(SiTech_Session::ATTR_REMEMBER, (bool)$r);
-			$session->setAttribute(SiTech_Session::ATTR_STRICT, (bool)$s);
+			list($r, $s, $data) = \explode("\n", $data);
+			$session = \SiTech\Session::singleton();
+			$session->setAttribute(\SiTech\Session::ATTR_REMEMBER, (bool)$r);
+			$session->setAttribute(\SiTech\Session::ATTR_STRICT, (bool)$s);
 		}
 
 		return((string)$data);
@@ -122,8 +125,8 @@ class SiTech_Session_Handler_Memcache implements SiTech_Session_Handler_Interfac
 
 	public function write($id, $data)
 	{
-		$session = SiTech_Session::singleton();
-		$data = sprintf("%d\n%d\n%s", $session->getAttribute(SiTech_Session::ATTR_REMEMBER), $session->getAttribute(SiTech_Session::ATTR_STRICT), $data);
+		$session = \SiTech\Session::singleton();
+		$data = \sprintf("%d\n%d\n%s", $session->getAttribute(\SiTech\Session::ATTR_REMEMBER), $session->getAttribute(\SiTech\Session::ATTR_STRICT), $data);
 		return($this->_memcache->set('session/'.$id, $data));
 	}
 }
