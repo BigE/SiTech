@@ -1,7 +1,5 @@
 <?php
 /**
- * SiTech/Model/Abstract.php
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -15,6 +13,12 @@
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+
+namespace SiTech\Model;
+
+/**
+ * I've had vodka, and this is the result. pwn.
  *
  * @author Eric Gach <eric@php-oop.net>
  * @copyright SiTech Group (c) 2010
@@ -24,13 +28,7 @@
  * @todo Finish documentation and fix any remaining bugs.
  * @version $Id$
  */
-
-/**
- * I've had vodka, and this is the result. pwn.
- *
- * @author Eric Gach <eric@php-oop.net>
- */
-abstract class SiTech_Model_Abstract
+abstract class AModel
 {
 	/**
 	 * This is used to tell the model that it belongs to another model. Through
@@ -104,7 +102,7 @@ abstract class SiTech_Model_Abstract
 	 */
 	protected static $_table;
 
-	public function __construct(PDO $db = null)
+	public function __construct(\PDO $db = null)
 	{
 		if (empty($db)) {
 			$this->_db = static::db();
@@ -160,7 +158,8 @@ abstract class SiTech_Model_Abstract
 					$one = true;
 				}
 
-				SiTech_Loader::loadModel($class);
+				require_once('SiTech/Loader.php');
+				SiTech\Loader::loadModel($class);
 				$class .= 'Model';
 				$value = $class::get($fk, $one);
 				$this->_fields[$name] = $value;
@@ -201,17 +200,16 @@ abstract class SiTech_Model_Abstract
 	 * @return PDO
 	 * @throws SiTech_Exception
 	 */
-	public static function db(PDO $db = null)
+	public static function db(\PDO $db = null)
 	{
 		/**
 		 * This is kinda like an init class since our internal methods use it,
 		 * so lets do some basic checks.
 		 */
-		if (empty(static::$_table)) static::$_table = get_parent_class();
+		if (empty(static::$_table)) static::$_table = \get_parent_class();
 
 		if (empty($db) && !is_a(static::$db, 'PDO')) {
-			require_once('SiTech/Exception.php');
-			throw new SiTech_Exception('The %s::$_db property is not set. Please use %s::db() to set the PDO connection.', array(get_parent_class(), get_parent_class()));
+			throw new Exception('The %s::$_db property is not set. Please use %s::db() to set the PDO connection.', array(\get_parent_class(), \get_parent_class()));
 		} elseif (empty($db)) {
 			return(static::$db);
 		} else {
@@ -247,7 +245,7 @@ abstract class SiTech_Model_Abstract
 		$sql = 'SELECT * FROM '.static::$_table;
 
 		if (!empty($where)) {
-			if (is_int($where)) {
+			if (\is_int($where)) {
 				$sql .= ' WHERE '.static::pk().' = '.$where;
 			} else {
 				$sql .= ' WHERE '.$where;
@@ -255,7 +253,7 @@ abstract class SiTech_Model_Abstract
 		}
 
 		$stmnt = static::db()->query($sql);
-		$stmnt->setFetchMode(PDO::FETCH_CLASS, get_called_class());
+		$stmnt->setFetchMode(\PDO::FETCH_CLASS, \get_called_class());
 
 		if ($only_one) {
 			return($stmnt->fetch());
@@ -269,7 +267,7 @@ abstract class SiTech_Model_Abstract
 		$sql = 'SELECT COUNT('.static::pk().') FROM '.static::$_table;
 
 		if (!empty($where)) {
-			if (is_int($where)) {
+			if (\is_int($where)) {
 				$sql .= ' WHERE '.static::pk().' = '.$where;
 			} else {
 				$sql .= ' WHERE '.$where;
@@ -283,8 +281,7 @@ abstract class SiTech_Model_Abstract
 	public static function pk($pk = null)
 	{
 		if (empty($pk) && empty(static::$_pk)) {
-			require_once('SiTech/Exception.php');
-			throw new SiTech_Exception('%s::$_pk is not set. Please use %s::pk() to set the primary key field.', array(get_parent_class(), get_parent_class()));
+			throw new Exception('%s::$_pk is not set. Please use %s::pk() to set the primary key field.', array(get_parent_class(), get_parent_class()));
 		} elseif (!empty($pk)) {
 			static::$_pk = $pk;
 		} else {
@@ -312,9 +309,14 @@ abstract class SiTech_Model_Abstract
 		}
 	}
 
+	/**
+	 * Take the data from the current model and encode it into a JSON string.
+	 *
+	 * @return string
+	 */
 	public function toJson()
 	{
-		return(json_encode($this->_fields));
+		return(\json_encode($this->_fields));
 	}
 
 	/**
@@ -349,13 +351,13 @@ abstract class SiTech_Model_Abstract
 			$values[$f] = $v;
 		}
 
-		$sql .= '('.implode(',', $fields).') VALUES(:'.implode(',:', $fields).')';
+		$sql .= '('.\implode(',', $fields).') VALUES(:'.\implode(',:', $fields).')';
 		$stmnt = $this->_db->prepare($sql);
 		if ($stmnt->execute($values)) {
 			// Assign the PK once the row is inserted
 			$this->_fields[$pk] = $this->_db->lastInsertId();
 		}
-		return($stmnt->rowCount());
+		return((bool)$stmnt->rowCount());
 	}
 
 	/**
@@ -378,7 +380,7 @@ abstract class SiTech_Model_Abstract
 			$values[] = $v;
 		}
 
-		$sql .= implode(',', $fields);
+		$sql .= \implode(',', $fields);
 		$sql .= ' WHERE '.$pk.' = ?';
 		$values[] = $this->_fields[$pk];
 		$stmnt = $this->_db->prepare($sql);
@@ -386,3 +388,6 @@ abstract class SiTech_Model_Abstract
 		return(($stmnt->rowCount() === false)? false : true);
 	}
 }
+
+require_once('SiTech/Exception.php');
+class Exception extends \SiTech\Exception {}
