@@ -110,9 +110,8 @@ class Session extends \ArrayObject
 		$this->setAttribute(self::ATTR_COOKIE_PATH, '/');
 
 		if (!static::$handler) {
-			$handler = self::HANDLER_FILE;
-			require_once(\str_replace('_', '/', $handler).'.php');
-			self::registerHandler(new $handler());
+			require_once('SiTech/Session/Handler/File.php');
+			self::registerHandler(new \SiTech\Session\Handler\File());
 		}
 
 		if (static::$handler instanceof \SiTech\Session\Handler\File) {

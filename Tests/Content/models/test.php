@@ -9,6 +9,6 @@
  *
  * @author Eric Gach <eric@php-oop.net>
  */
-class TestModel extends SiTech_Model_Abstract
+class TestModel extends SiTech\Model\AModel
 {
 }

@@ -22,7 +22,7 @@ namespace SiTech\DB\Driver;
 const SQLITE = 'SiTech\DB\Driver\SQLite';
 
 /**
- * @see SiTech\DB\Driver\Abstract
+ * @see SiTech\DB\Driver\ADriver
  */
 require_once('SiTech/DB/Driver/ADriver.php');
 

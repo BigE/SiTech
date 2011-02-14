@@ -1,18 +1,33 @@
 --TEST--
-SiTech_Loader::loadModel() usage
+SiTech\Loader::loadModel() usage
 --FILE--
 <?php
 require_once('SiTech_Test.php');
 require_once('SiTech/Loader.php');
 
 define('SITECH_APP_PATH', realpath(dirname(__FILE__).'/../Content'));
-SiTech_Loader::registerAutoload();
-SiTech_Loader::loadModel('Test');
+SiTech\Loader::registerAutoload();
+SiTech\Loader::loadModel('Test');
+TestModel::db(new SiTech\DB(array('dsn' => 'sqlite::memory:'), 'SiTech\DB\Driver\SQLite'));
 $model = new TestModel();
 var_dump($model);
 ?>
 --EXPECT--
-object(TestModel)#1 (4) {
+object(TestModel)#3 (6) {
+  ["_belongsTo":protected]=>
+  array(0) {
+  }
+  ["_db":protected]=>
+  object(SiTech\DB)#1 (2) {
+    ["driver":protected]=>
+    object(SiTech\DB\Driver\SQLite)#2 (1) {
+      ["pdo":protected]=>
+      *RECURSION*
+    }
+    ["_queries":"SiTech\DB":private]=>
+    array(0) {
+    }
+  }
   ["errors"]=>
   array(0) {
   }

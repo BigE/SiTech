@@ -7,8 +7,8 @@ require_once('SiTech/Template.php');
 require_once('SiTech/Template/Renderer/Macro.php');
 error_reporting(E_ALL);
 
-$template = new SiTech_Template(SITECH_BASEPATH.'/Tests/Content');
-$template->setAttribute(SiTech_Template::ATTR_RENDER_ENGINE, new SiTech_Template_Renderer_Macro());
+$template = new SiTech\Template(SITECH_BASEPATH.'/Tests/Content');
+$template->setAttribute(SiTech\Template::ATTR_RENDER_ENGINE, new SiTech\Template\Renderer\Macro());
 $template->assign('test', 'awesome');
 $template->display('macro.tpl');
 $template->assign('test', 'horrible');

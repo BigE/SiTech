@@ -18,9 +18,9 @@
 namespace SiTech\DB\Driver;
 
 /**
- * @see SiTech\DB\Driver\Interface
+ * @see SiTech\DB\Driver\IDriver
  */
-require_once('SiTech/DB/Driver/Interface.php');
+require_once('SiTech/DB/Driver/IDriver.php');
 
 /**
  * Base class for all database types.

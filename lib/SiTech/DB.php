@@ -51,7 +51,7 @@ class DB extends \PDO
 	 *                       constant.
 	 * @param array $options Array of config options to pass to PDO.
 	 */
-	public function __construct(array $config, $driver = 'SiTech_DB_Driver_MySQL', array $options = array())
+	public function __construct(array $config, $driver = 'SiTech\DB\Driver\MySQL', array $options = array())
 	{
 		if (empty($config['dsn'])) {
 			throw new DB\Exception('Missing required DSN from config');

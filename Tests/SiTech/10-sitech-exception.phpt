@@ -7,19 +7,19 @@ require_once('SiTech/Exception.php');
 
 $errstr = '#%d This is my %s test string';
 try {
-	throw new SiTech_Exception($errstr, array(1, 'beautiful'));
+	throw new SiTech\Exception($errstr, array(1, 'beautiful'));
 } catch (Exception $e) {
 	echo $e->getMessage(),"\n";
 }
 
 try {
-	throw new SiTech_Exception($errstr, array(2, 'horrible'));
+	throw new SiTech\Exception($errstr, array(2, 'horrible'));
 } catch (Exception $e) {
 	echo $e->getMessage(),"\n";
 }
 
 try {
-	throw new SiTech_Exception($errstr, array(3, 'final'));
+	throw new SiTech\Exception($errstr, array(3, 'final'));
 } catch (Exception $e) {
 	echo $e->getMessage(),"\n";
 }

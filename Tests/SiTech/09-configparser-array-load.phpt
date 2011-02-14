@@ -11,7 +11,7 @@ require_once('SiTech_Test.php');
 require_once('SiTech/ConfigParser.php');
 require_once('SiTech/ConfigParser/Handler/Array.php');
 try {
-	$config = SiTech_ConfigParser::load(array(SiTech_ConfigParser::ATTR_HANDLER => new SiTech_ConfigParser_Handler_Array));
+	$config = SiTech\ConfigParser::load(array(SiTech\ConfigParser::ATTR_HANDLER => new SiTech\ConfigParser\Handler\_Array));
 } catch (Exception $e) {
 	echo $e->getMessage(),"\n";
 }

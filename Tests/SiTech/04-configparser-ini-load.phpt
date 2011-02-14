@@ -10,7 +10,7 @@ if (!file_exists(dirname(__FILE__).'/test-config.ini')) die('skip the file test-
 require_once('SiTech_Test.php');
 require_once('SiTech/ConfigParser.php');
 try {
-	$config = SiTech_ConfigParser::load();
+	$config = SiTech\ConfigParser::load();
 	$config->read(array(dirname(__FILE__).'/test-config.ini'));
 } catch (Exception $e) {
 	echo $e->getMessage(),"\n";

@@ -83,7 +83,7 @@ class Loader
 			return;
 		}
 
-		$file = \str_replace('_', \DIRECTORY_SEPARATOR, $class).'.php';
+		$file = \str_replace(array('_', '\\'), \DIRECTORY_SEPARATOR, $class).'.php';
 		include_once($file);
 
 		if (!\class_exists($class, false) && !\interface_exists($class, false)) {
@@ -172,7 +172,7 @@ class Loader
 	 * @param bool $enabled
 	 * @throws SiTech\Loader\Exception
 	 */
-	public static function registerAutoload($class = 'SiTech_Loader', $enabled = true)
+	public static function registerAutoload($class = 'SiTech\Loader', $enabled = true)
 	{
 		if (!\function_exists('spl_autoload_register')) {
 			throw new Loader\Exception('spl_autoload does not exist in this PHP installation');
