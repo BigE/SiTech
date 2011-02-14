@@ -1,0 +1,5 @@
+Tests/SiTech/*.diff
+Tests/SiTech/*.exp
+Tests/SiTech/*.log
+Tests/SiTech/*.out
+Tests/SiTech/*.php
