@@ -1,7 +1,5 @@
 <?php
 /**
- * SiTech/Syntax/Highlight.php
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -15,23 +13,22 @@
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+
+namespace SiTech\Syntax;
+
+/**
+ * Description of Highlight
  *
  * @author Eric Gach <eric@php-oop.net>
- * @copyright SiTech Group (c) 2009
+ * @copyright SiTech Group (c) 2009-2011
  * @filesource
  * @package SiTech_Syntax
  * @subpackage SiTech_Syntax_Highlight
  * @todo Finish file documentation.
  * @version $Id$
  */
-
-/**
- * Description of Highlight
- *
- * @package SiTech_Syntax
- * @subpackage SiTech_Syntax_Highlight
- */
-class SiTech_Syntax_Highlight
+class Highlight
 {
 	const TYPE_PHP = 1;
 

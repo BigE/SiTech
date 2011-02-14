@@ -15,27 +15,26 @@
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
- *
- * @author Eric Gach <eric@php-oop.net>
- * @copyright SiTech Group (c) 2009
- * @filesource
- * @package SiTech_Syntax
- * @subpackage SiTech_Syntax_Highlight
- * @todo Finish file documentation and implement rules for CSS parsing.
- * @version $Id$
  */
 
+namespace SiTech\Syntax\Highlight;
+
 /**
- * @see SiTech_Syntax_Highlight_Abstract
+ * @see SiTech\Syntax\Highlight\Abstract
  */
-require_once('SiTech/Syntax/Highlight/Abstract.php');
+require_once('SiTech/Syntax/Highlight/AHighlight.php');
 
 /**
  * Description of CSS
  *
- * @package SiTech_Syntax
- * @subpackage SiTech_Syntax_Highlight
+ * @author Eric Gach <eric@php-oop.net>
+ * @copyright SiTech Group (c) 2009-2011
+ * @filesource
+ * @package SiTech\Syntax
+ * @subpackage SiTech\Syntax\Highlight
+ * @todo Finish file documentation and implement rules for CSS parsing.
+ * @version $Id$
  */
-class SiTech_Syntax_Highlight_CSS extends SiTech_Syntax_Highlight_Abstract
+class CSS extends AHighlight
 {
 }
