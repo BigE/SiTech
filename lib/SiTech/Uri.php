@@ -128,21 +128,21 @@ class Uri
 
 	public function getPath($flags = 0)
 	{
-		if ($flags & self::FLAG_REWRITE && isset($this->_requestUri['rewritePath'])) {
+		if ($flags & Uri\FLAG_REWRITE && isset($this->_requestUri['rewritePath'])) {
 			$path = $this->_requestUri['rewritePath'];
 		} else {
 			$path = $this->_requestUri['path'];
 		}
 
-		if ($flags & self::FLAG_ACTION) {
+		if ($flags & Uri\FLAG_ACTION) {
 			$path = \preg_replace('#^/'.$this->_controller.'/'.$this->_action.'#', '/'.$this->_controller, $path);
 		}
 
-		if ($flags & self::FLAG_CONTROLLER) {
+		if ($flags & Uri\FLAG_CONTROLLER) {
 			$path = \preg_replace('#^/('.$this->_controller.')#', '', $path);
 		}
 
-		if ($flags & self::FLAG_LTRIM) {
+		if ($flags & Uri\FLAG_LTRIM) {
 			$path = \ltrim($path, '/');
 		}
 
