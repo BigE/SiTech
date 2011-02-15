@@ -26,7 +26,7 @@ namespace SiTech\Controller;
  * @package SiTech\Controller
  * @version $Id$
  */
-abstract class AbstractController
+abstract class AController
 {
 	/**
 	 * Internal use for the action of the controller.
@@ -182,8 +182,8 @@ abstract class AbstractController
 		 * If the init() doesn't define its own view, set a generic view.
 		 */
 		if (empty($this->_view)) {
-			require_once('../Template.php');
-			$this->_view = new \SiTech_Template(\SITECH_APP_PATH.\DIRECTORY_SEPARATOR.'views');
+			require_once('SiTech/Template.php');
+			$this->_view = new \SiTech\Template(\SITECH_APP_PATH.\DIRECTORY_SEPARATOR.'views');
 		}
 		$this->_view->assign('_isXHR', $this->_isXHR);
 
