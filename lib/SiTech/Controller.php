@@ -60,7 +60,7 @@ class Controller
 		$rewrite = $uri->isRewrite();
 
 		if ($rewrite) {
-			$path = $uri->getPath(SiTech_Uri::FLAG_REWRITE);
+			$path = $uri->getPath(\SiTech\Uri\FLAG_REWRITE);
 		} else {
 			$path = $uri->getPath();
 		}
@@ -118,7 +118,7 @@ class Controller
 		$uri->setAction($action);
 		$uri->setPath($path);
 		require_once('Loader.php');
-		$obj = SiTech\Loader::loadController($controller, $uri);
+		$obj = \SiTech\Loader::loadController($controller, $uri);
 	}
 }
 

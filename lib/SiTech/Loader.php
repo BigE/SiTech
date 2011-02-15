@@ -101,7 +101,7 @@ class Loader
 	 * @return object
 	 * @throws SiTech\Loader\Exception
 	 */
-	public static function loadController($name, SiTech_Uri $uri)
+	public static function loadController($name, \SiTech\Uri $uri)
 	{
 		$name = \strtolower($name);
 		$class = null;
