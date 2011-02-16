@@ -37,7 +37,7 @@ class Highlight
 		switch ($type) {
 			case self::TYPE_PHP:
 				require_once('SiTech/Syntax/Highlight/PHP.php');
-				$obj = new SiTech_Syntax_Highlight_PHP;
+				$obj = new Highlight\PHP;
 				break;
 
 			default:
