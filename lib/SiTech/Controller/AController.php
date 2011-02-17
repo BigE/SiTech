@@ -68,6 +68,8 @@ abstract class AController
 	 */
 	private $_display = false;
 
+	protected $_errors = array();
+
 	/**
 	 * If $_GET['xhr'] or $_POST['xhr'] is set, the request is a XHR request
 	 * and this will be set to true.
@@ -203,12 +205,26 @@ abstract class AController
 		// Call the action for the controller.
 		$ret = $this->{$this->_action}();
 
+		if (!empty($this->_errors)) {
+			$this->_view->assign('errors', $this->_errors);
+		}
+
 		/**
 		 * If the display has not been initated, we need to call it. It will
 		 * default to using $controller/$action.tpl
 		 */
 		if ($this->_display !== true && $ret !== false) {
-			$this->_display($this->_uri->getController().\DIRECTORY_SEPARATOR.$this->_action.'.tpl');
+			if ($this->_uri->getFormat() == 'json') {
+				// If our format is json, render the template and pass it through
+				// a json encoded array. Also pass any errors.
+				$array = array('html' => $this->_view->render($this->_uri->getController().\DIRECTORY_SEPARATOR.$this->_action.'.tpl'));
+				if (!empty($this->_errors)) {
+					$array['errors'] = $this->_errors;
+				}
+				echo json_encode($array);
+			} else {
+				$this->_display($this->_uri->getController().\DIRECTORY_SEPARATOR.$this->_action.'.tpl');
+			}
 		}
 	}
 

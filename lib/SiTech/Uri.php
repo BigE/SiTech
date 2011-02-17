@@ -32,6 +32,7 @@ class Uri
 
 	protected $_action;
 	protected $_controller;
+	protected $_format;
 	protected $_requestUri;
 	
 	/**
@@ -74,6 +75,9 @@ class Uri
 
 		$this->_controller = (empty($parts[0]))? ((\defined('SITECH_DEFAULT_CONTROLLER'))? \SITECH_DEFAULT_CONTROLLER : 'default') : $parts[0];
 		$this->_action = (empty($parts[1]))? 'index' : ((\is_int($parts[1]))? 'view' : $parts[1]);
+		if (($fPos = \strrpos($this->_action, '.')) !== false) {
+			$this->_format = \substr($this->_action, $fPos);
+		}
 	}
 
 	public function __get($name)
@@ -119,6 +123,11 @@ class Uri
 	public function getController()
 	{
 		return($this->_controller);
+	}
+
+	public function getFormat()
+	{
+		return($this->_format);
 	}
 
 	public function getHost()
@@ -219,6 +228,11 @@ class Uri
 		} else {
 			return(false);
 		}
+	}
+
+	public function setFormat($format)
+	{
+		$this->_format = $format;
 	}
 
 	public function setPath($path, $rewrite = false)

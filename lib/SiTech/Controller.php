@@ -69,8 +69,11 @@ class Controller
 			if (\preg_match("#^($regex)$#", $path, $parts)) {
 				$uri->setController($array[0]);
 				$uri->setAction($array[1]);
-				if (!empty($parts[2])) {
+				if (!empty($parts[2]) && $parts[2][0] != '.') {
 					$uri->setPath('/'.$array[0].'/'.$array[1].'/'.$parts[2], true);
+				} elseif (!empty($parts[2]) && $parts[2][0] == '.') {
+					$uri->setFormat(substr($parts[2], 1));
+					$uri->setPath('/'.$array[0].'/'.$array[1].$parts[2], true);
 				} else {
 					$uri->setPath('/'.$array[0].'/'.$array[1], true);
 				}
@@ -79,10 +82,10 @@ class Controller
 			}
 		}
 
-
 		$controller = $uri->getController();
 		$action = $uri->getAction();
 		$parts = \explode('/', $uri->getPath(true));
+		$format = $uri->getFormat();
 		if (isset($parts[0])) {
 			$path = '/'.$parts[0];
 		} else {
@@ -110,6 +113,11 @@ class Controller
 			}
 		}
 
+		if (($fPos = \strrpos($action, '.')) !== false) {
+			$format = \substr($action, $fPos+1);
+			$action = \substr($action, 0, $fPos);
+		}
+
 		/**
 		 * Changed to set just the path, that way we don't loose the whole URL
 		 * when passing to a controller.
@@ -117,6 +125,7 @@ class Controller
 		$uri->setController($controller);
 		$uri->setAction($action);
 		$uri->setPath($path);
+		$uri->setFormat($format);
 		require_once('Loader.php');
 		$obj = \SiTech\Loader::loadController($controller, $uri);
 	}
