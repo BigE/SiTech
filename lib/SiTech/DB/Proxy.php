@@ -199,9 +199,9 @@ class SiTech_DB_Proxy extends SiTech_DB
 
 	public function query($statement, array $args = array()) {
 		if ($this->_readOnly($statement)) {
-			$this->_readConn->query($statement, $args);
+			return($this->_readConn->query($statement, $args));
 		} else {
-			$this->_writeConn->query($statement, $args);
+			return($this->_writeConn->query($statement, $args));
 		}
 	}
 
