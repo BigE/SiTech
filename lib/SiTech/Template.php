@@ -292,7 +292,7 @@ class Template
 	public function _handleError($msg, $array = array())
 	{
 		if ($this->getAttribute(self::ATTR_ERRMODE) === self::ERRMODE_EXCEPTION) {
-			throw new Exception(\vsprintf($msg, $array));
+			throw new Template\Exception(\vsprintf($msg, $array));
 		} elseif ($this->getAttribute(self::ATTR_ERRMODE) === self::ERRMODE_WARNING) {
 			\trigger_error(\vsprintf($msg, $array), \E_USER_WARNING);
 		}
