@@ -70,6 +70,12 @@ class Template
 	 */
 	protected $attributes = array();
 
+	/**
+	 * Layout to use for the template file we display. If no layout is set the
+	 * template itself will be displayed.
+	 *
+	 * @var string
+	 */
 	protected $_layout;
 
 	/**
