@@ -118,6 +118,12 @@ class Template
 		}
 	}
 
+	/**
+	 * Magic get
+	 *
+	 * @param string $name
+	 * @return mixed
+	 */
 	public function __get($name)
 	{
 		if (isset($this->vars[$name])) {
