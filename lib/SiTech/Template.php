@@ -48,10 +48,19 @@ class Template
      */
     const ATTR_ERRMODE = 2;
 
+	/**
+	 * Don't display any errors to the screen.
+	 */
     const ERRMODE_NONE = 0;
 
+	/**
+	 * Display a warning to the screen when an error occurs.
+	 */
 	const ERRMODE_WARNING = 1;
 
+	/**
+	 * Throw an exception when an error occurs.
+	 */
 	const ERRMODE_EXCEPTION = 2;
 
 	/**
