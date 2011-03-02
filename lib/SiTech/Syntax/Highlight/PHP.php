@@ -20,7 +20,7 @@ namespace SiTech\Syntax\Highlight;
 /**
  * @see SiTech\Syntax\Highlight\Abstract
  */
-require_once('SiTech/Syntax/Highlight/Abstract.php');
+require_once('SiTech/Syntax/Highlight/AHighlight.php');
 
 /**
  * Description of PHP

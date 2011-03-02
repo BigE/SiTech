@@ -225,4 +225,4 @@ class Filter
 
 namespace SiTech\Filter;
 require_once('Exception.php');
-class Exception extends SiTech\Exception {}
+class Exception extends \SiTech\Exception {}
