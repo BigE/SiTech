@@ -66,8 +66,8 @@ class SiTech_DB extends PDO
 			throw new SiTech_Exception('Missing required DSN from config');
 		}
 
-		$username = empty($config['user'])? null : $config['user'];
-		$password = empty($config['password'])? null : $config['password'];
+		$username = empty($config['username'])? (empty($config['user'])? null : $config['user']) : $config['username'];
+		$password = empty($config['password'])? (empty($config['pass'])? null : $config['pass']) : $config['password'];
 		parent::__construct($config['dsn'], $username, $password, $options);
 
 		/* This can be reset in user code, but we prefer exceptions */
