@@ -60,7 +60,7 @@ class SiTech_Session_Handler_DB implements SiTech_Session_Handler_Interface
 	 * @param SiTech_DB $dbObj Database object for use in the handler.
 	 * @param string $table Table name in the database to use.
 	 */
-	public function __construct($dbObj, $table)
+	public function __construct($dbObj, $table = 'SiTech_Sessions')
 	{
 		/* sanity checks */
 		if (!is_object($dbObj) && !is_a($dbObj, 'SiTech_DB')) {
