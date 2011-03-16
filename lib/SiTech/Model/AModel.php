@@ -121,8 +121,8 @@ abstract class AModel
 	{
 		if (isset($this->_fields[$name]) || isset($this->_hasOne[$name]) || isset($this->_hasMany[$name]) || isset($this->_belongsTo[$name])) {
 			$value = (isset($this->_fields[$name]))? $this->_fields[$name] : null;
-			
-			if ((isset($this->_hasMany[$name]) || isset($this->_hasOne[$name]) || isset($this->_belongsTo[$name])) && (!is_object($value) || !is_array($value))) {
+
+			if ((isset($this->_hasMany[$name]) || isset($this->_hasOne[$name]) || isset($this->_belongsTo[$name])) && (!is_object($value) && !is_array($value))) {
 				// Initalize the class with the name of the variable
 				$class = $name;
 				$fk = null;
