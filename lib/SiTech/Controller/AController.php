@@ -13,6 +13,8 @@
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ * @package SiTech\Controller
  */
 
 namespace SiTech\Controller;
@@ -61,13 +63,19 @@ abstract class AController
 	protected $_components = array();
 
 	/**
-	 * This tells if _display() has been called yet. If it hasn't then we call
-	 * it automatically.
+	 * This tells the display() method if it has been called yet.
 	 *
+	 * @see display
 	 * @var boolean
 	 */
 	private $_display = false;
 
+	/**
+	 * Any errors encountered during processing by the controller should be put
+	 * into this array.
+	 *
+	 * @var array
+	 */
 	protected $_errors = array();
 
 	/**
@@ -95,71 +103,34 @@ abstract class AController
 	protected $_models = array();
 
 	/**
-	 * This is a SiTech_Uri object used in the controller itself.
+	 * If passed into the constructor, this is the route that was matched by the
+	 * router to trigger this controller.
 	 *
-	 * @var SiTech_Uri
+	 * @var \SiTech\Router\Route
 	 */
-	protected $_uri;
+	protected $_route;
 
 	/**
+	 * This is the view used by the controller.
 	 *
-	 * @var SiTech_Template
+	 * @see display setLayout
+	 * @var \SiTech\Template
 	 */
 	protected $_view;
 
 	/**
 	 * This is the guts of the controller. Once here, we do all the processing
-	 * and setup needed. Once that is complete, we call the action specified
-	 * and then display the template for that action. By default we look at
-	 * application/views/<controller>/<action>.tpl but this can be overriden
-	 * by returning false or using _display()
-	 *
-	 * @param SiTech_Uri $uri
-	 * @see _display
+	 * and setup needed.
 	 */
-	public function __construct(\SiTech\Uri $uri)
+	public function __construct(\SiTech\Router\Route $route = null)
 	{
-		$this->_uri = $uri;
-		
-		$this->_action = $this->_uri->getAction(true);
-
-		$this->_args = \explode('/', $this->_uri->getPath(\SiTech\Uri\FLAG_REWRITE | \SiTech\Uri\FLAG_LTRIM | \SiTech\Uri\FLAG_CONTROLLER | \SiTech\Uri\FLAG_ACTION));
-
-		if (isset($this->_argMap[$this->_action]) && \is_array($this->_argMap[$this->_action])) {
-			$fill = false;
-			foreach ($this->_argMap[$this->_action] as $k => $arg) {
-				if (\is_array($arg)) {
-					$tmp = $arg;
-					$arg = $tmp['name'];
-					$fill = (isset($tmp['fill']) && $tmp['fill'] === true);
-					if (isset($tmp['qsa'])) {
-						foreach ($tmp['qsa'] as $getK => $getV) {
-							if (\is_numeric($getK)) $getK = $getV;
-							$this->_argMap[$getK] = (isset($_GET[$getV])? $_GET[$getV] : null);
-						}
-					}
-				}
-
-				if (!isset($this->_args[$k])) $this->_args[$arg] = null;
-				else $this->_args[$arg] = $this->_args[$k];
-
-				if ($fill) {
-					foreach ($this->_args as $argK => $argV) {
-						if (\is_numeric($argK) && $argK > $k) {
-							$this->_args[$arg] .= '/'.$argV;
-						}
-					}
-
-					break;
-				}
-			}
-		}
+		$this->_route = $route;
 
 		if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && \strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
 			$this->_isXHR = true;
 		}
 
-		// Load models
+		// Load models first, in case the components need them.
 		if (!empty($this->_models)) {
 			require_once('SiTech/Loader.php');
 			\array_walk($this->_models, array('\SiTech\Loader', 'loadModel'));
@@ -181,76 +152,48 @@ abstract class AController
 		}
 
 		/**
-		 * If the init() doesn't define its own view, set a generic view.
+		 * If the parent doesn't define its own view, set a generic view.
 		 */
 		if (empty($this->_view)) {
 			require_once('SiTech/Template.php');
 			$this->_view = new \SiTech\Template(\SITECH_APP_PATH.\DIRECTORY_SEPARATOR.'views');
 		}
-		$this->_view->assign('_isXHR', $this->_isXHR);
 
-		// Initalize the controller
-		$this->init();
-
-		/**
-		 * If the action does not exist, this is the same as a 404 error (page
-		 * not found) so we want to relay this to our application for a chance
-		 * to handle the error.
-		 */
-		if (!\method_exists($this, $this->_action)) {
-			require_once('SiTech/Controller.php');
-			throw new Exception('Method '.\get_class($this).'::'.$this->_action.'() not found', null, 404);
-		}
-
-		// Call the action for the controller.
-		$ret = $this->{$this->_action}();
-
-		if (!empty($this->_errors)) {
-			$this->_view->assign('errors', $this->_errors);
-		}
-
-		/**
-		 * If the display has not been initated, we need to call it. It will
-		 * default to using $controller/$action.tpl
-		 */
-		if ($this->_display !== true && $ret !== false) {
-			if ($this->_uri->getFormat() == 'json') {
-				// If our format is json, render the template and pass it through
-				// a json encoded array. Also pass any errors.
-				$array = array('html' => $this->_view->render($this->_uri->getController().\DIRECTORY_SEPARATOR.$this->_action.'.tpl'));
-				if (!empty($this->_errors)) {
-					$array['errors'] = $this->_errors;
-				}
-				echo json_encode($array);
-			} else {
-				$this->_display($this->_uri->getController().\DIRECTORY_SEPARATOR.$this->_action.'.tpl');
-			}
-		}
+		// let our template know if we're using a XML HTTP Request.
+		$this->_assign('_isXHR', $this->_isXHR);
 	}
 
 	/**
-	 * Initalization needed for the controller. We should never override the
-	 * constructor, so this is how we initalize our controller in the application.
-	 */
-	protected function init()
-	{
-	}
-
-	/**
-	 * Built in display method to call the view's display method. This is called
-	 * automatically or by our application. Either way, every action gets the
-	 * view called automatically.
+	 * This is a built in helper method for displaying the template once it is
+	 * built by the controller. If the controller does not call this method, the
+	 * dispatch of the route will automatically call it. If you do not want it
+	 * automatically called by the route, return false from the method and it
+	 * will not call this method.
 	 *
 	 * @param string $page Template page to display.
+	 * @param string $type Content Type to send for template output.
 	 */
-	protected function _display($page, $type = 'text/html')
+	public function display($page, $type = 'text/html')
 	{
+		if ($this->_display === true) return;
+
 		if (!empty($this->_layout)) {
-			$this->_view->setLayout($this->_layout);
+			$this->setLayout($this->_layout);
 		}
 
 		$this->_display = true;
 		$this->_view->display($page, $type);
+	}
+
+	/**
+	 * This is a helper method for the view to assign variables to the view.
+	 *
+	 * @param string $name
+	 * @param mixed $value
+	 */
+	protected function _assign($name, $value)
+	{
+		$this->_view->assign($name, $value);
 	}
 
 	/**
@@ -285,5 +228,17 @@ abstract class AController
 		} while (($i++ * $limit) <= $totalRecords);
 
 		return($pages);
+	}
+
+	/**
+	 * Helper function to set the layout with the view. This is automatically
+	 * called by the display method if the layout is defined in the instance
+	 * variable $_layout
+	 *
+	 * @param string $layout
+	 */
+	protected function _setLayout($layout)
+	{
+		$this->_view->setLayout($layout);
 	}
 }
