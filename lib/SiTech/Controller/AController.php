@@ -14,7 +14,7 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
- * @package SiTech\Controller
+ * @filesource
  */
 
 namespace SiTech\Controller;
@@ -23,8 +23,6 @@ namespace SiTech\Controller;
  * Description of Abstract
  *
  * @author Eric Gach <eric@php-oop.net>
- * @copyright SiTech Group © 2008-2011
- * @filesource
  * @package SiTech\Controller
  * @version $Id$
  */

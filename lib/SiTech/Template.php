@@ -13,6 +13,8 @@
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ * @filesource
  */
 
 namespace SiTech;
@@ -22,9 +24,7 @@ namespace SiTech;
  * assign variables, render the page, and even display the full output.
  *
  * @author Eric Gach <eric@php-oop.net>
- * @copyright SiTech Group (c) 2008-2011
- * @filesource
- * @package SiTech\Template
+ * @package SiTech
  * @version $Id$
  */
 class Template
@@ -189,7 +189,7 @@ class Template
 				$doctype = '<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN"
    "http://www.w3.org/TR/html4/frameset.dtd">';
 				break;
-			
+
 			case 'XHTML_10_STRICT':
 				$doctype = '<?xml version="1.0" encoding="utf-8"?>'.\PHP_EOL.'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">';
@@ -324,4 +324,11 @@ class Template
 
 namespace SiTech\Template;
 require_once('SiTech/Exception.php');
+
+/**
+ *
+ * @author Eric Gach <eric@php-oop.net>
+ * @package SiTech\Template
+ * @version $Id$
+ */
 class Exception extends \SiTech\Exception {}

@@ -13,6 +13,8 @@
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ * @filesource
  */
 
 namespace SiTech\ConfigParser\Handler;
@@ -26,14 +28,11 @@ const HANDLER_XML = 'SiTech\ConfigParser\Handler\XML';
 require_once('SiTech/ConfigParser/Handler/IHandler.php');
 
 /**
- * SiTech\ConfigParser\Handler\XML - Reads and writes configuration files that
- * are in XML format.
+ * Reads and writes configuration files that are in XML format.
  *
  * @author Eric Gach <eric@php-oop.net>
- * @copyright SiTech Group © 2008-2011
- * @filesource
- * @package SiTech_ConfigParser
- * @subpackage SiTech_ConfigParser_Handler
+ * @package SiTech\ConfigParser
+ * @subpackage SiTech\ConfigParser\Handler
  * @version $Id$
  */
 class XML implements IHandler

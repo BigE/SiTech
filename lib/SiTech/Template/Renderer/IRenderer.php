@@ -13,6 +13,8 @@
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ * @filesource
  */
 
 namespace SiTech\Template\Renderer;
@@ -21,8 +23,6 @@ namespace SiTech\Template\Renderer;
  * Interface for all rendering enginges.
  *
  * @author Eric Gach <eric@php-oop.net>
- * @copyright SiTech Group (c) 2008-2011
- * @filesource
  * @package SiTech\Template
  * @subpackage SiTech\Template\Renderer
  * @version $Id$
@@ -47,5 +47,15 @@ interface IRenderer
 	static public function render(\SiTech\Template $tpl, $file, $path, array $vars);
 }
 
+/**
+ * @see SiTech\Template
+ */
 require_once('SiTech/Template.php');
+
+/**
+ * @author Eric Gach <eric@php-oop.net>
+ * @package SiTech\Template
+ * @subpackage SiTech\Template\Renderer
+ * @version $Id$
+ */
 class Exception extends \SiTech\Template\Exception {}

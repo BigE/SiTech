@@ -1,7 +1,5 @@
 <?php
 /**
- * SiTech/Session.php
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -15,6 +13,8 @@
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ * @filesource
  */
 
 namespace SiTech\Console;
@@ -26,8 +26,6 @@ namespace SiTech\Console;
  * proper information.
  *
  * @author Eric Gach <eric@php-oop.net>
- * @copyright SiTech Group (c) 2008-2011
- * @filesource
  * @package SiTech\Console
  * @version $Id$
  */
@@ -151,7 +149,7 @@ class GetOpts
 			if (isset($option['long'])) {
 				$opts[] = '--'.$option['long'];
 			}
-			
+
 			$opts = implode(', ', $opts);
 			printf("%-30s%s\n", $opts, (isset($option['desc'])? $option['desc'] : null));
 		}

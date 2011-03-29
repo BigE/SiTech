@@ -13,6 +13,8 @@
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ * @filesource
  */
 
 namespace SiTech\DB\Privilege;
@@ -21,8 +23,6 @@ namespace SiTech\DB\Privilege;
  * Base class for all privilege classes based on database type.
  *
  * @author Eric Gach <eric@php-oop.net>
- * @copyright SiTech Group (c) 2008-2011
- * @filesource
  * @package SiTech\DB
  * @subpackage SiTech\DB\Privilege
  * @todo Finish documentation for file

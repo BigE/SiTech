@@ -13,6 +13,8 @@
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ * @filesource
  */
 
 namespace SiTech;
@@ -23,8 +25,7 @@ namespace SiTech;
  *
  * @author Eric Gach <eric@php-oop.net>
  * @copyright SiTech Group (c) 2010-2011
- * @filesource
- * @package SiTech\Plugins
+ * @package SiTech
  * @version $Id$
  */
 class Plugins
@@ -130,7 +131,7 @@ class Plugins
 			require_once('SiTech/Plugins/Exception.php');
 			throw new Plugins\Exception('The plugin file "%s" could not be loaded because it exceeds the maximum filesize of %d KB', array($file, $this->_attributes[self::ATTR_MAX_FILESIZE]));
 		}
-		
+
 		if (!file_exists($file) || !is_readable($file) || ($contents = php_strip_whitespace($file)) === false) {
 			require_once('SiTech/Plugins/Exception.php');
 			throw new Plugins\Exception('The plugin file "%s" could not be read', array($file));
@@ -169,4 +170,11 @@ class Plugins
 
 namespace SiTech\Plugins;
 require_once('Exception.php');
+
+/**
+ *
+ * @author Eric Gach <eric@php-oop.net>
+ * @package SiTech\Plugins
+ * @version $Id$
+ */
 class Exception extends \SiTech\Exception {}

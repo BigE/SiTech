@@ -13,6 +13,8 @@
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ * @filesource
  */
 
 namespace SiTech\DB\Privilege;
@@ -31,14 +33,12 @@ require_once('SiTech/DB/Privilege/Record/MySQL.php');
  * MySQL class for getting privileges from the mysql table.
  *
  * @author Eric Gach <eric@php-oop.net>
- * @copyright SiTech Group (c) 2008-2011
- * @filesource
  * @package SiTech\DB
  * @subpackage SiTech\DB\Privilege
  * @todo Finish documentation for file
  * @version $Id$
  */
-class MySQL extends PrivilegeAbstract
+class MySQL extends APrivilege
 {
 	public function __construct(\SiTech\DB $pdo, $user=null, $host=null)
 	{

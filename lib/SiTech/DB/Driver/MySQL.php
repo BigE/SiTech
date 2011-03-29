@@ -13,6 +13,8 @@
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ * @filesource
  */
 
 namespace SiTech\DB\Driver;
@@ -25,14 +27,10 @@ const MYSQL = 'SiTech\DB\Driver\MySQL';
 require_once('SiTech/DB/Driver/ADriver.php');
 
 /**
- * SiTech_DB_Driver_MySQL - For use with MySQL databases.
- *
  * Driver that contains special methods and instructions for MySQL database
  * connections.
  *
  * @author Eric Gach <eric@php-oop.net>
- * @copyright SiTech Group (c) 2008-2011
- * @filesource
  * @package SiTech\DB
  * @subpackage SiTech\DB\Driver
  * @version $Id$

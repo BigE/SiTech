@@ -13,6 +13,8 @@
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ * @filesource
  */
 
 namespace SiTech;
@@ -23,8 +25,7 @@ namespace SiTech;
  *
  * @author Eric Gach <eric@php-oop.net>
  * @copyright SiTech Group (c) 2008-2011
- * @filesource
- * @package SiTech\Filter
+ * @package SiTech
  * @todo Add code to use when filter extension is not available making a
  *       suitable replacement for the extension.
  * @version $Id$
@@ -224,5 +225,17 @@ class Filter
 }
 
 namespace SiTech\Filter;
+
+/**
+ * @see SiTech\Exception
+ */
 require_once('Exception.php');
+
+/**
+ * Exception class for the filter
+ *
+ * @author Eric Gach <eric@php-oop.net>
+ * @package SiTech\Filter
+ * @version $Id$
+ */
 class Exception extends \SiTech\Exception {}

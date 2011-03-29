@@ -13,6 +13,8 @@
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ * @filesource
  */
 
 namespace SiTech\Model;
@@ -21,10 +23,7 @@ namespace SiTech\Model;
  * I've had vodka, and this is the result. pwn.
  *
  * @author Eric Gach <eric@php-oop.net>
- * @copyright SiTech Group (c) 2010
- * @filesource
- * @package SiTech
- * @subpackage SiTech_Model
+ * @package SiTech\Model
  * @todo Finish documentation and fix any remaining bugs.
  * @version $Id$
  */
@@ -198,7 +197,7 @@ abstract class AModel
 	 *
 	 * @param PDO $db
 	 * @return PDO
-	 * @throws SiTech_Exception
+	 * @throws SiTech\Exception
 	 */
 	public static function db(\PDO $db = null)
 	{
@@ -390,4 +389,11 @@ abstract class AModel
 }
 
 require_once('SiTech/Exception.php');
+
+/**
+ *
+ * @author Eric Gach <eric@php-oop.net>
+ * @package SiTech\Model
+ * @version $Id$
+ */
 class Exception extends \SiTech\Exception {}

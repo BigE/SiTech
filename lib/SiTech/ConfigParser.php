@@ -13,13 +13,13 @@
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ * @filesource
  */
 
 namespace SiTech;
 
 /**
- * SiTech/ConfigParser - Configuration management class.
- *
  * This configuration class was closely modeled after the ConfigParser module
  * that is found in Python. I found it to be a very useful class and decided to
  * port the functionality over to this library.
@@ -27,7 +27,7 @@ namespace SiTech;
  * @author Eric Gach <eric@php-oop.net>
  * @copyright SiTech Group © 2008-2011
  * @filesource
- * @package SiTech_ConfigParser
+ * @package SiTech
  * @version $Id$
  */
 class ConfigParser
@@ -470,4 +470,13 @@ class ConfigParser
 
 namespace SiTech\ConfigParser;
 require_once('SiTech/Exception.php');
+
+/**
+ * Exception class for the ConfigParser
+ *
+ * @author Eric Gach <eric@php-oop.net>
+ * @package SiTech\ConfigParser
+ * @see SiTech\Exception
+ * @version $Id$
+ */
 class Exception extends \SiTech\Exception {}

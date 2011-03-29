@@ -14,18 +14,15 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
- * @package SiTech\Uri
+ * @filesource
  */
 
 namespace SiTech;
 
 /**
- * SiTech_Uri
  *
  * @author Eric Gach <eric@php-oop.net>
- * @copyright SiTech Group (c) 2009-2011
- * @filesource
- * @package SiTech\Uri
+ * @package SiTech
  * @todo Finish documentation of SiTech_Uri class.
  * @version $Id$
  */
@@ -159,4 +156,11 @@ namespace SiTech\Uri;
 const FLAG_LTRIM = 1;
 
 require_once('Exception.php');
+
+/**
+ *
+ * @author Eric Gach <eric@php-oop.net>
+ * @package SiTech\Uri
+ * @version $Id$
+ */
 class Exception extends \SiTech\Exception {}

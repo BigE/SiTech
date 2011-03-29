@@ -13,6 +13,8 @@
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ * @filesource
  */
 
 namespace SiTech\DB\Statement;
@@ -26,8 +28,6 @@ require_once('SiTech/DB/Statement.php');
  * This is made to write queries out instead of executing them.
  *
  * @author Eric Gach <eric@php-oop.net>
- * @copyright SiTech Group © 2008-2011
- * @filesource
  * @package SiTech\DB
  * @subpackage SiTech\DB\Statement
  * @version $Id$
@@ -61,7 +61,7 @@ class FileWriter extends \SiTech\DB\Statement
 	{
 		$this->_conn = $conn;
 		if (!($this->_output = fopen($output, 'a'))) {
-			throw new FileWriter\Exception('Failed to open output file \''.$output.'\' for writing');
+			throw new Exception('Failed to open output file \''.$output.'\' for writing');
 		}
 	}
 
@@ -145,7 +145,3 @@ class FileWriter extends \SiTech\DB\Statement
 		return(true);
 	}
 }
-
-namespace SiTech\DB\Statement\FileWriter;
-
-class Exception extends \SiTech\DB\Statement\Exception {}

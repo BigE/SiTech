@@ -13,6 +13,8 @@
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ * @filesource
  */
 
 namespace SiTech;
@@ -22,9 +24,7 @@ namespace SiTech;
  * override a few of the PDO methods to, in our opinion, improve them.
  *
  * @author Eric Gach <eric@php-oop.net>
- * @copyright SiTech Group (c) 2008-2010
- * @filesource
- * @package SiTech\DB
+ * @package SiTech
  * @version $Id$
  */
 class DB extends \PDO
@@ -166,7 +166,7 @@ class DB extends \PDO
 	{
 		return($this->driver->getPrivileges($user, $host));
 	}
-	
+
 	public function getQueries()
 	{
 		return($this->_queries);
@@ -222,7 +222,7 @@ class DB extends \PDO
 		if ((bool)$this->getAttribute(self::ATTR_TRACK_QUERIES)) {
 			$this->_queries[] = $statement;
 		}
-		
+
 		$stmnt = $this->prepare($statement);
 		if ($stmnt->execute($args)) {
 			return($stmnt);
@@ -274,4 +274,12 @@ class DB extends \PDO
 namespace SiTech\DB;
 
 require_once('Exception.php');
+
+/**
+ * DB Exception class.
+ *
+ * @author Eric Gach <eric@php-oop.net>
+ * @package SiTech\DB
+ * @version $Id$
+ */
 class Exception extends \SiTech\Exception {}

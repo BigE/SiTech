@@ -13,6 +13,8 @@
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ * @filesource
  */
 
 namespace SiTech;
@@ -25,9 +27,7 @@ namespace SiTech;
  * manage and build.
  *
  * @author Eric Gach <eric at php-oop.net>
- * @copyright SiTech Group (c) 2009-2011
- * @filesource
- * @package SiTech\Loader
+ * @package SiTech
  * @todo Fix documentation for whole SiTech\Loader class
  * @version $Id$
  */
@@ -41,7 +41,13 @@ class Loader
 	 */
 	public static function autoload($class)
 	{
-		self::loadClass($class);
+		if (substr($class, -5) == 'Model') {
+			self::loadModel(substr($class, 0, -5));
+		} elseif (substr($class, -10) == 'Controller') {
+			self::loadController(substr($class, 0, -10));
+		} else {
+			self::loadClass($class);
+		}
 	}
 
 	/**
@@ -203,8 +209,6 @@ require_once('Exception.php');
  * Exception class for the loader part of SiTech.
  *
  * @author Eric Gach <eric at php-oop.net>
- * @copyright SiTech Group (c) 2011
- * @filesource
  * @package SiTech\Loader
  * @version $Id$
  */

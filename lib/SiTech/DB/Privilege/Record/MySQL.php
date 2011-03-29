@@ -15,6 +15,8 @@
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ * @filesource
  */
 
 namespace SiTech\DB\Privilege\Record;
@@ -27,10 +29,8 @@ require_once('SiTech/DB/Privilege/Record/Abstract.php');
  * MySQL class for each privilege record that is retreived from MySQL.
  *
  * @author Eric Gach <eric@php-oop.net>
- * @copyright SiTech Group (c) 2008-2009
- * @filesource
- * @package SiTech_DB
- * @subpackage SiTech_DB_Privilege_Record
+ * @package SiTech\DB
+ * @subpackage SiTech\DB\Privilege\Record
  * @todo Finish documentation for file
  * @version $Id$
  */

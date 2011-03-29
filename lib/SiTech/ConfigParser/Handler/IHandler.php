@@ -13,19 +13,18 @@
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ * @filesource
  */
 
 namespace SiTech\ConfigParser\Handler;
 
 /**
- * SiTech_ConfigParser_Handler_Interface - Interface for all configuration
- * parser classes.
+ * Interface for all configuration parser classes.
  *
  * @author Eric Gach <eric@php-oop.net>
- * @copyright SiTech Group © 2008-2011
- * @filesource
- * @package SiTech_ConfigParser
- * @subpackage SiTech_ConfigParser_Handler
+ * @package SiTech\ConfigParser
+ * @subpackage SiTech\ConfigParser\Handler
  * @version $Id$
  */
 interface IHandler

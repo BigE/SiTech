@@ -13,6 +13,8 @@
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ * @filesource
  */
 
 namespace SiTech\DB;
@@ -28,10 +30,7 @@ require_once('SiTech/DB.php');
  * connection (reader or writer) to it.
  *
  * @author Eric Gach <eric@php-oop.net>
- * @copyright SiTech Group (c) 2008-2010
- * @filesource
- * @package SiTech_DB
- * @subpackage SiTech_DB_Proxy
+ * @package SiTech\DB
  * @todo Finish documentation
  * @version $Id$
  */
@@ -290,4 +289,12 @@ class Proxy extends \SiTech\DB
 
 namespace SiTech\DB\Proxy;
 
+/**
+ * Proxy specific exception.
+ *
+ * @author Eric Gach <eric@php-oop.net>
+ * @package SiTech\DB
+ * @subpackage SiTech\DB\Proxy
+ * @version $Id$
+ */
 class Exception extends \SiTech\DB\Exception {}
