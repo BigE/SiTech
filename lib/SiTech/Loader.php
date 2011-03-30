@@ -103,11 +103,10 @@ class Loader
 	 * load an exception will be thrown.
 	 *
 	 * @param string $name
-	 * @param SiTech_Uri $uri
 	 * @return object
 	 * @throws SiTech\Loader\Exception
 	 */
-	public static function loadController($name, \SiTech\Uri $uri)
+	public static function loadController($name)
 	{
 		$name = \strtolower($name);
 		$class = null;
@@ -132,7 +131,7 @@ class Loader
 			throw new Loader\Exception('The controller "%s" failed to load', array($class), 500);
 		}
 
-		return(new $class($uri));
+		return(new $class());
 	}
 
 	/**
