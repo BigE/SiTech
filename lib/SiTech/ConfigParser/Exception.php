@@ -26,8 +26,31 @@ require_once('SiTech/Exception.php');
  */
 class Exception extends \SiTech\Exception {}
 
+/**
+ * This exception is caused when you try to add a section that already exists.
+ *
+ * @author Eric Gach <eric@php-oop.net>
+ * @package SiTech\ConfigParser
+ * @version $Id$
+ */
 class DuplicateSection extends Exception {}
 
+/**
+ * This is seen when the config parser requires a section but none is defined in
+ * the configuration.
+ *
+ * @author Eric Gach <eric@php-oop.net>
+ * @package SiTech\ConfigParser
+ * @version $Id$
+ */
 class NoSection extends Exception {}
 
+/**
+ * This exception is seen when the config parser requires an option but none is
+ * defined in the configuration.
+ *
+ * @author Eric Gach <eric@php-oop.net>
+ * @package SiTech\ConfigParser
+ * @version $Id$
+ */
 class NoOption extends Exception {}
