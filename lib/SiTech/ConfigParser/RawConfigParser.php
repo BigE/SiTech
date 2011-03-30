@@ -13,11 +13,9 @@
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
- *
- * @filesource
  */
 
-namespace SiTech;
+namespace SiTech\ConfigParser;
 
 /**
  * This configuration class was closely modeled after the ConfigParser module
@@ -25,24 +23,17 @@ namespace SiTech;
  * port the functionality over to this library.
  *
  * @author Eric Gach <eric@php-oop.net>
- * @copyright SiTech Group © 2008-2011
- * @filesource
- * @package SiTech
+ * @package SiTech\ConfigParser
  * @version $Id$
  */
-class ConfigParser
+class RawConfigParser
 {
 	const ATTR_STRICT = 0;
 
-	const ATTR_ERRMODE = 1;
+	// Depricated ... all errors are now handled through specific exceptions
+	//const ATTR_ERRMODE = 1;
 
 	const ATTR_HANDLER = 2;
-
-	const ERRMODE_SILENT = 0;
-
-	const ERRMODE_WARNING = 1;
-
-	const ERRMODE_EXCEPTION = 2;
 
 	protected $_attributes = array();
 
@@ -99,8 +90,7 @@ class ConfigParser
 			$this->_config[$section] = array();
 			return(true);
 		} else {
-			$this->_handleError('Cannot add section "%s" because it already exists', array($section));
-			return(false);
+			throw new DuplicateSection('The section %s already exists.', array($section));
 		}
 	}
 
@@ -118,10 +108,10 @@ class ConfigParser
 			if ($this->hasOption($section, $option)) {
 				return($this->_config[$section][$option]);
 			} else {
-				$this->_handleError('Cannot retreive value for option "%s" because it does not exist', array($option));
+				throw new NoOption('Cannot retreive value for option "%s" because it does not exist', array($option));
 			}
 		} else {
-			$this->_handleError('Cannot retreive value for option "%s" because section "%s" does not exist', array($option, $section));
+			throw new NoSection('Cannot retreive value for option "%s" because section "%s" does not exist', array($option, $section));
 		}
 
 		return(null);
@@ -221,8 +211,7 @@ class ConfigParser
 		if ($this->hasSection($section)) {
 			return($this->_config[$section]);
 		} else {
-			$this->_handleError('Cannot retreive items because section "%s" does not exist', array($section));
-			return(false);
+			throw new NoSection('Cannot retreive items because section "%s" does not exist', array($section));
 		}
 	}
 
@@ -291,8 +280,7 @@ class ConfigParser
 		if ($this->hasSection($section)) {
 			return(array_keys($this->_config[$section]));
 		} else {
-			$this->_handleError('Cannot retreive options because section "%s" does not exist', array($section));
-			return(false);
+			throw new NoSection('Cannot retreive options because section "%s" does not exist', array($section));
 		}
 	}
 
@@ -304,7 +292,7 @@ class ConfigParser
 			list($bool, $config) = $this->_attributes[self::ATTR_HANDLER]->read($item);
 			$ret[$item] = $bool;
 			if (!$bool) {
-				$this->_handleError('Unable to parse "%s" into the config', array($item));
+				throw new Exception('Unable to parse "%s" into the config', array($item));
 			} else {
 				$this->_config = array_merge($config, $this->_config);
 			}
@@ -327,12 +315,10 @@ class ConfigParser
 				unset($this->_config[$section][$option]);
 				return(true);
 			} else {
-				$this->_handleError('Cannot remove the option "%s" from section "%s" because it does not exist', array($option, $section));
-				return(false);
+				throw new NoOption('Cannot remove the option "%s" from section "%s" because it does not exist', array($option, $section));
 			}
 		} else {
-			$this->_handleError('Cannot remove option "%s" from section "%s" because the section does not exist', array($option, $section));
-			return(false);
+			throw new NoSection('Cannot remove option "%s" from section "%s" because the section does not exist', array($option, $section));
 		}
 	}
 
@@ -348,8 +334,7 @@ class ConfigParser
 			unset($this->_config[$section]);
 			return(true);
 		} else {
-			$this->_handleError('Cannot remove section "%s" because it does not exist', array($section));
-			return(false);
+			throw new NoSection('Cannot remove section "%s" because it does not exist', array($section));
 		}
 	}
 
@@ -376,14 +361,13 @@ class ConfigParser
 	{
 		if ($this->hasSection($section)) {
 			if ($this->hasOption($section, $option)) {
-				$this->_handleError('Strict mode in effect - Cannot overwrite option "%s" in section "%s"', array($option, $section));
+				throw new Exception('Strict mode in effect - Cannot overwrite option "%s" in section "%s"', array($option, $section));
 			}
 
 			$this->_config[$section][$option] = $value;
 			return(true);
 		} else {
-			$this->_handleError('Cannot set option "%s". No section named "%s" exists in configuration!', array($section, $option));
-			return(false);
+			throw new NoSection('Cannot set option "%s". No section named "%s" exists in configuration!', array($section, $option));
 		}
 	}
 
@@ -406,17 +390,15 @@ class ConfigParser
 
 			case self::ATTR_HANDLER:
 				if (!\is_object($value)) {
-					$this->_handleError('Failed to set config handler. The handler must be an object');
-					$ret = false;
+					throw new Exception('Failed to set config handler. The handler must be an object');
 				} elseif (!($value instanceof \SiTech\ConfigParser\Handler\IHandler)) {
-					$this->_handleError('Failed to set config handler. The handler must implement SiTech\ConfigParser\Handler\IHandler');
-					$ret = false;
+					throw new Exception('Failed to set config handler. The handler must implement SiTech\ConfigParser\Handler\IHandler');
 				} else {
 					$this->_attributes[$attr] = $value;
 				}
 				break;
 
-			case self::ATTR_ERRMODE:
+			/*case self::ATTR_ERRMODE:
 				switch ($value) {
 					case self::ERRMODE_EXCEPTION:
 					case self::ERRMODE_SILENT:
@@ -425,11 +407,10 @@ class ConfigParser
 						break;
 
 					default:
-						$this->_handleError('Invalid error mode setting for %s::ATTR_ERRMODE', array(__CLASS__));
-						$ret = false;
+						throw new Exception('Invalid error mode setting for %s::ATTR_ERRMODE', array(__CLASS__));
 						break;
 				}
-				break;
+				break;*/
 
 			default:
 				$ret = false;
@@ -449,34 +430,4 @@ class ConfigParser
 	{
 		return($this->_attributes[self::ATTR_HANDLER]->write($item, $this->_config));
 	}
-
-	/**
-	 * Handle an error message based on the current ATTR_ERRMODE level.
-	 *
-	 * @param string $string
-	 * @param array $array
-	 */
-	protected function _handleError($string, array $array = array())
-	{
-		if ($this->getAttribute(self::ATTR_ERRMODE) === self::ERRMODE_EXCEPTION) {
-			throw new ConfigParser\Exception($string, $array);
-		} elseif ($this->getAttribute(self::ATTR_ERRMODE) === self::ERRMODE_WARNING) {
-			\trigger_error(\vsprintf($string, $array), \E_USER_WARNING);
-		}
-
-		$this->_error = \vsprintf($string, $array);
-	}
 }
-
-namespace SiTech\ConfigParser;
-require_once('SiTech/Exception.php');
-
-/**
- * Exception class for the ConfigParser
- *
- * @author Eric Gach <eric@php-oop.net>
- * @package SiTech\ConfigParser
- * @see SiTech\Exception
- * @version $Id$
- */
-class Exception extends \SiTech\Exception {}

@@ -94,7 +94,7 @@ class Route
 	 */
 	public function dispatch()
 	{
-		// We have to have \SiTech\Loader here for this to work reliably... sorry.
+		// We have to have SiTech\Loader here for this to work reliably... sorry.
 		require_once('SiTech/Loader.php');
 		\SiTech\Loader::loadController($this->_controller);
 

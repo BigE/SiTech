@@ -20,38 +20,15 @@
 namespace SiTech\Controller;
 
 /**
- * Description of Abstract
+ * This is the base controller for any controllers using the SiTech library. It
+ * defines plenty of helper methods and variables to be used by the controllers.
  *
  * @author Eric Gach <eric@php-oop.net>
  * @package SiTech\Controller
  * @version $Id$
  */
-abstract class AController
+abstract class Base
 {
-	/**
-	 * Internal use for the action of the controller.
-	 *
-	 * @var string Name of action for this controller.
-	 */
-	protected $_action;
-
-	/**
-	 * Internal argument map so the controller knows what arguments to map to
-	 * what variables.
-	 *
-	 * @var array
-	 */
-	protected $_argMap = array();
-
-	/**
-	 * Arguments received by the controller. If they don't have a named key
-	 * in the $_argMap array, they will only be available through the numerical
-	 * index.
-	 *
-	 * @var array
-	 */
-	protected $_args;
-
 	/**
 	 * Names of components to load when the controller is initalized. These
 	 * should exist inside of the controllers/components folder.
@@ -120,10 +97,14 @@ abstract class AController
 	 * This is the guts of the controller. Once here, we do all the processing
 	 * and setup needed.
 	 */
-	public function __construct(\SiTech\Router\Route $route = null)
+	public function __construct()
 	{
-		$this->_route = $route;
+		if (class_exists('\SiTech\Router')) {
+			// I wrapped this in an if because SiTech is a library.
+			$this->_route = \SiTech\Router::getDispatchedRoute();
+		}
 
+		// This seems to be pretty reliable, but I'm still not 100% sure
 		if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && \strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
 			$this->_isXHR = true;
 		}
