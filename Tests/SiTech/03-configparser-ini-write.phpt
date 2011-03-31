@@ -3,9 +3,9 @@ SiTech_ConfigParser(); Save configuration with the INI file format.
 --FILE--
 <?php
 require_once('SiTech_Test.php');
-require_once('SiTech/ConfigParser.php');
+require_once('SiTech/ConfigParser/RawConfigParser.php');
 try {
-	$config = SiTech\ConfigParser::load();
+	$config = new SiTech\ConfigParser\RawConfigParser();
 } catch (Exception $e) {
 	echo $e->getMessage(),"\n";
 }

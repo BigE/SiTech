@@ -8,10 +8,10 @@ if (!file_exists(dirname(__FILE__).'/test-config.xml')) die('skip the file test-
 --FILE--
 <?php
 require_once('SiTech_Test.php');
-require_once('SiTech/ConfigParser.php');
+require_once('SiTech/ConfigParser/RawConfigParser.php');
 require_once('SiTech/ConfigParser/Handler/XML.php');
 try {
-	$config = SiTech\ConfigParser::load(array(SiTech\ConfigParser::ATTR_HANDLER => new SiTech\ConfigParser\Handler\XML));
+	$config = new SiTech\ConfigParser\RawConfigParser(array(SiTech\ConfigParser\RawConfigParser::ATTR_HANDLER => new SiTech\ConfigParser\Handler\XML));
 } catch (Exception $e) {
 	echo $e->getMessage(),"\n";
 }
