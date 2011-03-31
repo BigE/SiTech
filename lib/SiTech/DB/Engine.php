@@ -17,7 +17,7 @@
  * @filesource
  */
 
-namespace SiTech;
+namespace SiTech\DB;
 
 /**
  * Database class that extends PDO and adds additional functionality. We also
@@ -27,8 +27,15 @@ namespace SiTech;
  * @package SiTech
  * @version $Id$
  */
-class DB extends \PDO
+class Engine extends \PDO
 {
+	/**
+	 * This is for tracking queries. If this is enabled, the queries will all be
+	 * stored inside the $_queries array in the engine. They can be retreived
+	 * using the getQueries method.
+	 * 
+	 * @see getQueries
+	 */
 	const ATTR_TRACK_QUERIES = 1234567890;
 
 	/**
@@ -38,6 +45,13 @@ class DB extends \PDO
 	 */
 	protected $driver;
 
+	/**
+	 * Queries that get executed against the database. This is only populated
+	 * if the ATTR_TRACK_QUERIES is enabled.
+	 *
+	 * @see getQueries
+	 * @var array
+	 */
 	private $_queries = array();
 
 	/**
@@ -72,6 +86,13 @@ class DB extends \PDO
 		$this->driver = \call_user_func_array(array($driver, 'singleton'), array($this));
 	}
 
+	/**
+	 * Helper method to delete rows from the table specified.
+	 *
+	 * @param string $table Table to delete rows from
+	 * @param string $where Chriteria to use when deleting rows
+	 * @return int
+	 */
 	public function delete($table, $where=null)
 	{
 		$sql = 'DELETE FROM '.$table;
@@ -167,11 +188,23 @@ class DB extends \PDO
 		return($this->driver->getPrivileges($user, $host));
 	}
 
+	/**
+	 * Get the array of queries that have been executed through the engine. This
+	 * only works if ATTR_TRACK_QUERIES is enabled.
+	 *
+	 * @return array
+	 */
 	public function getQueries()
 	{
 		return($this->_queries);
 	}
 
+	/**
+	 * Return a count of total queries executed through the engine. This only
+	 * works if ATTR_TRACK_QUERIES is enabled.
+	 *
+	 * @return int
+	 */
 	public function getQueryCount()
 	{
 		return(\sizeof($this->_queries));
@@ -270,16 +303,3 @@ class DB extends \PDO
 		return($this->exec($sql, \array_values($bind)));
 	}
 }
-
-namespace SiTech\DB;
-
-require_once('Exception.php');
-
-/**
- * DB Exception class.
- *
- * @author Eric Gach <eric@php-oop.net>
- * @package SiTech\DB
- * @version $Id$
- */
-class Exception extends \SiTech\Exception {}
