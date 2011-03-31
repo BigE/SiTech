@@ -15,6 +15,11 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+namespace SiTech\ConfigParser;
+
+/**
+ * @see SiTech\Exception
+ */
 require_once('SiTech/Exception.php');
 
 /**
@@ -33,7 +38,7 @@ class Exception extends \SiTech\Exception {}
  * @package SiTech\ConfigParser
  * @version $Id$
  */
-class DuplicateSection extends Exception {}
+class DuplicateSectionException extends Exception {}
 
 /**
  * This is seen when the config parser requires a section but none is defined in
@@ -43,7 +48,7 @@ class DuplicateSection extends Exception {}
  * @package SiTech\ConfigParser
  * @version $Id$
  */
-class NoSection extends Exception {}
+class NoSectionException extends Exception {}
 
 /**
  * This exception is seen when the config parser requires an option but none is
@@ -53,4 +58,4 @@ class NoSection extends Exception {}
  * @package SiTech\ConfigParser
  * @version $Id$
  */
-class NoOption extends Exception {}
+class NoOptionException extends Exception {}

@@ -18,6 +18,11 @@
 namespace SiTech\ConfigParser;
 
 /**
+ * @see SiTech\ConfigParser\Exception
+ */
+require_once('SiTech/ConfigParser/Exception.php');
+
+/**
  * This configuration class was closely modeled after the ConfigParser module
  * that is found in Python. I found it to be a very useful class and decided to
  * port the functionality over to this library.
@@ -44,7 +49,7 @@ class RawConfigParser
 	 *
 	 * @param array $options Array of self::ATTR_* options to set.
 	 */
-	protected function __construct(array $options = array())
+	public function __construct(array $options = array())
 	{
 		foreach ($options as $attr => $value) {
 			$this->setAttribute($attr, $value);
@@ -53,7 +58,7 @@ class RawConfigParser
 		if (empty($this->_attributes[self::ATTR_HANDLER])) {
 			/* default to INI files */
 			require_once('SiTech/ConfigParser/Handler/INI.php');
-			$this->setAttribute(self::ATTR_HANDLER, new ConfigParser\Handler\INI());
+			$this->setAttribute(self::ATTR_HANDLER, new Handler\INI());
 		}
 	}
 
@@ -90,7 +95,7 @@ class RawConfigParser
 			$this->_config[$section] = array();
 			return(true);
 		} else {
-			throw new DuplicateSection('The section %s already exists.', array($section));
+			throw new DuplicateSectionException('The section %s already exists.', array($section));
 		}
 	}
 
@@ -108,10 +113,10 @@ class RawConfigParser
 			if ($this->hasOption($section, $option)) {
 				return($this->_config[$section][$option]);
 			} else {
-				throw new NoOption('Cannot retreive value for option "%s" because it does not exist', array($option));
+				throw new NoOptionException('Cannot retreive value for option "%s" because it does not exist', array($option));
 			}
 		} else {
-			throw new NoSection('Cannot retreive value for option "%s" because section "%s" does not exist', array($option, $section));
+			throw new NoSectionException('Cannot retreive value for option "%s" because section "%s" does not exist', array($option, $section));
 		}
 
 		return(null);
@@ -211,20 +216,8 @@ class RawConfigParser
 		if ($this->hasSection($section)) {
 			return($this->_config[$section]);
 		} else {
-			throw new NoSection('Cannot retreive items because section "%s" does not exist', array($section));
+			throw new NoSectionException('Cannot retreive items because section "%s" does not exist', array($section));
 		}
-	}
-
-	/**
-	 * Load a new instance of the config parser. All options should be passed
-	 * in through the array.
-	 *
-	 * @param array $options Array of self::ATTR_* options to set.
-	 * @return SiTech_ConfigParser A new config parser instance.
-	 */
-	static public function load(array $options = array())
-	{
-		return(new static($options));
 	}
 
 	/**
@@ -250,7 +243,7 @@ class RawConfigParser
 						$GLOBALS[$option] = $this->_config[$section][$option];
 					}
 				} else {
-					$this->_handleError('Cannot make option "%s" of section "%s" global because the option does not exist', array($option, $section));
+					throw new NoOptionException('Cannot make option "%s" of section "%s" global because the option does not exist', array($option, $section));
 				}
 			} else {
 				if ($reference) {
@@ -261,9 +254,9 @@ class RawConfigParser
 			}
 		} else {
 			if (empty($option)) {
-				$this->_handleError('Cannot make section "%s" global because it does not exist', array($section));
+				throw new NoSectionException('Cannot make section "%s" global because it does not exist', array($section));
 			} else {
-				$this->_handleError('Cannot make option "%s" of section "%s" global because the section does not exist', array($option, $section));
+				throw new NoSectionException('Cannot make option "%s" of section "%s" global because the section does not exist', array($option, $section));
 			}
 		}
 	}
@@ -280,7 +273,7 @@ class RawConfigParser
 		if ($this->hasSection($section)) {
 			return(array_keys($this->_config[$section]));
 		} else {
-			throw new NoSection('Cannot retreive options because section "%s" does not exist', array($section));
+			throw new NoSectionException('Cannot retreive options because section "%s" does not exist', array($section));
 		}
 	}
 
@@ -315,10 +308,10 @@ class RawConfigParser
 				unset($this->_config[$section][$option]);
 				return(true);
 			} else {
-				throw new NoOption('Cannot remove the option "%s" from section "%s" because it does not exist', array($option, $section));
+				throw new NoOptionException('Cannot remove the option "%s" from section "%s" because it does not exist', array($option, $section));
 			}
 		} else {
-			throw new NoSection('Cannot remove option "%s" from section "%s" because the section does not exist', array($option, $section));
+			throw new NoSectionException('Cannot remove option "%s" from section "%s" because the section does not exist', array($option, $section));
 		}
 	}
 
@@ -334,7 +327,7 @@ class RawConfigParser
 			unset($this->_config[$section]);
 			return(true);
 		} else {
-			throw new NoSection('Cannot remove section "%s" because it does not exist', array($section));
+			throw new NoSectionException('Cannot remove section "%s" because it does not exist', array($section));
 		}
 	}
 
@@ -367,7 +360,7 @@ class RawConfigParser
 			$this->_config[$section][$option] = $value;
 			return(true);
 		} else {
-			throw new NoSection('Cannot set option "%s". No section named "%s" exists in configuration!', array($section, $option));
+			throw new NoSectionException('Cannot set option "%s". No section named "%s" exists in configuration!', array($section, $option));
 		}
 	}
 
