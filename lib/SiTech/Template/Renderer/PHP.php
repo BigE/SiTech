@@ -20,9 +20,9 @@
 namespace SiTech\Template\Renderer;
 
 /**
- * @see SiTech\Template\Renderer\ARenderer
+ * @see SiTech\Template\Renderer\Base
  */
-require_once('SiTech/Template/Renderer/ARenderer.php');
+require_once('SiTech/Template/Renderer/Base.php');
 
 /**
  * This renders files that are in PHP format into complete output.
@@ -32,7 +32,7 @@ require_once('SiTech/Template/Renderer/ARenderer.php');
  * @subpackage SiTech\Template\Renderer
  * @version $Id$
  */
-class PHP extends ARenderer
+class PHP extends Base
 {
 	static public function render(\SiTech\Template $tpl, $file, $path, array $vars)
 	{

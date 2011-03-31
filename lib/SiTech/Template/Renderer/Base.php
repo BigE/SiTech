@@ -33,7 +33,7 @@ require_once('SiTech/Template/Renderer/IRenderer.php');
  * @subpackage SiTech\Template\Renderer
  * @version $Id$
  */
-abstract class ARenderer implements IRenderer
+abstract class Base implements IRenderer
 {
 	static protected $error;
 

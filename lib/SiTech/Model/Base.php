@@ -27,7 +27,7 @@ namespace SiTech\Model;
  * @todo Finish documentation and fix any remaining bugs.
  * @version $Id$
  */
-abstract class AModel
+abstract class Base
 {
 	/**
 	 * This is used to tell the model that it belongs to another model. Through
@@ -286,6 +286,10 @@ abstract class AModel
 		} else {
 			return(static::$_pk);
 		}
+	}
+
+	public function replace()
+	{
 	}
 
 	/**

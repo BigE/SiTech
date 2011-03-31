@@ -20,9 +20,9 @@
 namespace SiTech\Template\Renderer;
 
 /**
- * @see SiTech\Template\Renderer\ARenderer
+ * @see SiTech\Template\Renderer\Base
  */
-require_once('SiTech/Template/Renderer/ARenderer.php');
+require_once('SiTech/Template/Renderer/Base.php');
 
 /**
  * This renders files that are in Smarty syntax into complete output. This does
@@ -36,7 +36,7 @@ require_once('SiTech/Template/Renderer/ARenderer.php');
  *       functionality would be nice.
  * @version $Id$
  */
-class Macro extends ARenderer
+class Macro extends Base
 {
 	static public function render(\SiTech\Template $tpl, $file, $path, array $vars)
 	{
