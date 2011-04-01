@@ -3,10 +3,10 @@ SiTech_ConfigParser(); Save configuration with the Array file format.
 --FILE--
 <?php
 require_once('SiTech_Test.php');
-require_once('SiTech/ConfigParser.php');
+require_once('SiTech/ConfigParser/RawConfigParser.php');
 require_once('SiTech/ConfigParser/Handler/Array.php');
 try {
-	$config = SiTech\ConfigParser::load(array(SiTech\ConfigParser::ATTR_HANDLER => new SiTech\ConfigParser\Handler\_Array));
+	$config = new SiTech\ConfigParser\RawConfigParser(array(SiTech\ConfigParser\RawConfigParser::ATTR_HANDLER => new SiTech\ConfigParser\Handler\_Array));
 } catch (Exception $e) {
 	echo $e->getMessage(),"\n";
 }

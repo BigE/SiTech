@@ -4,11 +4,11 @@ SiTech_Session::start(); usage with database handler.
 <?php
 require_once('SiTech_Test.php');
 require_once('SiTech/Session.php');
-require_once('SiTech/DB.php');
+require_once('SiTech/DB/Engine.php');
 require_once('SiTech/DB/Driver/SQLite.php');
 require_once('SiTech/Session/Handler/DB.php');
 try {
-	$db = new SiTech\DB(array('dsn' => 'sqlite::memory:'), SiTech\DB\DRIVER\SQLITE);
+	$db = new SiTech\DB\Engine(array('dsn' => 'sqlite::memory:'), SiTech\DB\DRIVER\SQLITE);
 	$db->exec(file_get_contents(dirname(__FILE__).'/../../Tools/SiTech_Session.sql'));
 	$handler = new SiTech\Session\Handler\DB($db, 'SiTech_Sessions');
 	SiTech\Session::registerHandler($handler);
