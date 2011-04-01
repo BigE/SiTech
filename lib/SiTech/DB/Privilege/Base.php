@@ -17,16 +17,35 @@
  * @filesource
  */
 
-namespace SiTech\DB\Privilege\Record;
+namespace SiTech\DB\Privilege;
 
 /**
- * Base class for all database privilege records retreived from the server.
+ * Base class for all privilege classes based on database type.
  *
  * @author Eric Gach <eric@php-oop.net>
  * @package SiTech\DB
- * @subpackage SiTech\DB\Privilege\Record
+ * @subpackage SiTech\DB\Privilege
+ * @todo Finish documentation for file
  * @version $Id$
  */
-abstract class ARecord
+abstract class Base
 {
+	/**
+	 * SiTech_DB object holder
+	 *
+	 * @var SiTech\DB
+	 */
+	protected $pdo;
+
+	protected $privileges = array();
+
+	/**
+	 * Constructor.
+	 *
+	 * @param SiTech\DB $pdo
+	 */
+	public function __construct(SiTech\DB $pdo)
+	{
+		$this->pdo = $pdo;
+	}
 }

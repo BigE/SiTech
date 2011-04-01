@@ -1,7 +1,5 @@
 <?php
 /**
- * SiTech/DB/Driver/SQLite.php
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -21,32 +19,60 @@
 
 namespace SiTech\DB\Driver;
 
-const SQLITE = 'SiTech\DB\Driver\SQLite';
-
 /**
- * @see SiTech\DB\Driver\Base
+ * @see SiTech\DB\Driver\IDriver
  */
-require_once('SiTech/DB/Driver/Base.php');
+require_once('SiTech/DB/Driver/IDriver.php');
 
 /**
- * Driver that contains special methods and instructions for SQLite database
- * connections.
+ * Base class for all database types.
  *
  * @author Eric Gach <eric@php-oop.net>
  * @package SiTech\DB
  * @subpackage SiTech\DB\Driver
  * @version $Id$
  */
-class SQLite extends Base
+abstract class Base implements IDriver
 {
 	/**
-	 * Singleton method to get the instance of the driver.
+	 * Instance of itself.
+	 *
+	 * @var SiTech_DB_Driver_Interface
+	 */
+	static protected $instance;
+
+	/**
+	 * Instance of SiTech_DB
+	 *
+	 * @var SiTech_DB
+	 */
+	protected $pdo;
+
+	/**
+	 * Constructor.
 	 *
 	 * @param SiTech_DB $pdo
-	 * @return SiTech_DB_Driver_SQLite
 	 */
-	static public function singleton($pdo)
+	protected function __construct($pdo)
 	{
-		return(self::_singleton($pdo, __CLASS__));
+		$this->pdo = $pdo;
+	}
+
+	/**
+	 * Get the instance of the class specified. The class that extends this
+	 * class should have a singleton() method that will pass __CLASS__ to this
+	 * protected method.
+	 *
+	 * @param SiTech_DB $pdo
+	 * @param string $class Class name that we're getting an instance of.
+	 * @return SiTech_DB_Driver_Interface
+	 */
+	final static protected function _singleton($pdo, $class)
+	{
+		if (empty(static::$instance)) {
+			static::$instance = new $class($pdo);
+		}
+
+		return(static::$instance);
 	}
 }

@@ -22,9 +22,9 @@ namespace SiTech\DB\Driver;
 const MYSQL = 'SiTech\DB\Driver\MySQL';
 
 /**
- * @see SiTech\DB\Driver\Abstract
+ * @see SiTech\DB\Driver\Base
  */
-require_once('SiTech/DB/Driver/ADriver.php');
+require_once('SiTech/DB/Driver/Base.php');
 
 /**
  * Driver that contains special methods and instructions for MySQL database
@@ -35,7 +35,7 @@ require_once('SiTech/DB/Driver/ADriver.php');
  * @subpackage SiTech\DB\Driver
  * @version $Id$
  */
-class MySQL extends ADriver
+class MySQL extends Base
 {
 	public function getPrivileges($user=null, $host=null)
 	{

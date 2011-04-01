@@ -20,9 +20,9 @@
 namespace SiTech\DB\Privilege;
 
 /**
- * @see SiTech\DB\Privilege\PrivilegeAbstract
+ * @see SiTech\DB\Privilege\Privilege\Base
  */
-require_once('SiTech/DB/Privilege/Abstract.php');
+require_once('SiTech/DB/Privilege/Base.php');
 
 /**
  * @see SiTech\DB\Privilege\Record\MySQL
@@ -38,7 +38,7 @@ require_once('SiTech/DB/Privilege/Record/MySQL.php');
  * @todo Finish documentation for file
  * @version $Id$
  */
-class MySQL extends APrivilege
+class MySQL extends Base
 {
 	public function __construct(\SiTech\DB $pdo, $user=null, $host=null)
 	{

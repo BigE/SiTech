@@ -20,10 +20,11 @@
  */
 
 namespace SiTech\DB\Privilege\Record;
+
 /**
- * @see SiTech\DB\Privilege\Record\RecordAbstract
+ * @see SiTech\DB\Privilege\Record\Base
  */
-require_once('SiTech/DB/Privilege/Record/Abstract.php');
+require_once('SiTech/DB/Privilege/Record/Base.php');
 
 /**
  * MySQL class for each privilege record that is retreived from MySQL.
@@ -34,7 +35,7 @@ require_once('SiTech/DB/Privilege/Record/Abstract.php');
  * @todo Finish documentation for file
  * @version $Id$
  */
-class MySQL extends ARecord
+class MySQL extends Base
 {
 	/**
 	 * ALL [PRIVILEGES]	Grants all privileges at specified access level except GRANT OPTION
