@@ -15,6 +15,8 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+namespace SiTech\DB;
+
 /**
  * @see SiTech\Exception
  */
@@ -24,7 +26,7 @@ require_once('SiTech/Exception.php');
  * Description of Exception
  *
  * @author Eric Gach <eric@php-oop.net>
+ * @package SiTech\DB
+ * @version $Id$
  */
-class Exception extends \SiTech\Exception
-{
-}
+class Exception extends \SiTech\Exception {}

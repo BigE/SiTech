@@ -24,7 +24,7 @@ namespace SiTech\DB;
  * override a few of the PDO methods to, in our opinion, improve them.
  *
  * @author Eric Gach <eric@php-oop.net>
- * @package SiTech
+ * @package SiTech\DB
  * @version $Id$
  */
 class Engine extends \PDO
