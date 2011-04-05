@@ -13,8 +13,6 @@
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
- *
- * @filesource
  */
 
 namespace SiTech\Session\Handler;
@@ -29,6 +27,11 @@ require_once('SiTech/Session/Handler/IHandler.php');
  * @see SiTech\Session
  */
 require_once('SiTech/Session.php');
+
+/**
+ * @see SiTech\Session\Handler\Exception
+ */
+require_once('SiTech/Session/Handler/Exception.php');
 
 if (!extension_loaded('memcache')) {
 	throw new Exception('You must have the memcache extension to use this handler.');
