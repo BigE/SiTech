@@ -20,9 +20,9 @@
 namespace SiTech\Router;
 
 /**
- * @see \SiTech\Router
+ * @see \SiTech\Router\Exception
  */
-require_once('SiTech/Router.php');
+require_once('SiTech/Router/Exception.php');
 
 /**
  * These are the routes for the router. Each route takes a regex to match against
@@ -91,6 +91,8 @@ class Route
 	 * can be called without matching the route, but is automatically called from
 	 * the router when the route is matched. If the action does not return false
 	 * this will try to call the display() method to render the view.
+	 * 
+	 * @throws \SiTech\Router\MethodNotFoundException
 	 */
 	public function dispatch()
 	{
@@ -100,7 +102,7 @@ class Route
 
 		$controller = new $this->_controller($this);
 		if (!\method_exists($controller, $this->_action)) {
-			throw new Exception('No method defined %s::%s', array($this->_controller, $this->_action));
+			throw new MethodNotFoundException('No method defined %s::%s', array($this->_controller, $this->_action));
 		}
 
 		if ($controller->{$this->_action}() !== false && $this->_controller instanceof \SiTech\Controller\AController) {

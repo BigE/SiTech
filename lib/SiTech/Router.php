@@ -13,11 +13,11 @@
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
- *
- * @filesource
  */
 
 namespace SiTech;
+
+require_once('SiTech/Router/Exception.php');
 
 /**
  * This is the router for adding and matching routes based uppon a path that is
@@ -66,11 +66,12 @@ class Router
 	 *
 	 * @param \SiTech\Router\Route $route
 	 * @see getDispatchedRoute
+	 * @throws \SiTech\Router\NoRouteException
 	 */
 	public static function dispatch(\SiTech\Router\Route $route = null)
 	{
 		if (empty($route)) $route = static::getRoute();
-		if (!$route) throw new Router\Exception('No route was matched');
+		if (!$route) throw new Router\NoRouteException('No route was matched');
 		self::$_dispatchedRoute = $route;
 
 		$route->dispatch();
@@ -123,14 +124,3 @@ class Router
 		return($match);
 	}
 }
-
-namespace SiTech\Router;
-require_once('SiTech/Exception.php');
-
-/**
- *
- * @author Eric Gach <eric@php-oop.net>
- * @package SiTech\Router
- * @version $Id$
- */
-class Exception extends \SiTech\Exception {}
