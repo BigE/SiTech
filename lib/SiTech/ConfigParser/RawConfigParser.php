@@ -33,15 +33,41 @@ require_once('SiTech/ConfigParser/Exception.php');
  */
 class RawConfigParser
 {
+	/**
+	 * To enable strict mode set this attribute to true. This will cause an
+	 * exception to be thrown if a config value is being set that is already
+	 * set.
+	 */
 	const ATTR_STRICT = 0;
 
 	// Depricated ... all errors are now handled through specific exceptions
 	//const ATTR_ERRMODE = 1;
 
+	/**
+	 * This attribute is the backend handler for the config parser. The default
+	 * is the INI handler. To use a different one, initate an instance of the
+	 * handler and pass the object as the attribute. The instance must implement
+	 * SiTech\ConfigParser\Handler\IHandler
+	 * 
+	 * @see SiTech\ConfigParser\Handler\IHandler
+	 */
 	const ATTR_HANDLER = 2;
 
+	/**
+	 * Array of attributes set on the configuration parser. The getAttribute and
+	 * setAttribute methods controll this array.
+	 *
+	 * @var array
+	 */
 	protected $_attributes = array();
 
+	/**
+	 * This is an array of the configuration that is loaded into the config
+	 * parser instance. It is populated by the handler and written to files
+	 * by the handler.
+	 *
+	 * @var array
+	 */
 	protected $_config = array();
 
 	/**
@@ -88,6 +114,7 @@ class RawConfigParser
 	 *
 	 * @param string $section Section name to remove.
 	 * @return bool
+	 * @throws DuplicateSectionException
 	 */
 	public function addSection($section)
 	{
@@ -106,6 +133,7 @@ class RawConfigParser
 	 * @param string $section Section name where option exists.
 	 * @param string $option Option name to get value of.
 	 * @return mixed
+	 * @throws NoOptionException NoSectionException
 	 */
 	public function get($section, $option)
 	{
@@ -130,7 +158,18 @@ class RawConfigParser
 	 */
 	public function getAttribute($attr)
 	{
-		return((isset($this->_attributes[$attr]))? $this->_attributes[$attr] : null);
+		switch ($attr) {
+			// This is a true/false value .. so we need to typecast as bool
+			case self::ATTR_STRICT:
+				$val = (isset($this->_attributes[$attr]))? (bool)$this->_attributes[$attr] : false;
+				break;
+
+			default:
+				$val = (isset($this->_attributes[$attr]))? $this->_attributes[$attr] : null;
+				break;
+		}
+
+		return($val);
 	}
 
 	/**
@@ -353,7 +392,7 @@ class RawConfigParser
 	public function set($section, $option, $value)
 	{
 		if ($this->hasSection($section)) {
-			if ($this->hasOption($section, $option)) {
+			if ($this->hasOption($section, $option) && $this->getAttribute(self::ATTR_STRICT) === true) {
 				throw new Exception('Strict mode in effect - Cannot overwrite option "%s" in section "%s"', array($option, $section));
 			}
 

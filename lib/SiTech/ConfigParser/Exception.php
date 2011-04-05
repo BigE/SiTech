@@ -24,7 +24,7 @@ require_once('SiTech/Exception.php');
 
 /**
  * Base exception class for the ConfigParser section.
- *
+ * 
  * @author Eric Gach <eric@php-oop.net>
  * @package SiTech\ConfigParser
  * @version $Id$
