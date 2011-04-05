@@ -66,8 +66,8 @@ class DB implements IHandler
 	public function __construct($dbObj, $table = 'SiTech_Sessions')
 	{
 		/* sanity checks */
-		if (!\is_object($dbObj) && !\is_a($dbObj, 'SiTech\DB')) {
-			throw new \SiTech\Session\Handler\Exception('The DB connection must be an instance or subclass of SiTech\DB');
+		if (!\is_object($dbObj) && !($dbObj instanceof \PDO)) {
+			throw new Exception('The DB connection must be an instance or subclass of PDO');
 		}
 
 		$this->db = $dbObj;
@@ -155,9 +155,8 @@ class DB implements IHandler
 	 */
 	public function write ($id, $data)
 	{
-		require_once('SiTech/DB.php');
-        $old_mode = $this->db->getAttribute(\SiTech\DB::ATTR_ERRMODE);
-		$this->db->setAttribute(\SiTech\DB::ATTR_ERRMODE, \SiTech\DB::ERR_NONE);
+        $old_mode = $this->db->getAttribute(\PDO::ATTR_ERRMODE);
+		$this->db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERR_NONE);
 		$stmnt = $this->db->prepare('SELECT Id FROM '.$this->table.' WHERE Name=:name AND Id=:id');
 		$session = \SiTech\Session::singleton();
 		$stmnt->execute(array(':name' => $session->getAttribute(\SiTech\Session::ATTR_SESSION_NAME), ':id' => $id));
@@ -169,7 +168,7 @@ class DB implements IHandler
 
 		$remote = (isset($_SERVER['REMOTE_ADDR']))? $_SERVER['REMOTE_ADDR'] : null;
 		$ret = $stmnt->execute(array(':id' => $id, ':name' => $session->getAttribute(\SiTech\Session::ATTR_SESSION_NAME), ':data' => \serialize($data), ':remember' => (int)$session->getAttribute(\SiTech\Session::ATTR_REMEMBER), ':strict' => (int)$session->getAttribute(\SiTech\Session::ATTR_STRICT), ':remote' => $remote));
-        $this->db->setAttribute(\SiTech\DB::ATTR_ERRMODE, $old_mode);
+        $this->db->setAttribute(\PDO::ATTR_ERRMODE, $old_mode);
 		return($ret);
 	}
 }

@@ -13,8 +13,6 @@
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
- *
- * @filesource
  */
 
 namespace SiTech;
@@ -236,7 +234,7 @@ class Session extends \ArrayObject
 		if (isset($_SESSION)) {
 			throw new Session\Exception('You cannot register a handler after the session has been started');
 		} elseif (!($object instanceof \SiTech\Session\Handler\IHandler) && !($object instanceof \Memcache)) {
-			throw new Session\Exception('The session handler must implement SiTech_Session_Handler_Interface');
+			throw new Session\Exception('The session handler must implement SiTech\Session\Handler\Interface');
 		}
 
 		static::$handler = true;
@@ -291,8 +289,8 @@ class Session extends \ArrayObject
 				break;
 
 			case self::ATTR_DB_CONN:
-				if (!\is_object($value) || (!\is_a($value, 'SiTech_DB') && !\is_subclass_of($value, 'SiTech_DB'))) {
-					throw new Exception('Invalid class for database connection, object must be a sub class or the main class of SiTech_DB');
+				if (!\is_object($value) || !($value instanceof \PDO)) {
+					throw new Exception('Invalid class for database connection, object must be an instance of PDO');
 				}
 
 				$this->attributes[$attr] = $value;
@@ -322,7 +320,7 @@ class Session extends \ArrayObject
 	static public function singleton()
 	{
 		if (empty(static::$instance)) {
-			throw new Session\Exception('Session not started yet. Please call '.\get_called_class().'::start() first.');
+			throw new Session\NotStartedException('Session not started yet. Please call '.\get_called_class().'::start() first.');
 		}
 
 		return(static::$instance);
@@ -338,9 +336,9 @@ class Session extends \ArrayObject
 	static public function start()
 	{
 		if (isset($_SESSION) && $_SESSION instanceof \SiTech\Session && $_SESSION->isActive()) {
-			return;
+			throw new Session\AlreadyStartedException('The session has already been started. Use singleton() if you need an object of the instance.');
 		} elseif (isset($_SESSION) && !($_SESSION instanceof Session)) {
-			throw new Session\Exception('A session has already been started using session_start() or session.auto-start');
+			throw new Session\AlreadyStartedException('A session has already been started using session_start() or session.auto-start');
 		}
 
 		static::$internal = true;
@@ -348,15 +346,3 @@ class Session extends \ArrayObject
 		new $class();
 	}
 }
-
-namespace SiTech\Session;
-require_once('SiTech/Exception.php');
-
-/**
- * Base session exception class.
- *
- * @author Eric Gach <eric@php-oop.net>
- * @package SiTech\Session
- * @version $Id$
- */
-class Exception extends \SiTech\Exception {}

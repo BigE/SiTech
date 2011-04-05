@@ -78,7 +78,7 @@ interface IHandler
 	public function write($id, $data);
 }
 
-require_once('SiTech/Session.php');
+require_once('SiTech/Session/Exception.php');
 
 /**
  *
