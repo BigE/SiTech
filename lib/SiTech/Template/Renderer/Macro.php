@@ -38,6 +38,17 @@ require_once('SiTech/Template/Renderer/IRenderer.php');
  */
 class Macro implements IRenderer
 {
+	/**
+	 * Here we render the Macro template format. Currently the only supported
+	 * parts of the macro template format are variables. There are no control
+	 * or conditional structures supported yet.
+	 *
+	 * @param \SiTech\Template\Engine $tpl Instance of the template engine
+	 * @param type $file Template file to parse and render
+	 * @param type $path Path of where to find the template
+	 * @param array $vars Variables that are to be used in the template
+	 * @return string Final output of the template after its rendered
+	 */
 	static public function render(\SiTech\Template $tpl, $file, $path, array $vars)
 	{
 		$rendered = \file_get_contents($path.\DIRECTORY_SEPARATOR.$file);
