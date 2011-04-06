@@ -15,25 +15,20 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-namespace SiTech\Template;
-
-require_once('SiTech/Exception.php');
+namespace SiTech\Template\Renderer;
 
 /**
- * Base exception class for the template package.
- *
- * @author Eric Gach <eric@php-oop.net>
- * @package SiTech\Template
- * @version $Id$
+ * @see SiTech\Template\Exception
  */
-class Exception extends \SiTech\Exception {}
+require_once('SiTech/Template/Exception.php');
 
 /**
- * This exception is thrown when a variable is assigned that is already set. This
- * only happens if strict mode is enabled for the template engine.
+ * Base exception class for the renderer.
  * 
  * @author Eric Gach <eric@php-oop.net>
  * @package SiTech\Template
+ * @subpackage SiTech\Template\Renderer
  * @version $Id$
  */
-class AlreadySetException extends Exception {}
+class Exception extends \SiTech\Template\Exception {}
+

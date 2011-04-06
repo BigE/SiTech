@@ -19,6 +19,8 @@
 
 namespace SiTech\Template;
 
+require_once('SiTech/Template/Exception.php');
+
 /**
  * This is the template class for all templates. Here you can
  * assign variables, render the page, and even display the full output.
@@ -42,26 +44,6 @@ class Engine
 	 * set, we default to SiTech_Template_Renderer_PHP.
 	 */
 	const ATTR_RENDER_ENGINE = 1;
-
-    /**
-     * Error mode to use for templates.
-     */
-    const ATTR_ERRMODE = 2;
-
-	/**
-	 * Don't display any errors to the screen.
-	 */
-    const ERRMODE_NONE = 0;
-
-	/**
-	 * Display a warning to the screen when an error occurs.
-	 */
-	const ERRMODE_WARNING = 1;
-
-	/**
-	 * Throw an exception when an error occurs.
-	 */
-	const ERRMODE_EXCEPTION = 2;
 
 	/**
 	 * Attributes set within the current template.
@@ -97,6 +79,7 @@ class Engine
 	 *
 	 * @param string $page Page name to render.
 	 * @param string $path Path where to load the template file.
+	 * @return void
 	 */
 	public function __construct($path = null, array $options = array())
 	{
@@ -135,6 +118,7 @@ class Engine
 	 *
 	 * @param string $name Name of variable to set in template
 	 * @param mixed $value Value to set variable to
+	 * @return void
 	 * @see assign unassign
 	 */
 	public function __set($name, $value)
@@ -150,12 +134,12 @@ class Engine
 	 * @param string $name Name of variable to be assigned.
 	 * @param mixed $value Value of variable to be used in template.
 	 * @return bool Returns TRUE on success FALSE on failure.
+	 * @throws SiTech\Template\Exception
 	 */
 	public function assign($name, $val)
 	{
 		if ((bool)$this->getAttribute(self::ATTR_STRICT) && isset($this->_vars[$name])) {
-			$this->_handleError('Cannot overwrite previously set template variable '.$name.' due to strict restrictions');
-			return(false);
+			throw new AlreadySetException('Cannot overwrite previously set template variable %s due to strict restrictions', array($name));
 		}
 
 		$this->_vars[$name] = $val;
@@ -166,6 +150,7 @@ class Engine
 	 * Output the current template file. This just echos the output of the
 	 * render method.
 	 *
+	 * @return void The page is displayed, nothing is returned.
 	 * @see render
 	 */
 	public function display($page, $type = 'text/html')
@@ -227,11 +212,10 @@ class Engine
 	}
 
 	/**
-	 * Get the value of the specified attribute. If the attribute is not set
-	 * NULL will be returned.
+	 * Get the value of the specified attribute.
 	 *
 	 * @param int $attr SiTech_Template::ATTR_* constant.
-	 * @return mixed
+	 * @return mixed If the attribute is not set, null will be returned.
 	 */
 	public function getAttribute($attr)
 	{
@@ -250,7 +234,9 @@ class Engine
 	 */
 	public function getLayout()
 	{
-		return($this->_layout);
+		$path = $this->_layout;
+		if (\defined('SITECH_APP_PATH') && \is_dir(\SITECH_APP_PATH.'/layouts/')) $path = \SITECH_APP_PATH.'/layouts/'.$path;
+		return($path);
 	}
 
 	/**
@@ -270,13 +256,11 @@ class Engine
 		if ($this->getAttribute(self::ATTR_STRICT)) {
 			$error_reporting = \error_reporting(\E_ALL);
 		} else {
-			$error_reporting = \error_reporting(\E_ALL ^ \E_NOTICE);
+			// Turn off notices if strict mode is disabled.
+			$error_reporting = \error_reporting(\E_ALL ^ \E_NOTICE ^ \E_USER_NOTICE);
 		}
 
 		$rendered = \call_user_func_array(array($engine, 'render'), array($this, $page, $this->_path, $this->_vars));
-		if ($rendered === false) {
-			$this->_handleError(\call_user_func(array($engine, 'getError')));
-		}
 
 		\error_reporting($error_reporting);
 		return($rendered);
@@ -299,6 +283,7 @@ class Engine
 	 * template itself will still display.
 	 *
 	 * @param string $layout
+	 * @return void
 	 */
 	public function setLayout($layout)
 	{
@@ -309,27 +294,12 @@ class Engine
 	 * Remove a variable from the template.
 	 *
 	 * @param string $name Name of variable.
+	 * @return void
 	 */
 	public function unassign($name)
 	{
 		if (isset($this->_vars[$name])) {
 			unset($this->_vars[$name]);
 		}
-	}
-
-	/**
-	 * Handle the error according to the error output settings.
-	 *
-	 * @param string $msg Error message to be used.
-	 */
-	public function _handleError($msg, $array = array())
-	{
-		if ($this->getAttribute(self::ATTR_ERRMODE) === self::ERRMODE_EXCEPTION) {
-			throw new Template\Exception(\vsprintf($msg, $array));
-		} elseif ($this->getAttribute(self::ATTR_ERRMODE) === self::ERRMODE_WARNING) {
-			\trigger_error(\vsprintf($msg, $array), \E_USER_WARNING);
-		}
-
-		$this->_error = \vsprintf($msg, $array);
 	}
 }

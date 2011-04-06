@@ -30,13 +30,6 @@ namespace SiTech\Template\Renderer;
 interface IRenderer
 {
 	/**
-	 * Return an error string if one exists.
-	 *
-	 * @return string
-	 */
-	static public function getError();
-
-	/**
 	 * Render the template and output the result.
 	 *
 	 * @param string $file Filename of the template.
@@ -46,16 +39,3 @@ interface IRenderer
 	 */
 	static public function render(\SiTech\Template $tpl, $file, $path, array $vars);
 }
-
-/**
- * @see SiTech\Template
- */
-require_once('SiTech/Template.php');
-
-/**
- * @author Eric Gach <eric@php-oop.net>
- * @package SiTech\Template
- * @subpackage SiTech\Template\Renderer
- * @version $Id$
- */
-class Exception extends \SiTech\Template\Exception {}

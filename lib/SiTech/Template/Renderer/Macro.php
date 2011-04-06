@@ -20,9 +20,9 @@
 namespace SiTech\Template\Renderer;
 
 /**
- * @see SiTech\Template\Renderer\Base
+ * @see SiTech\Template\Renderer\IRenderer
  */
-require_once('SiTech/Template/Renderer/Base.php');
+require_once('SiTech/Template/Renderer/IRenderer.php');
 
 /**
  * This renders files that are in Smarty syntax into complete output. This does
@@ -36,14 +36,13 @@ require_once('SiTech/Template/Renderer/Base.php');
  *       functionality would be nice.
  * @version $Id$
  */
-class Macro extends Base
+class Macro implements IRenderer
 {
 	static public function render(\SiTech\Template $tpl, $file, $path, array $vars)
 	{
 		$rendered = \file_get_contents($path.\DIRECTORY_SEPARATOR.$file);
 		if ($rendered === false) {
-			self::$error = 'Unable to read file '.$file.' on path '.$path;
-			return(false);
+			throw new Exception('Unable to read file %s on path %s', array($file, $path));
 		}
 
 		if (\preg_match_all('#(\{\$([a-z][a-z0-9_]+)\})#im', $rendered, $variables)) {
@@ -52,7 +51,8 @@ class Macro extends Base
 					$rendered = \str_replace($variables[1][$k], $vars[$var], $rendered);
 				} else {
 					$rendered = \str_replace($variables[1][$k], '', $rendered);
-					/* Hm, should we really trigger an error here? */
+					// Trigger a E_USER_NOTICE here. This is hidden by the template
+					// engine unless strict mode is turned on.
 					\trigger_error('Undefined variable: '.$var.' in template '.$path.\DIRECTORY_SEPARATOR.$file.' code on line ??', \E_USER_NOTICE);
 				}
 			}

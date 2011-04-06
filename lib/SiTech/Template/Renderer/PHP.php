@@ -22,7 +22,12 @@ namespace SiTech\Template\Renderer;
 /**
  * @see SiTech\Template\Renderer\Base
  */
-require_once('SiTech/Template/Renderer/Base.php');
+require_once('SiTech/Template/Renderer/IRenderer.php');
+
+/**
+ * @see SiTech\Template\Renderer\Exception
+ */
+require_once('SiTech/Template/Renderer/Exception.php');
 
 /**
  * This renders files that are in PHP format into complete output.
@@ -32,27 +37,40 @@ require_once('SiTech/Template/Renderer/Base.php');
  * @subpackage SiTech\Template\Renderer
  * @version $Id$
  */
-class PHP extends Base
+class PHP implements IRenderer
 {
+	/**
+	 * Render the template file and then return the output. Since we're using
+	 * PHP to render our template, all variables are extracted to the space of
+	 * the template. The template is then loaded using include() and the
+	 * output captured by the output buffer functions.
+	 *
+	 * @param \SiTech\Template\Engine $tpl Main instance of the template engine.
+	 * @param type $file Template file to render
+	 * @param type $path Path of where we find the template at
+	 * @param array $vars Variables that are set for the template
+	 * @return string Final output of template after rendered
+	 */
 	static public function render(\SiTech\Template $tpl, $file, $path, array $vars)
 	{
+		// Backup the old include path so we can reset it once we're done.
 		$_SiTech_oldPath = \set_include_path($path.\PATH_SEPARATOR.\get_include_path());
-		$fp = @\fopen($file, 'r', true);
-        if (!\is_resource($fp)) {
-			self::$error = 'Unable to read file '.$file.' on path '.$path;
-			return(false);
-		}
 		\extract($vars, \EXTR_OVERWRITE);
 		unset($vars);
 
 		\ob_start();
-		include($file);
+		@include($file);
+		$error = get_last_error();
+		if (!empty($error) && $error['type'] == E_WARNING && preg_match('#include\(\): Failed opening \''.$file.'\'#')) {
+			\ob_end_clean();
+			throw new Exception('Failed to open template file %s on path %s', array($file, $path));
+		}
 		$content = \ob_get_clean();
 		\ob_start();
 		if ($tpl->getLayout() == null) {
 			echo $content;
 		} else {
-			include(\SITECH_APP_PATH.'/layouts/'.$tpl->getLayout());
+			include($tpl->getLayout());
 		}
 		$rendered = \ob_get_clean();
 
