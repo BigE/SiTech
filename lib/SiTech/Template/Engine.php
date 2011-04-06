@@ -17,17 +17,17 @@
  * @filesource
  */
 
-namespace SiTech;
+namespace SiTech\Template;
 
 /**
  * This is the template class for all templates. Here you can
  * assign variables, render the page, and even display the full output.
  *
  * @author Eric Gach <eric@php-oop.net>
- * @package SiTech
+ * @package SiTech\Template
  * @version $Id$
  */
-class Template
+class Engine
 {
 	/**
 	 * Toggles if the template should be in strict mode or not. When a template
@@ -68,7 +68,7 @@ class Template
 	 *
 	 * @var array
 	 */
-	protected $attributes = array();
+	protected $_attributes = array();
 
 	/**
 	 * Layout to use for the template file we display. If no layout is set the
@@ -79,25 +79,18 @@ class Template
 	protected $_layout;
 
 	/**
-	 * Template page to render.
-	 *
-	 * @var string
-	 */
-	protected $page;
-
-	/**
 	 * Template path to locate files at.
 	 *
 	 * @var string
 	 */
-	protected $path;
+	protected $_path;
 
 	/**
 	 * Variables set for the current template
 	 *
 	 * @var array
 	 */
-	protected $vars = array();
+	protected $_vars = array();
 
 	/**
 	 * Initalize the class by setting the page and path settings.
@@ -108,7 +101,9 @@ class Template
 	public function __construct($path = null, array $options = array())
 	{
 		if (!empty($path)) {
-			$this->path = \realpath($path);
+			$this->_path = \realpath($path);
+		} elseif (defined('SITECH_APP_PATH') && is_dir(SITECH_APP_PATH.'/views')) {
+			$this->_path = SITECH_APP_PATH.'/views';
 		}
 
 		if (!empty($options)) {
@@ -119,22 +114,38 @@ class Template
 	}
 
 	/**
-	 * Magic get
+	 * Magic get method. This will pull an assigned value from the class.
 	 *
-	 * @param string $name
+	 * @param string $name Name of the variable to get
 	 * @return mixed
+	 * @see assign
 	 */
 	public function __get($name)
 	{
-		if (isset($this->vars[$name])) {
-			return($this->vars[$name]);
+		if (isset($this->_vars[$name])) {
+			return($this->_vars[$name]);
 		} else {
 			return(null);
 		}
 	}
 
 	/**
-	 * Assign a variable to the current template file.
+	 * Magic set method. This is basically another way of using the assign
+	 * method to set variables for the template.
+	 *
+	 * @param string $name Name of variable to set in template
+	 * @param mixed $value Value to set variable to
+	 * @see assign unassign
+	 */
+	public function __set($name, $value)
+	{
+		$this->assign($name, $value);
+	}
+
+	/**
+	 * Assign a variable to the current template file. If strict mode is enabled
+	 * and a variable is already set, an exception will be thrown to notify the
+	 * user.
 	 *
 	 * @param string $name Name of variable to be assigned.
 	 * @param mixed $value Value of variable to be used in template.
@@ -142,12 +153,12 @@ class Template
 	 */
 	public function assign($name, $val)
 	{
-		if ((bool)$this->getAttribute(self::ATTR_STRICT) && isset($this->vars[$name])) {
+		if ((bool)$this->getAttribute(self::ATTR_STRICT) && isset($this->_vars[$name])) {
 			$this->_handleError('Cannot overwrite previously set template variable '.$name.' due to strict restrictions');
 			return(false);
 		}
 
-		$this->vars[$name] = $val;
+		$this->_vars[$name] = $val;
 		return(true);
 	}
 
@@ -167,7 +178,8 @@ class Template
 	}
 
 	/**
-	 * Return the proper doctype tag for use in HTML documents.
+	 * Return the proper doctype tag for use in HTML documents. Default is
+	 * XHTML 1.0 Strict.
 	 *
 	 * @param string $doctype
 	 * @return string
@@ -223,8 +235,8 @@ class Template
 	 */
 	public function getAttribute($attr)
 	{
-		if (isset($this->attributes[$attr])) {
-			return($this->attributes[$attr]);
+		if (isset($this->_attributes[$attr])) {
+			return($this->_attributes[$attr]);
 		} else {
 			return(null);
 		}
@@ -261,7 +273,7 @@ class Template
 			$error_reporting = \error_reporting(\E_ALL ^ \E_NOTICE);
 		}
 
-		$rendered = \call_user_func_array(array($engine, 'render'), array($this, $page, $this->path, $this->vars));
+		$rendered = \call_user_func_array(array($engine, 'render'), array($this, $page, $this->_path, $this->_vars));
 		if ($rendered === false) {
 			$this->_handleError(\call_user_func(array($engine, 'getError')));
 		}
@@ -278,7 +290,7 @@ class Template
 	 */
 	public function setAttribute($attr, $value)
 	{
-		$this->attributes[$attr] = $value;
+		$this->_attributes[$attr] = $value;
 	}
 
 
@@ -300,8 +312,8 @@ class Template
 	 */
 	public function unassign($name)
 	{
-		if (isset($this->vars[$name])) {
-			unset($this->vars[$name]);
+		if (isset($this->_vars[$name])) {
+			unset($this->_vars[$name]);
 		}
 	}
 
@@ -321,14 +333,3 @@ class Template
 		$this->_error = \vsprintf($msg, $array);
 	}
 }
-
-namespace SiTech\Template;
-require_once('SiTech/Exception.php');
-
-/**
- *
- * @author Eric Gach <eric@php-oop.net>
- * @package SiTech\Template
- * @version $Id$
- */
-class Exception extends \SiTech\Exception {}
