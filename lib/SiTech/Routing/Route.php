@@ -20,9 +20,9 @@
 namespace SiTech\Routing;
 
 /**
- * @see \SiTech\Router\Exception
+ * @see \SiTech\Routing\Exception
  */
-require_once('SiTech/Router/Exception.php');
+require_once('SiTech/Routing/Exception.php');
 
 /**
  * These are the routes for the router. Each route takes a regex to match against
@@ -33,7 +33,7 @@ require_once('SiTech/Router/Exception.php');
  * matching if it is defined.
  *
  * @author Eric Gach <eric@php-oop.net>
- * @package SiTech\Router
+ * @package SiTech\Routing
  * @see preg_match
  * @version $Id$
  */
@@ -92,11 +92,10 @@ class Route
 	 * the router when the route is matched. If the action does not return false
 	 * this will try to call the display() method to render the view.
 	 * 
-	 * @throws \SiTech\Router\MethodNotFoundException
+	 * @throws \SiTech\Routing\MethodNotFoundException
 	 */
 	public function dispatch()
 	{
-		// We have to have SiTech\Loader here for this to work reliably... sorry.
 		require_once('SiTech/Loader.php');
 		\SiTech\Loader::loadController($this->_controller);
 
@@ -115,7 +114,7 @@ class Route
 	 *
 	 * @param string $path If you pass \SiTech\Uri here we will take the path
 	 *                     from the object.
-	 * @return \SiTech\Router\Route Returns false if it does not match.
+	 * @return \SiTech\Routing\Route Returns false if it does not match.
 	 */
 	public function match($path)
 	{

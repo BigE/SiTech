@@ -23,10 +23,10 @@ namespace SiTech\Routing;
 require_once('SiTech/Exception.php');
 
 /**
- * Router exception class.
+ * Routing exception class.
  *
  * @author Eric Gach <eric@php-oop.net>
- * @package SiTech\Router
+ * @package SiTech\Routing
  * @version $Id$
  */
 class Exception extends \SiTech\Exception {}
@@ -35,9 +35,17 @@ class Exception extends \SiTech\Exception {}
  * This exception is thrown when no route is matched through the router.
  * 
  * @author Eric Gach <eric@php-oop.net>
- * @package SiTech\Router
+ * @package SiTech\Routing
  * @version $Id$
  */
 class NoRouteException extends Exception {}
 
+/**
+ * This exception is thrown when an action is not found in a controller. It can
+ * successfully be caught to produce a 404 error if you so desire.
+ * 
+ * @author Eric Gach <eric@php-oop.net>
+ * @package SiTech\Routing
+ * @version $Id$
+ */
 class MethodNotFoundException extends Exception {}

@@ -17,7 +17,10 @@
 
 namespace SiTech\Routing;
 
-require_once('SiTech/Router/Exception.php');
+/**
+ * @see \SiTech\Routing\Exception
+ */
+require_once('SiTech/Routing/Exception.php');
 
 /**
  * This is the router for adding and matching routes based uppon a path that is
@@ -25,7 +28,7 @@ require_once('SiTech/Router/Exception.php');
  * portion of the path will be ignored by the route itself.
  *
  * @author Eric Gach <eric@php-oop.net>
- * @package SiTech
+ * @package SiTech\Routing
  * @see preg_match
  * @version $Id$
  */
@@ -37,7 +40,7 @@ class Router
 	 * getDispatchedRoute method.
 	 *
 	 * @see getDispatchedRoute
-	 * @var \SiTech\Router\Route
+	 * @var \SiTech\Routing\Route
 	 */
 	protected static $_dispatchedRoute = false;
 
@@ -52,9 +55,9 @@ class Router
 	 * Add a route to the router. The router will match based on the order that
 	 * the routes are added.
 	 *
-	 * @param \SiTech\Router\Route $route
+	 * @param \SiTech\Routing\Route $route
 	 */
-	public static function add(\SiTech\Router\Route $route)
+	public static function add(Route $route)
 	{
 		static::$_routes[] = $route;
 	}
@@ -64,14 +67,14 @@ class Router
 	 * on the current path of the application. The route that gets dispached will
 	 * be set internall and can be retreived using getDispatchedRoute
 	 *
-	 * @param \SiTech\Router\Route $route
+	 * @param \SiTech\Routing\Route $route
 	 * @see getDispatchedRoute
-	 * @throws \SiTech\Router\NoRouteException
+	 * @throws \SiTech\Routing\NoRouteException
 	 */
-	public static function dispatch(\SiTech\Router\Route $route = null)
+	public static function dispatch(\SiTech\Routing\Route $route = null)
 	{
 		if (empty($route)) $route = static::getRoute();
-		if (!$route) throw new Router\NoRouteException('No route was matched');
+		if (!$route) throw new NoRouteException('No route was matched');
 		self::$_dispatchedRoute = $route;
 
 		$route->dispatch();
@@ -80,7 +83,7 @@ class Router
 	/**
 	 * Return the route that was dispached through the router.
 	 *
-	 * @return \SiTech\Router\Route Returns false if no route has been dispatched.
+	 * @return \SiTech\Routing\Route Returns false if no route has been dispatched.
 	 * @see dispatch
 	 */
 	public static function getDispatchedRoute()
@@ -94,7 +97,7 @@ class Router
 	 *
 	 * @param string $path If \SiTech\Uri is passed in, the path will be retreived
 	 *                     from that.
-	 * @return \SiTech\Router\Route
+	 * @return \SiTech\Routing\Route
 	 */
 	public static function getRoute($path = null)
 	{
@@ -110,7 +113,7 @@ class Router
 	 *
 	 * @param string $path If \SiTech\Uri is passed in, the path will be retreived
 	 *                     from the object.
-	 * @return \SiTech\Router\Route Returns false if no route is matched.
+	 * @return \SiTech\Routing\Route Returns false if no route is matched.
 	 */
 	public static function matchRoute($path = null)
 	{
