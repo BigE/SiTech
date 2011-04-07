@@ -32,10 +32,12 @@ interface IRenderer
 	/**
 	 * Render the template and output the result.
 	 *
+	 * @param \SiTech\Template\Engine $tpl Template engine object so the renderer
+	 *                                     can get the needed info
 	 * @param string $file Filename of the template.
 	 * @param string $path Template base path.
 	 * @param array $vars Array of template variables to be used in the template.
 	 * @return string Returns a string of the rendered template.
 	 */
-	static public function render(\SiTech\Template $tpl, $file, $path, array $vars);
+	static public function render(\SiTech\Template\Engine $tpl, $file, $path, array $vars);
 }

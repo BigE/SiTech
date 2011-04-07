@@ -51,7 +51,7 @@ class PHP implements IRenderer
 	 * @param array $vars Variables that are set for the template
 	 * @return string Final output of template after rendered
 	 */
-	static public function render(\SiTech\Template $tpl, $file, $path, array $vars)
+	static public function render(\SiTech\Template\Engine $tpl, $file, $path, array $vars)
 	{
 		// Backup the old include path so we can reset it once we're done.
 		$_SiTech_oldPath = \set_include_path($path.\PATH_SEPARATOR.\get_include_path());

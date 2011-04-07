@@ -54,7 +54,7 @@ class Macro implements IRenderer
 	 * @param array $vars Variables that are to be used in the template
 	 * @return string Final output of the template after its rendered
 	 */
-	static public function render(\SiTech\Template $tpl, $file, $path, array $vars)
+	static public function render(\SiTech\Template\Engine $tpl, $file, $path, array $vars)
 	{
 		$rendered = \file_get_contents($path.\DIRECTORY_SEPARATOR.$file);
 		if ($rendered === false) {
