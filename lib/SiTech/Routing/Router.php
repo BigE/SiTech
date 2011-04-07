@@ -15,7 +15,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-namespace SiTech;
+namespace SiTech\Routing;
 
 require_once('SiTech/Router/Exception.php');
 

@@ -17,7 +17,7 @@
  * @filesource
  */
 
-namespace SiTech\Router;
+namespace SiTech\Routing;
 
 /**
  * @see \SiTech\Router\Exception
