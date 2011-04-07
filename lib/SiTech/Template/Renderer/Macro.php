@@ -25,6 +25,11 @@ namespace SiTech\Template\Renderer;
 require_once('SiTech/Template/Renderer/IRenderer.php');
 
 /**
+ * @see SiTech\Template\Renderer\Exception
+ */
+require_once('SiTech/Template/Renderer/Exception.php');
+
+/**
  * This renders files that are in Smarty syntax into complete output. This does
  * not provide the full support of Smarty just simply uses similar syntax.
  *

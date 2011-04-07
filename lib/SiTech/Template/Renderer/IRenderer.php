@@ -35,7 +35,7 @@ interface IRenderer
 	 * @param string $file Filename of the template.
 	 * @param string $path Template base path.
 	 * @param array $vars Array of template variables to be used in the template.
-	 * @return string Returns FALSE on failure.
+	 * @return string Returns a string of the rendered template.
 	 */
 	static public function render(\SiTech\Template $tpl, $file, $path, array $vars);
 }
