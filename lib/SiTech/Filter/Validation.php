@@ -21,6 +21,8 @@ namespace SiTech\Filter;
  * Description of Validation
  *
  * @author Eric Gach <eric@php-oop.net>
+ * @package SiTech\Filter
+ * @version $Id$
  */
 class Validation
 {
