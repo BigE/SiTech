@@ -46,3 +46,12 @@ class Exception extends \Exception
 		parent::__construct(vsprintf($msg, $args), $code, $previous);
 	}
 }
+
+/**
+ * Exception for features that are not implemented yet.
+ * 
+ * @author Eric Gach <eric@php-oop.net>
+ * @package SiTech
+ * @version $Id$
+ */
+class NotImplementedException extends Exception {}
