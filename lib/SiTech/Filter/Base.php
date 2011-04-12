@@ -297,9 +297,8 @@ const SANITIZE_MAGIC_QUOTES = 521;
 // Other filters
 
 /**
- * This is the default filter.
- * 
- * @see UNSAFE_RAW
+ * This is an attribute for the class. This can be used to set a default filter
+ * for any values passed in.
  */
 const FILTER_DEFAULT = 516;
 
@@ -322,6 +321,14 @@ const CALLBACK = 1024;
 class Base
 {
 	/**
+	 * Attributes set to the filter class. Only value that is set is the default
+	 * filter which is set to UNSAFE_RAW
+	 *
+	 * @var array
+	 */
+	protected $_attributes = array(FILTER_DEFAULT => UNSAFE_RAW);
+
+	/**
 	 * One of the SiTech\Filter constants for the filter type we are using.
 	 *
 	 * @var int
@@ -334,13 +341,27 @@ class Base
 	 * @param type $input Input type to use for the filter. If the type specified
 	 *                    is not valid, an exception will be thrown.
 	 */
-	public function __construct($input = INPUT_POST)
+	public function __construct($input = INPUT_POST, array $options = array())
 	{
 		$this->_filterExt = extension_loaded('filter');
 		if (!in_array($input, array(INPUT_POST, INPUT_GET, INPUT_COOKIE, INPUT_ENV, INPUT_SERVER, INPUT_SESSION, INPUT_REQUEST))) {
 			throw new Exception('The filter type %d specified is not a valid filter type', array($input));
 		}
 		$this->_type = (int)$input;
+		foreach ($options as $k => $v) {
+			$this->setAttribute($k, $v);
+		}
+	}
+
+	/**
+	 * Get the value of an attribute set with the instance of the filter.
+	 *
+	 * @param int $attribute Attribute to get the value of.
+	 * @return mixed If the attribute is not set, null is returned.
+	 */
+	public function getAttribute($attribute)
+	{
+		return((isset($this->_attributes[$attribute]))? $this->_attributes[$attribute] : null);
 	}
 	
 	/**
@@ -396,8 +417,9 @@ class Base
 	 * @return mixed Returns false on failure and null if the value is not set
 	 * @see http://php.net/filter-input-array
 	 */
-	public function input($variable_name, $filter = FILTER_DEFAULT, $options = FLAG_NONE)
+	public function input($variable_name, $filter = null, $options = FLAG_NONE)
 	{
+		if (empty($filter)) $filter = $this->getAttribute(FILTER_DEFAULT);
 		if ($this->_filterExt) {
 			if (is_array($variable_name)) {
 				return(filter_input_array($this->_type, $variable_name));
@@ -410,6 +432,17 @@ class Base
 	}
 
 	/**
+	 * Set attributes on this instance of the filter.
+	 *
+	 * @param int $attribute Attribute to set the value for.
+	 * @param mixed $value Value to set attribute to. This varies by attribute.
+	 */
+	public function setAttribute($attribute, $value)
+	{
+		$this->_attributes[$attribute] = $value;
+	}
+
+	/**
 	 * Filter a specific variable and return the value.
 	 *
 	 * @param mixed $variable Variable to pass through the specified filter
@@ -417,8 +450,9 @@ class Base
 	 * @param mixed $options Options to pass into filter
 	 * @return mixed Returns false on failure
 	 */
-	public function variable($variable, $filter = FILTER_DEFAULT, $options = FLAG_NONE)
+	public function variable($variable, $filter = null, $options = FLAG_NONE)
 	{
+		if (empty($filter)) $filter = $this->getAttribute(FILTER_DEFAULT);
 		if ($this->_filterExt) {
 			return(filter_var($variable, $filter, $options));
 		} else {
