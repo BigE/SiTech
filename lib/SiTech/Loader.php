@@ -13,31 +13,29 @@
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
- *
- * @filesource
  */
 
 namespace SiTech;
 
 /**
- * SiTech_Loader
- *
  * This loader class adds functionality to the autoload function already built
  * into PHP. It also provides helper functions to make any application easier to
  * manage and build.
  *
  * @author Eric Gach <eric at php-oop.net>
  * @package SiTech
- * @todo Fix documentation for whole SiTech\Loader class
  * @version $Id$
  */
 class Loader
 {
 	/**
-	 * Auto load the class by calling the loadClass method.
+	 * Auto load the class by calling the loadClass method. This method detects
+	 * the last part of a class name and loads appropriately. If the class ends
+	 * in "Model" it calls ::loadModel() If it ends in "Controller" it calls
+	 * ::loadController() otherwise ::loadClass() is called.
 	 *
-	 * @param string $class
-	 * @see loadClass
+	 * @param string $class This is the class name that is to be autoloaded
+	 * @see SiTech\Loader::loadClass SiTech\Loader::loadModel SiTech\Loader::loadController
 	 */
 	public static function autoload($class)
 	{
@@ -139,7 +137,7 @@ class Loader
 	 * SITECH_APP_PATH/models/ for the model. If the model fails to load an
 	 * exception will be thrown.
 	 *
-	 * @param string $model
+	 * @param string $model Name of the model to load
 	 * @throws SiTech\Loader\Exception
 	 */
 	public static function loadModel($model)
@@ -173,8 +171,9 @@ class Loader
 	 * this will override any methods in this class. If something fails, an
 	 * exception will be thrown.
 	 *
-	 * @param string $class
-	 * @param bool $enabled
+	 * @param string $class Name of the class to be used for an autoloader
+	 * @param bool $enabled If set to true, the autoloader will be registered, if
+	 *                      it is false, it will be unregistered.
 	 * @throws SiTech\Loader\Exception
 	 */
 	public static function registerAutoload($class = 'SiTech\Loader', $enabled = true)

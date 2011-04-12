@@ -13,8 +13,6 @@
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
- *
- * @filesource
  */
 
 namespace SiTech\DB\Driver;
@@ -32,8 +30,8 @@ interface IDriver
 	/**
 	 * Singleton method to get the instance of the driver.
 	 *
-	 * @param SiTech_DB $pdo
-	 * @return SiTech_DB_Driver_Interface
+	 * @param SiTech\DB $pdo Database instance for driver to use
+	 * @return SiTech\DB\Driver\IDriver
 	 */
 	static public function singleton($pdo);
 }
