@@ -35,7 +35,7 @@ class Loader
 	 * ::loadController() otherwise ::loadClass() is called.
 	 *
 	 * @param string $class This is the class name that is to be autoloaded
-	 * @see SiTech\Loader::loadClass SiTech\Loader::loadModel SiTech\Loader::loadController
+	 * @static
 	 */
 	public static function autoload($class)
 	{
@@ -54,6 +54,7 @@ class Loader
 	 * a string to the path.
 	 *
 	 * @param string $file
+	 * @static
 	 * @throws SiTech\Loader\Exception
 	 */
 	public static function loadBootstrap($file = null)
@@ -79,6 +80,7 @@ class Loader
 	 * method will also load interfaces.
 	 *
 	 * @param string $class
+	 * @static
 	 * @throws SiTech\Loader\Exception
 	 */
 	public static function loadClass($class)
@@ -102,6 +104,7 @@ class Loader
 	 *
 	 * @param string $name
 	 * @return object
+	 * @static
 	 * @throws SiTech\Loader\Exception
 	 */
 	public static function loadController($name)
@@ -138,6 +141,7 @@ class Loader
 	 * exception will be thrown.
 	 *
 	 * @param string $model Name of the model to load
+	 * @static
 	 * @throws SiTech\Loader\Exception
 	 */
 	public static function loadModel($model)
@@ -174,6 +178,7 @@ class Loader
 	 * @param string $class Name of the class to be used for an autoloader
 	 * @param bool $enabled If set to true, the autoloader will be registered, if
 	 *                      it is false, it will be unregistered.
+	 * @static
 	 * @throws SiTech\Loader\Exception
 	 */
 	public static function registerAutoload($class = 'SiTech\Loader', $enabled = true)
