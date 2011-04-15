@@ -97,6 +97,10 @@ class GetOpts
 	 * Here you can specify the specific usage, the version and the description
 	 * for the help output.
 	 *
+	 * @param string $usage Program usage to be displayed.
+	 * @param string $version Version to be displayed with requested.
+	 * @param string $description Short description of the program and what it
+	 *                            does.
 	 * @see setUsage,setVersion
 	 */
 	public function __construct($usage = '%prog [options]', $version = null, $description = null)
