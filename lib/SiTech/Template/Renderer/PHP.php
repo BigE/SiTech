@@ -45,9 +45,9 @@ class PHP implements IRenderer
 	 * the template. The template is then loaded using include() and the
 	 * output captured by the output buffer functions.
 	 *
-	 * @param \SiTech\Template\Engine $tpl Main instance of the template engine.
-	 * @param type $file Template file to render
-	 * @param type $path Path of where we find the template at
+	 * @param SiTech\Template\Engine $tpl Main instance of the template engine.
+	 * @param string $file Template file to render
+	 * @param string $path Path of where we find the template at
 	 * @param array $vars Variables that are set for the template
 	 * @return string Final output of template after rendered
 	 */

@@ -39,7 +39,7 @@ class Exception extends \Exception
 	 *                    for documentation of formatting.
 	 * @param array $args Array of arguments to pass for formatting, like sprintf.
 	 * @param int $code Error code to pass to internal Exception class.
-	 * @param Exception $previous Previous exception encountered in the stack.
+	 * @param \Exception $previous Previous exception encountered in the stack.
 	 */
 	public function __construct($msg, $args = array(), $code = 0, \Exception $previous = null)
 	{

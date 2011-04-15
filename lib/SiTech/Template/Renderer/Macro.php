@@ -48,9 +48,9 @@ class Macro implements IRenderer
 	 * parts of the macro template format are variables. There are no control
 	 * or conditional structures supported yet.
 	 *
-	 * @param \SiTech\Template\Engine $tpl Instance of the template engine
-	 * @param type $file Template file to parse and render
-	 * @param type $path Path of where to find the template
+	 * @param SiTech\Template\Engine $tpl Instance of the template engine
+	 * @param string $file Template file to parse and render
+	 * @param string $path Path of where to find the template
 	 * @param array $vars Variables that are to be used in the template
 	 * @return string Final output of the template after its rendered
 	 */
