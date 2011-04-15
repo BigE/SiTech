@@ -250,6 +250,9 @@ class Uri
 
 namespace SiTech\Uri;
 
+/**
+ * If passed into the getPath method, it will trim the leading / off the path.
+ */
 const FLAG_LTRIM = 1;
 
 require_once('Exception.php');

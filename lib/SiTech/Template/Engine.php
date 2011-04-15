@@ -75,10 +75,11 @@ class Engine
 	protected $_vars = array();
 
 	/**
-	 * Initalize the class by setting the page and path settings.
+	 * This will initalize the engine by setting the path of where to find files
+	 * and any additional options.
 	 *
-	 * @param string $page Page name to render.
-	 * @param string $path Path where to load the template file.
+	 * @param string $path Path where to load the template file(s) from.
+	 * @param array $options Options to set for the template engine.
 	 * @return void
 	 */
 	public function __construct($path = null, array $options = array())
@@ -132,7 +133,7 @@ class Engine
 	 * user.
 	 *
 	 * @param string $name Name of variable to be assigned.
-	 * @param mixed $value Value of variable to be used in template.
+	 * @param mixed $val Value of variable to be used in template.
 	 * @return bool Returns TRUE on success FALSE on failure.
 	 * @throws SiTech\Template\Exception
 	 */
@@ -150,6 +151,8 @@ class Engine
 	 * Output the current template file. This just echos the output of the
 	 * render method.
 	 *
+	 * @param string $page Page name to render and display.
+	 * @param string $type Document type header to send before displaying.
 	 * @return void The page is displayed, nothing is returned.
 	 * @see render
 	 */
@@ -243,6 +246,7 @@ class Engine
 	 * This calls the rendering engine to parse the template file and return
 	 * the complete output.
 	 *
+	 * @param string $page Page name to render and return.
 	 * @return string The parsed template file.
 	 */
 	public function render($page)

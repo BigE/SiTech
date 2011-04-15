@@ -21,6 +21,9 @@
 
 namespace SiTech\DB\Driver;
 
+/**
+ * SQLite database driver.
+ */
 const SQLITE = 'SiTech\DB\Driver\SQLite';
 
 /**

@@ -13,8 +13,6 @@
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
- *
- * @filesource
  */
 
 namespace SiTech\Console;
@@ -31,10 +29,19 @@ namespace SiTech\Console;
  */
 class GetOpts
 {
+	/**
+	 * String option
+	 */
 	const TYPE_STRING = 1;
 
+	/**
+	 * Integer option
+	 */
 	const TYPE_INT = 2;
 
+	/**
+	 * Float option
+	 */
 	const TYPE_FLOAT = 3;
 
 	/**

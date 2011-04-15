@@ -13,8 +13,6 @@
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
- *
- * @filesource
  */
 
 namespace SiTech\Model;
@@ -101,6 +99,12 @@ abstract class Base
 	 */
 	protected static $_table;
 
+	/**
+	 * Nothing much going on here, just set the database object to be used with
+	 * the model so we have a way of accessing everything.
+	 *
+	 * @param \PDO $db Database connection to use with the model.
+	 */
 	public function __construct(\PDO $db = null)
 	{
 		if (empty($db)) {
@@ -113,8 +117,8 @@ abstract class Base
 	/**
 	 * Get a field from the current record.
 	 *
-	 * @param string $name
-	 * @return mixed
+	 * @param string $name Name of the field to get
+	 * @return mixed Returns null if no value is set.
 	 */
 	public function __get($name)
 	{
@@ -170,13 +174,15 @@ abstract class Base
 		}
 	}
 
+	/**
+	 * Magic method to check if a field has a value set or not.
+	 *
+	 * @param type $name
+	 * @return bool Returns true if set and false if not
+	 */
 	public function __isset($name)
 	{
-		if (isset($this->_fields[$name])) {
-			return(true);
-		} else {
-			return(false);
-		}
+		return((isset($this->_fields[$name]))? true : false);
 	}
 
 	/**
@@ -195,8 +201,8 @@ abstract class Base
 	 * is set and you call this method without specifying a connection, an
 	 * exception will be thrown.
 	 *
-	 * @param PDO $db
-	 * @return PDO
+	 * @param PDO $db Database connection to use
+	 * @return PDO Only returns when no connection is passed in
 	 * @throws SiTech\Exception
 	 */
 	public static function db(\PDO $db = null)
@@ -261,6 +267,12 @@ abstract class Base
 		}
 	}
 
+	/**
+	 * Get a total of rows based on the chriteria passed in.
+	 *
+	 * @param string $where Chriteria to use when counting rows.
+	 * @return int Total rows that match chriteria
+	 */
 	public static function getCount($where = null)
 	{
 		$sql = 'SELECT COUNT('.static::pk().') FROM '.static::$_table;
@@ -277,6 +289,12 @@ abstract class Base
 		return((int)$stmnt->fetchColumn());
 	}
 
+	/**
+	 * Set or get the primary key field of the model.
+	 *
+	 * @param string $pk Primary key field to use for the model.
+	 * @return string Will only return if no primary key is passed in.
+	 */
 	public static function pk($pk = null)
 	{
 		if (empty($pk) && empty(static::$_pk)) {

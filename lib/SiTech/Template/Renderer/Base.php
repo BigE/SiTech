@@ -29,14 +29,27 @@ require_once('SiTech/Template/Renderer/IRenderer.php');
  * extend this class.
  *
  * @author Eric Gach <eric@php-oop.net>
+ * @abstract
  * @package SiTech\Template
  * @subpackage SiTech\Template\Renderer
  * @version $Id$
  */
 abstract class Base implements IRenderer
 {
+	/**
+	 * Error message that is set by the rendering engine.
+	 *
+	 * @var string
+	 */
 	static protected $error;
 
+	/**
+	 * Get and return a set error message from the renderer. If nothing is set
+	 * the method will return null.
+	 *
+	 * @return string Error message that is set.
+	 * @static
+	 */
 	static public function getError()
 	{
 		return(self::$error);

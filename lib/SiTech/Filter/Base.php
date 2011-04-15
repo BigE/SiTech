@@ -338,8 +338,10 @@ class Base
 	/**
 	 * Setup the filter and get everything ready to do what we need.
 	 *
-	 * @param type $input Input type to use for the filter. If the type specified
-	 *                    is not valid, an exception will be thrown.
+	 * @param int $input Input type to use for the filter. If the type specified
+	 *                   is not valid, an exception will be thrown.
+	 * @param array $options These are the options to initally set for the
+	 *                       filter base. They will be passed to setAttribute
 	 */
 	public function __construct($input = INPUT_POST, array $options = array())
 	{

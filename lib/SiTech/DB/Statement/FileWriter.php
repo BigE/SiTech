@@ -47,6 +47,11 @@ class FileWriter extends \SiTech\DB\Statement
 	 */
 	protected $_conn;
 
+	/**
+	 * File resource for output of the query.
+	 *
+	 * @var resource 
+	 */
 	protected $_output;
 
 	/**
@@ -65,6 +70,9 @@ class FileWriter extends \SiTech\DB\Statement
 		}
 	}
 
+	/**
+	 * Close the file out if its open.
+	 */
 	public function  __destruct() {
 		if ($this->_output !== false)
 			\fclose($this->_output);

@@ -36,6 +36,10 @@ require_once('SiTech/DB.php');
  */
 class Proxy extends \SiTech\DB
 {
+	/**
+	 * Attribute that will cause the queries to only use the writer if set to
+	 * true.
+	 */
 	const ATTR_WRITEONLY = 12345678900;
 
 	/**
@@ -46,6 +50,11 @@ class Proxy extends \SiTech\DB
 	 */
 	protected $_inTransaction = false;
 
+	/**
+	 * If set to true, we want to only user a writer for our queries.
+	 *
+	 * @var bool
+	 */
 	protected $_useWriteOnly = false;
 
 	/**
@@ -67,8 +76,8 @@ class Proxy extends \SiTech\DB
 	 * initalized, the writer will be default for everything.
 	 *
 	 * @param array $config Array of configuration settings for the connections.
-	 * @param array $readers Array of hosts that are dedicated as "readers"
 	 * @param array $writers Array of hosts that are dedicated as "writers"
+	 * @param array $readers Array of hosts that are dedicated as "readers"
 	 * @param string $driver
 	 * @param array $options Options to pass to the connections.
 	 * @see SiTech_DB
@@ -152,6 +161,13 @@ class Proxy extends \SiTech\DB
 		));
 	}
 
+	/**
+	 * Execute the query in the database and return the number of rows affected.
+	 *
+	 * @param string $statement SQL query to execute
+	 * @param array $args Arguments to use in the query
+	 * @return int Number of rows affected by the query
+	 */
 	public function exec($statement, array $args = array()) {
 		if ($this->_readOnly($statement)) {
 			return($this->_readConn->exec($statement, $args));
@@ -160,9 +176,16 @@ class Proxy extends \SiTech\DB
 		}
 	}
 
+	/**
+	 * This grabs the attribute from the reader and writer and returns it as
+	 * an array so you can see each value.
+	 *
+	 * @param int $attribute Attribute to get value for
+	 * @return array Value that attribute is set to
+	 */
 	public function getAttribute($attribute) {
 		if ($attribute == self::ATTR_WRITEONLY) {
-			return($this->_useWriteOnly);
+			return(array('writer' => $this->_useWriteOnly));
 		} else {
 			return(array(
 				'reader' => ((!empty($this->_readConn))? $this->_readConn->getAttribute($attribute) : null),
@@ -171,10 +194,22 @@ class Proxy extends \SiTech\DB
 		}
 	}
 
+	/**
+	 * Insert a number of values into the specified table.
+	 *
+	 * @param string $table Table name to execute query on
+	 * @param array $bind Array of fields and values to use
+	 * @return int Number of rows inserted
+	 */
 	public function insert($table, array $bind) {
 		return($this->_writeConn->insert($table, $bind));
 	}
 
+	/**
+	 * This tells us if we're currently in a transaction.
+	 *
+	 * @return bool
+	 */
 	public function inTransaction()
 	{
 		if (\method_exists($this->_writeConn, 'inTransaction')) {
@@ -184,10 +219,23 @@ class Proxy extends \SiTech\DB
 		}
 	}
 
+	/**
+	 * Get the last inserted ID of the record into the database.
+	 *
+	 * @param string $name Column name to pull ID from
+	 * @return int
+	 */
 	public function lastInsertId($name = null) {
 		return($this->_writeConn->lastInsertId($name));
 	}
 
+	/**
+	 * Prepare a SQL statement to be executed on the database server.
+	 *
+	 * @param string $statement SQL query to be prepared.
+	 * @param array $driver_options Options to pass to the statement
+	 * @return PDOStatement Statement class prepared by the database.
+	 */
 	public function prepare($statement, $driver_options = array())
 	{
 		if ($this->_readOnly($statement)) {
@@ -197,6 +245,13 @@ class Proxy extends \SiTech\DB
 		}
 	}
 
+	/**
+	 * Execute a query on the database server and get the statement back.
+	 *
+	 * @param string $statement
+	 * @param array $args
+	 * @return PDOStatement
+	 */
 	public function query($statement, array $args = array()) {
 		if ($this->_readOnly($statement)) {
 			return($this->_readConn->query($statement, $args));

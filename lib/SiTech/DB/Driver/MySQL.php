@@ -19,6 +19,9 @@
 
 namespace SiTech\DB\Driver;
 
+/**
+ * MySQL Driver for the DB
+ */
 const MYSQL = 'SiTech\DB\Driver\MySQL';
 
 /**
@@ -37,6 +40,13 @@ require_once('SiTech/DB/Driver/Base.php');
  */
 class MySQL extends Base
 {
+	/**
+	 * Get exsisting privileges from the database server.
+	 *
+	 * @param string $user User to look for privileges.
+	 * @param string $host Host to look for privileges.
+	 * @return SiTech\DB\Privilege\MySQL
+	 */
 	public function getPrivileges($user=null, $host=null)
 	{
 		require_once('SiTech/DB/Privilege/MySQL.php');

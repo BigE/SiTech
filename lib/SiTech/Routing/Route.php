@@ -39,7 +39,14 @@ require_once('SiTech/Routing/Exception.php');
  */
 class Route
 {
+	/**
+	 * This is the controller option that can be used in the route.
+	 */
 	const OPT_CONTROLLER = 1;
+	
+	/**
+	 * This is the action which is the method to call in the controller.
+	 */
 	const OPT_ACTION = 2;
 
 	/**
@@ -74,9 +81,8 @@ class Route
 	 * Build the route up. If no controller or action are specified, we set
 	 * defaults.
 	 *
-	 * @param string $route
-	 * @param string $controller
-	 * @param string $action
+	 * @param string $route Regex string of route to match
+	 * @param array $options Options to use for the route
 	 */
 	public function __construct($route, array $options = array())
 	{
@@ -92,7 +98,7 @@ class Route
 	 * the router when the route is matched. If the action does not return false
 	 * this will try to call the display() method to render the view.
 	 * 
-	 * @throws \SiTech\Routing\MethodNotFoundException
+	 * @throws SiTech\Routing\MethodNotFoundException
 	 */
 	public function dispatch()
 	{
@@ -114,7 +120,7 @@ class Route
 	 *
 	 * @param string $path If you pass \SiTech\Uri here we will take the path
 	 *                     from the object.
-	 * @return \SiTech\Routing\Route Returns false if it does not match.
+	 * @return SiTech\Routing\Route Returns false if it does not match.
 	 */
 	public function match($path)
 	{
