@@ -39,7 +39,7 @@ class SiTech_Loader
 	{
 		if (substr($class, -5) == 'Model' && substr($class, -6, 1) !== '_') {
 			self::loadModel(substr($class, 0, -5));
-		} elseif (substr($class, -10) == 'Controller' && substr($class, -10, 1) !== '_') {
+		} elseif (substr($class, -10) == 'Controller' && substr($class, -11, 1) !== '_') {
 			self::loadController(substr($class, 0, -10));
 		} else {
 			self::loadClass($class);
