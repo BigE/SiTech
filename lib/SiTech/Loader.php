@@ -108,7 +108,7 @@ class SiTech_Loader
 	 * @static
 	 * @throws SiTech_Exception
 	 */
-	public static function loadController($name)
+	public static function loadController($name, SiTech_Uri $uri)
 	{
 		$name = strtolower($name);
 		$class = null;
