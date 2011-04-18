@@ -186,7 +186,7 @@ class SiTech_Loader
 	 * @static
 	 * @throws SiTech_Exception
 	 */
-	public static function registerAutoload($class = 'SiTech\Loader', $enabled = true)
+	public static function registerAutoload($class = 'SiTech_Loader', $enabled = true)
 	{
         if (!function_exists('spl_autoload_register')) {
             require_once 'SiTech/Exception.php';
