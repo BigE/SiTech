@@ -15,8 +15,6 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-namespace SiTech;
-
 /**
  * This loader class adds functionality to the autoload function already built
  * into PHP. It also provides helper functions to make any application easier to
@@ -26,7 +24,7 @@ namespace SiTech;
  * @package SiTech
  * @version $Id$
  */
-class Loader
+class SiTech_Loader
 {
 	/**
 	 * Auto load the class by calling the loadClass method. This method detects
@@ -39,9 +37,9 @@ class Loader
 	 */
 	public static function autoload($class)
 	{
-		if (substr($class, -5) == 'Model') {
+		if (substr($class, -5) == 'Model' && substr($class, -6, 1) !== '_') {
 			self::loadModel(substr($class, 0, -5));
-		} elseif (substr($class, -10) == 'Controller') {
+		} elseif (substr($class, -10) == 'Controller' && substr($class, -10, 1) !== '_') {
 			self::loadController(substr($class, 0, -10));
 		} else {
 			self::loadClass($class);
@@ -55,20 +53,22 @@ class Loader
 	 *
 	 * @param string $file
 	 * @static
-	 * @throws SiTech\Loader\Exception
+	 * @throws SiTech_Exception
 	 */
 	public static function loadBootstrap($file = null)
 	{
 		if (empty($file)) {
-			if (!\defined('SITECH_APP_PATH')) {
-				throw new Loader\Exception('SITECH_APP_PATH not defined. Unable to detect path to find bootstrap file');
+			if (!defined('SITECH_APP_PATH')) {
+				require_once('SiTech/Exception.php');
+				throw new SiTech_Exception('SITECH_APP_PATH not defined. Unable to detect path to find bootstrap file');
 			} else {
-				$file = \SITECH_APP_PATH.'/bootstrap.php';
+				$file = SITECH_APP_PATH.'/bootstrap.php';
 			}
 		}
 
-		if (!\is_readable($file)) {
-			throw new Loader\Exception('Unable to load bootsrap file "%s"', array($file));
+		if (!is_readable($file)) {
+			require_once('SiTech/Exception.php');
+			throw new SiTech_Exception('Unable to load bootsrap file "%s"', array($file));
 		}
 
 		require($file);
@@ -85,15 +85,16 @@ class Loader
 	 */
 	public static function loadClass($class)
 	{
-		if (\class_exists($class, false) || \interface_exists($class, false)) {
+		if (class_exists($class, false) || interface_exists($class, false)) {
 			return;
 		}
 
-		$file = \str_replace(array('_', '\\'), \DIRECTORY_SEPARATOR, $class).'.php';
+		$file = str_replace('_', DIRECTORY_SEPARATOR, $class).'.php';
 		include_once($file);
 
-		if (!\class_exists($class, false) && !\interface_exists($class, false)) {
-			throw new Loader\Exception('The class "%s" failed to load', array($class));
+		if (!class_exists($class, false) && !interface_exists($class, false)) {
+			require_once('SiTech/Exception.php');
+			throw new SiTech_Exception('The class "%s" failed to load', array($class));
 		}
 	}
 
@@ -105,34 +106,36 @@ class Loader
 	 * @param string $name
 	 * @return object
 	 * @static
-	 * @throws SiTech\Loader\Exception
+	 * @throws SiTech_Exception
 	 */
 	public static function loadController($name)
 	{
-		$name = \strtolower($name);
+		$name = strtolower($name);
 		$class = null;
 
-		if (\strstr($name, '/') !== false) {
-			$parts = \explode('/', $name);
-			$parts = \array_map('ucfirst', $parts);
-			$class = \implode('_', $parts).'Controller';
+		if (strstr($name, '/') !== false) {
+			$parts = explode('/', $name);
+			$parts = array_map('ucfirst', $parts);
+			$class = implode('_', $parts).'Controller';
 		} else {
-			$class = \ucfirst($name).'Controller';
+			$class = ucfirst($name).'Controller';
 		}
 
-		if (\class_exists($class, false)) return;
+		if (class_exists($class, false)) return;
 
-		if (\is_readable(\SITECH_APP_PATH.'/controllers/'.$name.'.php')) {
-			include_once(\SITECH_APP_PATH.'/controllers/'.$name.'.php');
+		if (is_readable(SITECH_APP_PATH.'/controllers/'.$name.'.php')) {
+			include_once(SITECH_APP_PATH.'/controllers/'.$name.'.php');
 		} else {
-			throw new Loader\Exception('The controller "%s" failed to load', array($class), 404);
+			require_once('SiTech/Exception.php');
+			throw new SiTech_Exception('The controller "%s" failed to load', array($class), 404);
 		}
 
-		if (!\class_exists($class, false)) {
-			throw new Loader\Exception('The controller "%s" failed to load', array($class), 500);
+		if (!class_exists($class, false)) {
+			require_once('SiTech/Exception.php');
+			throw new SiTech_Exception('The controller "%s" failed to load', array($class), 500);
 		}
 
-		return(new $class());
+		return(new $class($uri));
 	}
 
 	/**
@@ -142,31 +145,33 @@ class Loader
 	 *
 	 * @param string $model Name of the model to load
 	 * @static
-	 * @throws SiTech\Loader\Exception
+	 * @throws SiTech_Exception
 	 */
 	public static function loadModel($model)
 	{
-		$name = \strtolower($model);
+		$name = strtolower($model);
 		$class = null;
 
-		if (\strstr($name, '/') !== false) {
-			$parts = \explode('/', $name);
-			$parts = \array_map('ucfirst', $parts);
-			$class = \implode('_', $parts).'Model';
+		if (strstr($name, '/') !== false) {
+			$parts = explode('/', $name);
+			$parts = array_map('ucfirst', $parts);
+			$class = implode('_', $parts).'Model';
 		} else {
-			$class = \ucfirst($name).'Model';
+			$class = ucfirst($name).'Model';
 		}
 
-		if (\class_exists($class, false)) return;
+		if (class_exists($class, false)) return;
 
-		if (\is_readable(\SITECH_APP_PATH.'/models/'.$name.'.php')) {
-			include_once(\SITECH_APP_PATH.'/models/'.$name.'.php');
+		if (is_readable(SITECH_APP_PATH.'/models/'.$name.'.php')) {
+			include_once(SITECH_APP_PATH.'/models/'.$name.'.php');
 		} else {
-			throw new Loader\Exception('The model "%s" failed to load', array($class));
+			require_once('SiTech/Exception.php');
+			throw new SiTech_Exception('The model "%s" failed to load', array($class));
 		}
 
-		if (!\class_exists($class, false)) {
-			throw new Loader\Exception('The model "%s" failed to load', array($class));
+		if (!class_exists($class, false)) {
+			require_once('SiTech/Exception.php');
+			throw new SiTech_Exception('The model "%s" failed to load', array($class));
 		}
 	}
 
@@ -179,40 +184,26 @@ class Loader
 	 * @param bool $enabled If set to true, the autoloader will be registered, if
 	 *                      it is false, it will be unregistered.
 	 * @static
-	 * @throws SiTech\Loader\Exception
+	 * @throws SiTech_Exception
 	 */
 	public static function registerAutoload($class = 'SiTech\Loader', $enabled = true)
 	{
-		if (!\function_exists('spl_autoload_register')) {
-			throw new Loader\Exception('spl_autoload does not exist in this PHP installation');
+        if (!function_exists('spl_autoload_register')) {
+            require_once 'SiTech/Exception.php';
+            throw new SiTech_Exception('spl_autoload does not exist in this PHP installation');
 		}
 
 		self::loadClass($class);
-		$methods = \get_class_methods($class);
-		if (!\in_array('autoload', (array)$methods)) {
-			throw new Loader\Exception('The class "%s" does not have an autoload() method', array($class));
+        $methods = get_class_methods($class);
+        if (!in_array('autoload', (array)$methods)) {
+            require_once 'SiTech/Exception.php';
+            throw new SiTech_Exception('The class "%s" does not have an autoload() method', array($class));
 		}
 
 		if ($enabled === true) {
-			\spl_autoload_register(array($class, 'autoload'));
+            spl_autoload_register(array($class, 'autoload'));
 		} else {
-			\spl_autoload_unregister(array($class, 'autoload'));
+            spl_autoload_unregister(array($class, 'autoload'));
 		}
 	}
 }
-
-namespace SiTech\Loader;
-
-/**
- * @see SiTech\Exception
- */
-require_once('Exception.php');
-
-/**
- * Exception class for the loader part of SiTech.
- *
- * @author Eric Gach <eric at php-oop.net>
- * @package SiTech\Loader
- * @version $Id$
- */
-class Exception extends \SiTech\Exception {}
