@@ -99,9 +99,9 @@ abstract class Base
 	 */
 	public function __construct()
 	{
-		if (class_exists('\SiTech\Router')) {
+		if (class_exists('\SiTech\Routing\Router')) {
 			// I wrapped this in an if because SiTech is a library.
-			$this->_route = \SiTech\Router::getDispatchedRoute();
+			$this->_route = \SiTech\Routing\Router::getDispatchedRoute();
 		}
 
 		// This seems to be pretty reliable, but I'm still not 100% sure
@@ -134,8 +134,8 @@ abstract class Base
 		 * If the parent doesn't define its own view, set a generic view.
 		 */
 		if (empty($this->_view)) {
-			require_once('SiTech/Template.php');
-			$this->_view = new \SiTech\Template(\SITECH_APP_PATH.\DIRECTORY_SEPARATOR.'views');
+			require_once('SiTech/Template/Engine.php');
+			$this->_view = new \SiTech\Template\Engine(\SITECH_APP_PATH.\DIRECTORY_SEPARATOR.'views');
 		}
 
 		// let our template know if we're using a XML HTTP Request.

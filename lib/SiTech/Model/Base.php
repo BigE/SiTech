@@ -369,7 +369,7 @@ abstract class Base
 		foreach ($this->_fields as $f => $v) {
 			if ($f == $pk) continue;
 			$fields[] = $f;
-			$values[$f] = $v;
+			$values[$f] = ($v instanceof \SiTech\Model\Base)? $v->{$v::pk()} : $v;
 		}
 
 		$sql .= '('.\implode(',', $fields).') VALUES(:'.\implode(',:', $fields).')';
@@ -398,7 +398,7 @@ abstract class Base
 		foreach ($this->_fields as $f => $v) {
 			if ($f == $pk) continue; // We don't update the value of the pk
 			$fields[] = $f.' = ?';
-			$values[] = $v;
+			$values[] = ($v instanceof \SiTech\Model\Base)? $v->{$v::pk()} : $v;
 		}
 
 		$sql .= \implode(',', $fields);

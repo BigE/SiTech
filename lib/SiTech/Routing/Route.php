@@ -42,12 +42,12 @@ class Route
 	/**
 	 * This is the controller option that can be used in the route.
 	 */
-	const OPT_CONTROLLER = 1;
+	const OPT_CONTROLLER = 0;
 	
 	/**
 	 * This is the action which is the method to call in the controller.
 	 */
-	const OPT_ACTION = 2;
+	const OPT_ACTION = 1;
 
 	/**
 	 * Action of router to call
@@ -103,11 +103,10 @@ class Route
 	public function dispatch()
 	{
 		require_once('SiTech/Loader.php');
-		\SiTech\Loader::loadController($this->_controller);
+		$controller = \SiTech\Loader::loadController($this->_controller);
 
-		$controller = new $this->_controller($this);
 		if (!\method_exists($controller, $this->_action)) {
-			throw new MethodNotFoundException('No method defined %s::%s', array($this->_controller, $this->_action));
+			throw new MethodNotFoundException('No method defined %s::%s', array(get_class($controller), $this->_action));
 		}
 
 		if ($controller->{$this->_action}() !== false && $this->_controller instanceof \SiTech\Controller\AController) {
