@@ -110,7 +110,7 @@ class Route
 		}
 
 		if ($controller->{$this->_action}() !== false && $controller instanceof \SiTech\Controller\Base) {
-			$controller->display();
+			$controller->display($this->_controller.DIRECTORY_SEPARATOR.$this->_action.'.tpl');
 		}
 	}
 
