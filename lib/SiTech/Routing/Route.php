@@ -109,7 +109,7 @@ class Route
 			throw new MethodNotFoundException('No method defined %s::%s', array(get_class($controller), $this->_action));
 		}
 
-		if ($controller->{$this->_action}() !== false && $this->_controller instanceof \SiTech\Controller\AController) {
+		if ($controller->{$this->_action}() !== false && $controller instanceof \SiTech\Controller\Base) {
 			$controller->display();
 		}
 	}
