@@ -157,7 +157,7 @@ abstract class Base
 		if ($this->_display === true) return;
 
 		if (!empty($this->_layout)) {
-			$this->setLayout($this->_layout);
+			$this->_setLayout($this->_layout);
 		}
 
 		$this->_display = true;
