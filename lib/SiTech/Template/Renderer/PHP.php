@@ -60,7 +60,7 @@ class PHP implements IRenderer
 
 		\ob_start();
 		@include($file);
-		$error = get_last_error();
+		$error = \error_get_last();
 		if (!empty($error) && $error['type'] == E_WARNING && preg_match('#include\(\): Failed opening \''.$file.'\'#')) {
 			\ob_end_clean();
 			throw new Exception('Failed to open template file %s on path %s', array($file, $path));
