@@ -58,7 +58,7 @@ class Engine
 	 *
 	 * @var string
 	 */
-	protected $_layout;
+	protected $_layout = null;
 
 	/**
 	 * Template path to locate files at.
@@ -238,7 +238,7 @@ class Engine
 	public function getLayout()
 	{
 		$path = $this->_layout;
-		if (\defined('SITECH_APP_PATH') && \is_dir(\SITECH_APP_PATH.'/layouts/')) $path = \SITECH_APP_PATH.'/layouts/'.$path;
+		if (!empty($path) && \defined('SITECH_APP_PATH') && \is_dir(\SITECH_APP_PATH.'/layouts/')) $path = \SITECH_APP_PATH.'/layouts/'.$path;
 		return($path);
 	}
 
