@@ -92,6 +92,20 @@ class Route
 		$this->_action = (isset($options[self::OPT_ACTION]))? $options[self::OPT_ACTION] : 'index';
 	}
 
+	public function __get($name)
+	{
+		if (isset($this->_match[$name])) {
+			return($this->_match[$name]);
+		} else {
+			return(null);
+		}
+	}
+
+	public function __isset($name)
+	{
+		return((isset($this->_match[$name]))? true : false);
+	}
+
 	/**
 	 * This will dispatch the controller/action that is tied to this route. This
 	 * can be called without matching the route, but is automatically called from
