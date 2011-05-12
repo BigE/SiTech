@@ -68,7 +68,7 @@ class Engine extends \PDO
 	public function __construct(array $config, $driver = 'SiTech\DB\Driver\MySQL', array $options = array())
 	{
 		if (empty($config['dsn'])) {
-			throw new DB\Exception('Missing required DSN from config');
+			throw new Exception('Missing required DSN from config');
 		}
 
 		$username = empty($config['username'])? (empty($config['user'])? null : $config['user']) : $config['username'];
