@@ -243,6 +243,15 @@ class Engine extends \PDO
 		}
 	}
 
+	public function prepare($statement, $driver_options = array())
+	{
+		if ((bool)$this->getAttribute(self::ATTR_TRACK_QUERIES)) {
+			$this->_queries[] = $statement;
+		}
+
+		return(parent::prepare($statement, $driver_options));
+	}
+
 	/**
 	 * Executes an SQL statement, returning a result set as a PDOStatement object
 	 *
@@ -252,10 +261,6 @@ class Engine extends \PDO
 	 */
 	public function query($statement, array $args = array())
 	{
-		if ((bool)$this->getAttribute(self::ATTR_TRACK_QUERIES)) {
-			$this->_queries[] = $statement;
-		}
-
 		$stmnt = $this->prepare($statement);
 		if ($stmnt->execute($args)) {
 			return($stmnt);
