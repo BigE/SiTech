@@ -141,6 +141,8 @@ class Base extends \ArrayObject
 			throw new Exception('Unable to create a session instance, please call the %s::start() method');
 		}
 
+		static::$_instance = $this;
+
 		// If the HTTP_HOST is defined, use it as the cookie domain.
 		if (isset($_SERVER['HTTP_HOST'])) {
 			$this->setAttribute(ATTR_COOKIE_DOMAIN, $_SERVER['HTTP_HOST']);
@@ -155,6 +157,7 @@ class Base extends \ArrayObject
 
 		// If no handler is defined, create one using the File handler.
 		if (empty($handler)) {
+			require_once('SiTech/Session/Handler/File.php');
 			$handler = new \SiTech\Session\Handler\File();
 		}
 
@@ -303,7 +306,7 @@ class Base extends \ArrayObject
 	 */
 	public static function singleton()
 	{
-		if (static::$_state & ~STATE_STARTED) {
+		if (static::$_state & ~STATE_STARTED && self::$_internal === false) {
 			static::start(); // Attempt to start the session if it isn't
 		}
 
@@ -320,7 +323,7 @@ class Base extends \ArrayObject
 	 * @param SiTech\Session\Handler\IHandler $handler Handler interface object
 	 * @return SiTech\Session\Base
 	 */
-	public function start(\SiTech\Session\Handler\IHandler $handler = null)
+	public static function start(\SiTech\Session\Handler\IHandler $handler = null)
 	{
 		if (isset($_SESSION)) {
 			if ($_SESSION instanceof Base) {
@@ -331,7 +334,7 @@ class Base extends \ArrayObject
 		}
 
 		self::$_internal = true;
-		static::$_instance = new Base($handler);
+		new Base($handler);
 		self::$_internal = false;
 		return(static::$_instance);
 	}

@@ -26,7 +26,7 @@ require_once('SiTech/Session/Handler/IHandler.php');
 /**
  * @see SiTech\Session
  */
-require_once('SiTech/Session.php');
+require_once('SiTech/Session/Base.php');
 
 /**
  * SiTech session handler for file based session storage.
@@ -101,8 +101,8 @@ class File implements IHandler
 	{
 		if (empty($path)) { $path = '/tmp'; }
 		$this->_savePath = \realpath($path);
-		$session = \SiTech\Session::singleton();
-		$session->setAttribute(\SiTech\Session::ATTR_SESSION_NAME, $name);
+		$session = \SiTech\Session\Base::singleton();
+		$session->setAttribute(\SiTech\Session\ATTR_SESSION_NAME, $name);
 		return(true);
 	}
 
@@ -120,8 +120,8 @@ class File implements IHandler
 			$time = \microtime();
 			$data = '';
 			$str = '';
-			$session = \SiTech\Session::singleton();
-			$timeout = $session->getAttribute(\SiTech\Session::ATTR_FILE_TIMEOUT);
+			$session = \SiTech\Session\Base::singleton();
+			$timeout = $session->getAttribute(\SiTech\Session\ATTR_FILE_TIMEOUT);
 
 			do {
 				$canRead = \flock($fp, \LOCK_SH + \LOCK_NB);
@@ -143,8 +143,8 @@ class File implements IHandler
 
 			list($r, $s, $data) = \explode("\n", $data, 3);
 
-			$session->setAttribute(\SiTech\Session::ATTR_REMEMBER, (bool)$r);
-			$session->setAttribute(\SiTech\Session::ATTR_STRICT, (bool)$s);
+			$session->setAttribute(\SiTech\Session\ATTR_REMEMBER, (bool)$r);
+			$session->setAttribute(\SiTech\Session\ATTR_STRICT, (bool)$s);
 
 			return((string)$data);
 		} else {
@@ -164,13 +164,12 @@ class File implements IHandler
 		$file = 'sess_'.$id;
 		$file = $this->_savePath.\DIRECTORY_SEPARATOR.$file;
 
-		$session = \SiTech\Session::singleton();
-		$data = \sprintf("%d\n%d\n%s", $session->getAttribute(\SiTech\Session::ATTR_REMEMBER), $session->getAttribute(\SiTech\Session::ATTR_STRICT), $data);
+		$session = \SiTech\Session\Base::singleton();
+		$data = \sprintf("%d\n%d\n%s", $session->getAttribute(\SiTech\Session\ATTR_REMEMBER), $session->getAttribute(\SiTech\Session\ATTR_STRICT), $data);
 
 		if (($fp = \fopen($file, 'a')) !== false) {
 			$time = \microtime();
-			$session = \SiTech\Session::singleton();
-			$timeout = $session->getAttribute(\SiTech\Session::ATTR_FILE_TIMEOUT);
+			$timeout = $session->getAttribute(\SiTech\Session\ATTR_FILE_TIMEOUT);
 
 			do {
 				$canWrite = \flock($fp, \LOCK_EX + \LOCK_NB);

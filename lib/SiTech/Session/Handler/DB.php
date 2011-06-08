@@ -32,7 +32,7 @@ require_once('SiTech/Session/Handler/Exception.php');
 /**
  * @see SiTech\Session
  */
-require_once('SiTech/Session.php');
+require_once('SiTech/Session/Base.php');
 
 /**
  * Interface for all session handlers.
@@ -97,8 +97,8 @@ class DB implements IHandler
 	public function destroy ($id)
 	{
 		$stmnt = $this->db->prepare('DELETE FROM '.$this->table.' WHERE Name = :name AND Id = :id');
-		$session = \SiTech\Session::singleton();
-		return($stmnt->execute(array(':name' => $session->getAttribute(\SiTech\Session::ATTR_SESSION_NAME), ':id' => $id)));
+		$session = \SiTech\Session\Base::singleton();
+		return($stmnt->execute(array(':name' => $session->getAttribute(\SiTech\Session\ATTR_SESSION_NAME), ':id' => $id)));
 	}
 
 	/**
@@ -125,8 +125,8 @@ class DB implements IHandler
 	public function open ($path, $name)
 	{
 		$this->_savePath = $path;
-		$session = \SiTech\Session::singleton();
-		$session->setAttribute(\SiTech\Session::ATTR_SESSION_NAME, $name);
+		$session = \SiTech\Session\Base::singleton();
+		$session->setAttribute(\SiTech\Session\ATTR_SESSION_NAME, $name);
 		return(true);
 	}
 
@@ -139,11 +139,11 @@ class DB implements IHandler
 	public function read ($id)
 	{
 		$stmnt = $this->db->prepare('SELECT Id, Name, Data, Remember, Strict, RemoteAddr FROM '.$this->table.' WHERE Name=:name AND Id=:id');
-		$session = \SiTech\Session::singleton();
-		if ($stmnt->execute(array(':name' => $session->getAttribute(\SiTech\Session::ATTR_SESSION_NAME), ':id' => $id))) {
+		$session = \SiTech\Session\Base::singleton();
+		if ($stmnt->execute(array(':name' => $session->getAttribute(\SiTech\Session\ATTR_SESSION_NAME), ':id' => $id))) {
 			$row = $stmnt->fetch();
-			$session->setAttribute(\SiTech\Session::ATTR_REMEMBER, (bool)$row['Remember']);
-			$session->setAttribute(\SiTech\Session::ATTR_STRICT, (bool)$row['Strict']);
+			$session->setAttribute(\SiTech\Session\ATTR_REMEMBER, (bool)$row['Remember']);
+			$session->setAttribute(\SiTech\Session\ATTR_STRICT, (bool)$row['Strict']);
 			return(\unserialize($row['Data']));
 		} else {
 			return('');
@@ -162,8 +162,8 @@ class DB implements IHandler
         $old_mode = $this->db->getAttribute(\PDO::ATTR_ERRMODE);
 		$this->db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERR_NONE);
 		$stmnt = $this->db->prepare('SELECT Id FROM '.$this->table.' WHERE Name=:name AND Id=:id');
-		$session = \SiTech\Session::singleton();
-		$stmnt->execute(array(':name' => $session->getAttribute(\SiTech\Session::ATTR_SESSION_NAME), ':id' => $id));
+		$session = \SiTech\Session\Base::singleton();
+		$stmnt->execute(array(':name' => $session->getAttribute(\SiTech\Session\ATTR_SESSION_NAME), ':id' => $id));
 		if ($stmnt->rowCount() > 0) {
 			$stmnt = $this->db->prepare('UPDATE '.$this->table.' SET Data=:data, Remember=:remember, Strict=:strict, RemoteAddr=:remote WHERE Id=:id AND Name=:name');
 		} else {
@@ -171,7 +171,7 @@ class DB implements IHandler
 		}
 
 		$remote = (isset($_SERVER['REMOTE_ADDR']))? $_SERVER['REMOTE_ADDR'] : null;
-		$ret = $stmnt->execute(array(':id' => $id, ':name' => $session->getAttribute(\SiTech\Session::ATTR_SESSION_NAME), ':data' => \serialize($data), ':remember' => (int)$session->getAttribute(\SiTech\Session::ATTR_REMEMBER), ':strict' => (int)$session->getAttribute(\SiTech\Session::ATTR_STRICT), ':remote' => $remote));
+		$ret = $stmnt->execute(array(':id' => $id, ':name' => $session->getAttribute(\SiTech\Session\ATTR_SESSION_NAME), ':data' => \serialize($data), ':remember' => (int)$session->getAttribute(\SiTech\Session::ATTR_REMEMBER), ':strict' => (int)$session->getAttribute(\SiTech\Session\ATTR_STRICT), ':remote' => $remote));
         $this->db->setAttribute(\PDO::ATTR_ERRMODE, $old_mode);
 		return($ret);
 	}
