@@ -317,14 +317,14 @@ abstract class Base
 	 *
 	 * @return bool
 	 */
-	public function save()
+	public function save($duplicateKeyUpdate = false)
 	{
 		if (!$this->validate()) {
 			return(false);
 		}
 
-		if (empty($this->_fields[static::pk()])) {
-			return($this->_insert());
+		if (empty($this->_fields[static::pk()]) || $duplicateKeyUpdate === true) {
+			return($this->_insert($duplicateKeyUpdate));
 		} else {
 			return($this->_update());
 		}
@@ -359,7 +359,7 @@ abstract class Base
 	 *
 	 * @return bool
 	 */
-	private function _insert()
+	private function _insert($duplicateKeyUpdate)
 	{
 		$pk = static::pk();
 		$sql = 'INSERT INTO '.static::$_table.' ';
@@ -373,6 +373,17 @@ abstract class Base
 		}
 
 		$sql .= '('.\implode(',', $fields).') VALUES(:'.\implode(',:', $fields).')';
+		if ($duplicateKeyUpdate) {
+			// Unique duplicate key maybe?
+			$sql .= ' ON DUPLICATE KEY UPDATE ';
+			$sql .= static::pk().' = LAST_INSERT_ID('.static::pk().')';
+			foreach ($fields as $field) {
+				$sql .= ' '.$field.' = :'.$field.',';
+			}
+
+			// Get rid of the trailing character
+			$sql = substr($sql, 0, -1);
+		}
 		$stmnt = $this->_db->prepare($sql);
 		if ($stmnt->execute($values)) {
 			// Assign the PK once the row is inserted
