@@ -199,7 +199,8 @@ class Response
 						break;
 				}
 			}
-			header(ucwords($name).':'.$value);
+
+			header(str_replace(array(' ', '[s]'), array('-', ' '), ucwords(str_replace(array(' ', '-'), array('[s]', '-'), $name))).':'.$value);
 		}
 
 		if (!isset($this->_headers['content-length'])) {
