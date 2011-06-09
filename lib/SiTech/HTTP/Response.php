@@ -199,7 +199,7 @@ class Response
 						break;
 				}
 			}
-			header(ucfirst($name).':'.$value);
+			header(ucwords($name).':'.$value);
 		}
 
 		if (!isset($this->_headers['content-length'])) {
