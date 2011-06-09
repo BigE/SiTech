@@ -203,7 +203,7 @@ class Response
 		}
 
 		if (!isset($this->_headers['content-length'])) {
-			header('Content-Lenght: '.strlen($body));
+			header('Content-Length: '.strlen($body));
 		}
 		
 		echo $body;
