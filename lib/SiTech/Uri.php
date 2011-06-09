@@ -186,9 +186,9 @@ class Uri
 	 *
 	 * @return string
 	 */
-	public function getQueryString()
+	public function getQueryString($separator = null)
 	{
-		return(\http_build_query($this->_requestUri['query']));
+		return(\http_build_query($this->_requestUri['query'], null, $separator));
 	}
 
 	/**
