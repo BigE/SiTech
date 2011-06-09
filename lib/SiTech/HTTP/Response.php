@@ -99,7 +99,7 @@ class Response
 				$header = explode(':', $v, 2);
 				if (count($header) != 2) {
 					require_once('SiTech/HTTP/Response/Exception.php');
-					throw new Response\InvalidHeaderException('Invalid HTTP header specified: %s', array($value));
+					throw new Response\InvalidHeaderException('Invalid HTTP header specified: %s', array($v));
 				}
 
 				$k = $header[0];
@@ -132,9 +132,7 @@ class Response
 	{
 		$body = $this->_body;
 
-		if ($body instanceof \SiTech\Template\Engine) {
-			$body = $body->render();
-		} elseif ($body instanceof \SplFileInfo) {
+		if ($body instanceof \SplFileInfo) {
 			$body = file_get_contents($body->getRealPath());
 		}
 		
@@ -202,6 +200,10 @@ class Response
 				}
 			}
 			header($name.':'.$value);
+		}
+
+		if (!isset($this->_headers['content-length'])) {
+			header('Content-Lenght: '.strlen($body));
 		}
 		
 		echo $body;
