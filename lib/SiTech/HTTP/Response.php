@@ -94,14 +94,19 @@ class Response
 		$this->_body = $body;
 		$this->_message = (empty($message))? self::responseCodeAsText($code, $version) : $message;
 
-		foreach ($headers as $value) {
-			$header = explode(':', $value, 2);
-			if (count($header) != 2) {
-				require_once('SiTech/HTTP/Response/Exception.php');
-				throw new Response\InvalidHeaderException('Invalid HTTP header specified: %s', array($value));
+		foreach ($headers as $k => $v) {
+			if (!is_string($k)) {
+				$header = explode(':', $v, 2);
+				if (count($header) != 2) {
+					require_once('SiTech/HTTP/Response/Exception.php');
+					throw new Response\InvalidHeaderException('Invalid HTTP header specified: %s', array($value));
+				}
+
+				$k = $header[0];
+				$v = $header[1];
 			}
 
-			$this->_headers[strtolower($header[0])] = $header[1];
+			$this->_headers[strtolower($k)] = $v;
 		}
 		
 		if (!preg_match('#^[0-9]\.[0-9]$#', $version)) {
