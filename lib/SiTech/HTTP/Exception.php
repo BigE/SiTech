@@ -18,7 +18,7 @@
 
 namespace SiTech\HTTP;
 
-require_once('SiTech\Exception.php');
+require_once('SiTech/Exception.php');
 
 /**
  * Description of Exception

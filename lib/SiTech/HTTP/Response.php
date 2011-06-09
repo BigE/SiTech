@@ -88,7 +88,7 @@ class Response
 
 	protected $_version;
 
-	public function __construct($code, array $headers, $body = null, $version = '1.1', $message = null)
+	public function __construct($code, array $headers = array(), $body = null, $version = '1.1', $message = null)
 	{
 		$this->_code = $code;
 		$this->_body = $body;
@@ -129,6 +129,8 @@ class Response
 
 		if ($body instanceof \SiTech\Template\Engine) {
 			$body = $body->render();
+		} elseif ($body instanceof \SplFileInfo) {
+			$body = file_get_contents($body->getRealPath());
 		}
 		
 		if (!$raw) {
