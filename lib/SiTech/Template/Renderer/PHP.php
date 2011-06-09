@@ -35,7 +35,7 @@ require_once('SiTech/Template/Renderer/Exception.php');
  * @author Eric Gach <eric@php-oop.net>
  * @package SiTech\Template
  * @subpackage SiTech\Template\Renderer
- * @version $Id: 6fa70e42fe6166fbce9dc88a23bb34a2d0ecad34 $
+ * @version $Id$
  */
 class PHP implements IRenderer
 {
@@ -51,17 +51,17 @@ class PHP implements IRenderer
 	 * @param array $vars Variables that are set for the template
 	 * @return string Final output of template after rendered
 	 */
-	static public function render(\SiTech\Template\Engine $_SiTech_tpl, $_SiTech_file, $_SiTech_path, array $_SiTech_vars)
+	static public function render(\SiTech\Template\Engine $tpl, $_SiTech_file, $_SiTech_path, array $_SiTech_vars)
 	{
 		// Backup the old include path so we can reset it once we're done.
-		$_SiTech_oldPath = \set_include_path($path.\PATH_SEPARATOR.\get_include_path());
+		$_SiTech_oldPath = \set_include_path($_SiTech_path.\PATH_SEPARATOR.\get_include_path());
 		\extract($_SiTech_vars, \EXTR_OVERWRITE);
 		unset($_SiTech_vars);
 
 		\ob_start();
 		@include($_SiTech_file);
 		$error = \error_get_last();
-		if (!empty($error) && $error['type'] == E_WARNING && preg_match('#Failed opening \''.$_SiTech_file.'\' for inclusion#', $error['message'])) {
+		if (!empty($error) && $error['type'] == E_WARNING && strstr($error['message'], 'Failed opening \''.$_SiTech_file.'\' for inclusion')) {
 			\ob_end_clean();
 			throw new Exception('Failed to open template file %s on path %s', array($_SiTech_file, $_SiTech_path));
 		}
