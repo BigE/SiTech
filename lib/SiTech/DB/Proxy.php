@@ -22,7 +22,7 @@ namespace SiTech\DB;
 /**
  * @see SiTech\DB
  */
-require_once('SiTech/DB.php');
+require_once('SiTech/DB/Engine.php');
 
 /**
  * This is a class that extends the base SiTech_DB class and adds a "proxy"
@@ -34,7 +34,7 @@ require_once('SiTech/DB.php');
  * @todo Finish documentation
  * @version $Id$
  */
-class Proxy extends \SiTech\DB
+class Proxy extends \SiTech\DB\Engine
 {
 	/**
 	 * Attribute that will cause the queries to only use the writer if set to
