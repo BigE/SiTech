@@ -57,7 +57,7 @@ class INI implements IHandler
 		/* now loop through the config options and unserialize items */
 		foreach ($config as $section => $options) {
 			foreach ($options as $option => &$value) {
-				$value = \stripslashes($value);
+				if (is_string($value)) $value = \stripslashes($value);
 				if (\substr($value, -2) === '==') {
 					if (\base64_decode($value, true) !== false) {
 						$value = \base64_decode($value);
