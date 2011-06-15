@@ -89,7 +89,7 @@ class Proxy extends \SiTech\DB\Engine
 			$reader = $readers[\mt_rand(0, (\sizeof($readers) - 1))];
 			$rconfig = $config;
 			$rconfig['dsn'] = \sprintf($rconfig['dsn'], $reader);
-			$this->_readConn = new \SiTech\DB($rconfig, $driver, $options);
+			$this->_readConn = new \SiTech\DB\Engine($rconfig, $driver, $options);
 		}
 
 		if (empty($writers)) {
@@ -100,7 +100,7 @@ class Proxy extends \SiTech\DB\Engine
 		$writer = $writers[\mt_rand(0, (\sizeof($writers) - 1))];
 		$wconfig = $config;
 		$wconfig['dsn'] = \sprintf($wconfig['dsn'], $writer);
-		$this->_writeConn = new \SiTech\DB($wconfig, $driver, $options);
+		$this->_writeConn = new \SiTech\DB\Engine($wconfig, $driver, $options);
 	}
 
 	/**
