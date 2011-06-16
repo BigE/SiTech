@@ -24,19 +24,65 @@ require_once(dirname(dirname(__FILE__)).'/SiTech_PHPUnit_Base.php');
  */
 class RawConfigParserTest extends SiTech_PHPUnit_Base
 {
-	protected $_configParser;
+	/**
+	 * @var SiTech\ConfigParser\RawConfigParser
+	 */
+	protected static $_config;
 
-	protected function setUp()
+	public static function setUpBeforeClass()
 	{
+		parent::setUpBeforeClass();
 		require_once('SiTech/ConfigParser/RawConfigParser.php');
-		$this->_configParser = new \SiTech\ConfigParser\RawConfigParser();
+		self::$_config = new \SiTech\ConfigParser\RawConfigParser();
+	}
+
+	public static function tearDownAfterClass()
+	{
+		self::$_config = null;
+		@unlink(SITECH_TEST_FILES.DIRECTORY_SEPARATOR.'config.ini');
+	}
+
+	public function testAddSection()
+	{
+		$this->assertTrue(self::$_config->addSection('main'));
+	}
+
+	/**
+	 * @depends testAddSection
+	 * @expectedException SiTech\ConfigParser\DuplicateSectionException
+	 */
+	public function testAddDuplicateSection()
+	{
+		self::$_config->addSection('main');
+	}
+
+	public function testSet()
+	{
+		$this->assertTrue(self::$_config->set('main', 'foo', 'bar'));
+	}
+
+	public function testWrite()
+	{
+		$this->assertTrue(self::$_config->write(SITECH_TEST_FILES.DIRECTORY_SEPARATOR.'config.ini'));
+		// I do this just to clear the array before we read, that way we ensure that reading gives us untainted results
+		self::$_config = new \SiTech\ConfigParser\RawConfigParser();
 	}
 	
 	/**
-	 * @expectedException SiTech\ConfigParser\Exception
+	 * @depends testWrite
 	 */
 	public function testRead()
 	{
-		$files = $this->_configParser->read(array('test.ini'));
+		$files = self::$_config->read(array(SITECH_TEST_FILES.DIRECTORY_SEPARATOR.'config.ini'));
+		$this->assertEquals(array(SITECH_TEST_FILES.DIRECTORY_SEPARATOR.'config.ini' => true), $files);
+		$this->assertEquals('bar', self::$_config->get('main', 'foo'));
+	}
+
+	/**
+	 * @expectedException SiTech\ConfigParser\Exception
+	 */
+	public function testReadFail()
+	{
+		$files = self::$_config->read(array('test.ini'));
 	}
 }

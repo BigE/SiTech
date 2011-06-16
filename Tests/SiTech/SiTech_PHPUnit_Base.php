@@ -25,6 +25,8 @@ class SiTech_PHPUnit_Base extends PHPUnit_Framework_TestCase
 {
 	public static function setUpBeforeClass()
 	{
-		set_include_path(dirname(dirname(dirname(__FILE__))).DIRECTORY_SEPARATOR.'lib'.PATH_SEPARATOR.  get_include_path());
+		define('SITECH_TEST_BASE', dirname(dirname(__FILE__)));
+		define('SITECH_TEST_FILES', SITECH_TEST_BASE.DIRECTORY_SEPARATOR.'_files');
+		set_include_path(dirname(SITECH_TEST_BASE).DIRECTORY_SEPARATOR.'lib'.PATH_SEPARATOR.  get_include_path());
 	}
 }
