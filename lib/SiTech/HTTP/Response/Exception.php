@@ -21,22 +21,30 @@ namespace SiTech\HTTP\Response;
  * Description of Exception
  *
  * @author Eric Gach <eric@php-oop.net>
+ * @package SiTech\HTTP\Response
+ * @version $Id$
  */
 class Exception extends \SiTech\HTTP\Exception
 {
 }
 
 /**
+ * This exception is thrown when a badly formatted header is found.
  * 
  * @author Eric Gach <eric@php-oop.net>
+ * @package SiTech\HTTP\Response
+ * @version $Id$
  */
 class InvalidHeaderException extends Exception
 {
 }
 
 /**
+ * This exception is thrown when an invalid HTTP version is used in a request.
  * 
  * @author Eric Gach <eric@php-oop.net>
+ * @package SiTech\HTTP\Response
+ * @version $Id$
  */
 class InvalidVersionException extends Exception
 {

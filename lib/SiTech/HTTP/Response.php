@@ -21,6 +21,9 @@ namespace SiTech\HTTP;
  * Description of Response
  *
  * @author Eric Gach <eric@php-oop.net>
+ * @package SiTech\HTTP
+ * @todo Finish class documentation.
+ * @version $Id$
  */
 class Response
 {

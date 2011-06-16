@@ -24,6 +24,8 @@ require_once('SiTech/Exception.php');
  * Description of Exception
  *
  * @author Eric Gach <eric@php-oop.net>
+ * @package SiTech\HTTP
+ * @version $Id$
  */
 class Exception extends \SiTech\Exception
 {
