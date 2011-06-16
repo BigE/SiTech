@@ -59,8 +59,13 @@ $opts->addOption(array(
 	'short' => 'c'
 ));
 $opts->addOption(array(
+	'desc' => 'Show output from the documentation generator.',
+	'long' => 'verbose',
+	'short' => 'v'
+));
+$opts->addOption(array(
 	'long' => 'docblox',
-	'desc' => 'Generate documentation using DocBlox. Please provide the path to where docblox.php resides.'
+	'desc' => 'Generate documentation using DocBlox.'
 ));
 $opts->addOption(array(
 	'long' => 'doxygen',
@@ -72,6 +77,8 @@ $opts->addOption(array(
 ));
 $options = $opts->parse();
 
+define('DOCS_VERBOSE', (isset($options['verbose']) || isset($options['v']))? true : false);
+
 if (isset($options['clean']) || isset($options['c'])) {
 	echo 'Cleaning old documentation files... ';
 	rrmdir(SITECH_BASE.'/Docs/DocBlox');
@@ -81,31 +88,60 @@ if (isset($options['clean']) || isset($options['c'])) {
 }
 
 if (isset($options['docblox'])) {
-	if ($options['docblox'] === true) {
-		echo 'You must specify the path to where docblox.php resides on your file system.'.PHP_EOL;
-		exit(-1);
-	} elseif (!file_exists(rtrim($options['docblox'], '/\\').DIRECTORY_SEPARATOR.'docblox.php')) {
-		echo 'Cannot find docblox.php at '.$options['docblox'].PHP_EOL;
-		exit(-1);
-	}
-
 	_mkdir(SITECH_BASE.'/Docs/DocBlox');
 
-	echo 'Processing documentation...'.PHP_EOL;
-	echo shell_exec('php '.$options['docblox'].'/docblox.php project:parse -d '.SITECH_BASE.'/lib/SiTech -t '.SITECH_BASE.'/Docs/DocBlox');
-	echo PHP_EOL.'Generating templates...'.PHP_EOL;
-	echo shell_exec('php '.$options['docblox'].'/docblox.php project:transform -s '.SITECH_BASE.'/Docs/DocBlox/structure.xml -t '.SITECH_BASE.'/Docs/DocBlox');
+	echo 'Processing documentation... ';
+	ob_start();
+	echo PHP_EOL;
+	echo shell_exec('docblox project:parse -d '.SITECH_BASE.'/lib/SiTech -t '.SITECH_BASE.'/Docs/DocBlox');
+	echo PHP_EOL;
+	if (DOCS_VERBOSE) {
+		ob_end_flush();
+	}  else {
+		ob_end_clean();
+	}
+	echo 'Done.'.PHP_EOL;
+	echo 'Generating templates... ';
+	ob_start();
+	echo PHP_EOL;
+	echo shell_exec('docblox project:transform -s '.SITECH_BASE.'/Docs/DocBlox/structure.xml -t '.SITECH_BASE.'/Docs/DocBlox');
+	echo PHP_EOL;
+	if (DOCS_VERBOSE) {
+		ob_end_flush();
+	}  else {
+		ob_end_clean();
+	}
+	echo 'Done.'.PHP_EOL;
 }
 
 if (isset($options['doxygen'])) {
 	_mkdir(SITECH_BASE.'/Docs/Doxygen');
+	echo 'Running Doxygen... ';
+	ob_start();
+	echo PHP_EOL;
 	echo shell_exec('doxygen '.SITECH_BASE.'/Docs/SiTech.doxygen');
+	echo PHP_EOL;
+	if (DOCS_VERBOSE) {
+		ob_end_flush();
+	} else {
+		ob_end_clean();
+	}
+	echo 'Done.'.PHP_EOL;
 }
 
 if (isset($options['phpdoc'])) {
 	_mkdir(SITECH_BASE.'/Docs/phpDocs');
-	echo 'Running phpDocumentor...'.PHP_EOL;
+	echo 'Running phpDocumentor... ';
+	ob_start();
+	echo PHP_EOL;
 	echo shell_exec('phpdoc -d '.SITECH_BASE.'/lib/SiTech -t '.SITECH_BASE.'/Docs/phpDocs -o HTML:frames:earthli -s on -ti \'SiTech Documentation\' -dn SiTech -dc SiTech');
+	echo PHP_EOL;
+	if (DOCS_VERBOSE) {
+		ob_end_flush();
+	} else {
+		ob_end_clean();
+	}
+	echo 'Done.'.PHP_EOL;
 }
 
 exit(0);
