@@ -15,7 +15,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-namespace SiTech;
+namespace SiTech\HTTP;
 
 /**
  * The URI class takes a URI into the constructor and parses it up into peices
@@ -248,19 +248,9 @@ class Uri
 	}
 }
 
-namespace SiTech\Uri;
+namespace SiTech\HTTP\Uri;
 
 /**
  * If passed into the getPath method, it will trim the leading / off the path.
  */
 const FLAG_LTRIM = 1;
-
-require_once('Exception.php');
-
-/**
- *
- * @author Eric Gach <eric@php-oop.net>
- * @package SiTech\Uri
- * @version $Id$
- */
-class Exception extends \SiTech\Exception {}
