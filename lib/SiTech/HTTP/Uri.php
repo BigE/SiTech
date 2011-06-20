@@ -54,7 +54,7 @@ class Uri
 	 *
 	 * @param string $uri URI to parse
 	 */
-	public function __construct($uri = null)
+	public function __construct($uri = null, $autoFill = true)
 	{
 		if (\is_null($uri)) {
 			$host = \parse_url(((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on')? 'https://' : 'http://').$_SERVER['HTTP_HOST']);
@@ -62,6 +62,29 @@ class Uri
 		}
 
 		$this->_requestUri = \parse_url($uri);
+
+		if ($autoFill) {
+			if (empty($this->_requestUri['scheme'])) {
+				$this->_requestUri['scheme'] = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on')? 'https' : 'http';
+			}
+			
+			if (empty($this->_requestUri['host']) && isset($_SERVER['HTTP_HOST'])) {
+				$this->_requestUri['host'] = $_SERVER['HTTP_HOST'];
+			} 
+
+			if (empty($this->_requestUri['port']) && isset($_SERVER['SERVER_PORT'])) {
+				$this->_requestUri['port'] = $_SERVER['SERVER_PORT'];
+			}
+
+			if (empty($this->_requestUri['path']) && isset($_SERVER['REQUEST_URI'])) {
+				$this->_requestUri['path'] = $_SERVER['REQUEST_URI'];
+			}
+
+			if (empty($this->_requestUri['query']) && isset($_SERVER['QUERY_STRING'])) {
+				$this->_requestUri['query'] = $_SERVER['QUERY_STRING'];
+			}
+		}
+
 		if (!empty($this->_requestUri['query'])) {
 			\parse_str($this->_requestUri['query'], $this->_requestUri['query']);
 		} else {
