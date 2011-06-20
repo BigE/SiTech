@@ -172,7 +172,7 @@ class Engine
 	 * @param string $doctype
 	 * @return string
 	 */
-	public function doctype($doctype = 'XHTML_10_STRICT')
+	public function doctype($doctype = 'HTML5')
 	{
 		switch ($doctype) {
 			case 'HTML_401_STRICT':
@@ -208,6 +208,10 @@ class Engine
 			case 'XHTML_11':
 				$doctype = '<?xml version="1.0" encoding="utf-8"?>'.\PHP_EOL.'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">';
+				break;
+
+			case 'HTML5':
+				$doctype = '<!DOCTYPE html>';
 				break;
 		}
 
