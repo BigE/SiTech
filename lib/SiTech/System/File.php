@@ -77,4 +77,25 @@ class File extends \SplFileInfo
 		$ext = $this->getExtension();
 		return(in_array($ext, array('mpg', 'mpeg', 'avi', 'flv', 'wmv')));
 	}
+
+	/**
+	 * This overrides the built in function. If the file is a type supported by
+	 * SiTech, it will automatically call ::setFileClass() with the proper class
+	 * name to use when opening the file for extra options and support.
+	 *
+	 * @param string $open_mode Mode for opening the file.
+	 * @param bool $use_include_path If true, the include_path is also searched.
+	 * @param string $context
+	 */
+	public function openFile($open_mode = 'r', $use_include_path = false, $context = null)
+	{
+		if ($this->isImage()) {
+			require_once('SiTech/System/File/Image.php');
+			$this->setFileClass('\SiTech\System\File\Image');
+		}
+
+		$obj = parent::openFile($open_mode, $use_include_path, $context);
+		$this->setFileClass('\SplFileObject');
+		return($obj);
+	}
 }
