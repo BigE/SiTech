@@ -196,6 +196,11 @@ abstract class Base
 		$this->_fields[$name] = $value;
 	}
 
+	public function __unset($name)
+	{
+		unset($this->_fields[$name]);
+	}
+
 	/**
 	 * Get or set the database connection for the model to use. If no connection
 	 * is set and you call this method without specifying a connection, an

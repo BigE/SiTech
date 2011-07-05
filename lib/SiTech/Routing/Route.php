@@ -43,7 +43,7 @@ class Route
 	 * This is the controller option that can be used in the route.
 	 */
 	const OPT_CONTROLLER = 0;
-	
+
 	/**
 	 * This is the action which is the method to call in the controller.
 	 */
@@ -111,7 +111,7 @@ class Route
 	 * can be called without matching the route, but is automatically called from
 	 * the router when the route is matched. If the action does not return false
 	 * this will try to call the display() method to render the view.
-	 * 
+	 *
 	 * @throws SiTech\Routing\MethodNotFoundException
 	 */
 	public function dispatch()
@@ -159,6 +159,9 @@ class Route
 			// Remove the action from the path
 			unset($m['action']);
 			$this->_match = $m;
+
+			// Get any unmapped arguments passed in the URL
+			$this->_args = explode('/', substr($path, strlen($m[0])+1));
 
 			return($this);
 		}
