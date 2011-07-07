@@ -161,17 +161,17 @@ class DB implements IHandler
 	{
         $old_mode = $this->db->getAttribute(\PDO::ATTR_ERRMODE);
 		$this->db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERR_NONE);
-		$stmnt = $this->db->prepare('SELECT Id FROM '.$this->table.' WHERE Name=:name AND Id=:id');
 		$session = \SiTech\Session\Base::singleton();
-		$stmnt->execute(array(':name' => $session->getAttribute(\SiTech\Session\ATTR_SESSION_NAME), ':id' => $id));
-		if ($stmnt->rowCount() > 0) {
-			$stmnt = $this->db->prepare('UPDATE '.$this->table.' SET Data=:data, Remember=:remember, Strict=:strict, RemoteAddr=:remote WHERE Id=:id AND Name=:name');
-		} else {
-			$stmnt = $this->db->prepare('INSERT INTO '.$this->table.' (Id, Name, Data, Remember, Strict, RemoteAddr) VALUES(:id, :name, :data, :remember, :strict, :remote)');
-		}
-
+		$stmnt = $this->db->prepare('REPLACE INTO '.$this->table.' (Id, Name, Data, Remember, Strict, RemoteAddr) VALUES(:id, :name, :data, :remember, :strict, :remote)');
 		$remote = (isset($_SERVER['REMOTE_ADDR']))? $_SERVER['REMOTE_ADDR'] : null;
-		$ret = $stmnt->execute(array(':id' => $id, ':name' => $session->getAttribute(\SiTech\Session\ATTR_SESSION_NAME), ':data' => \serialize($data), ':remember' => (int)$session->getAttribute(\SiTech\Session::ATTR_REMEMBER), ':strict' => (int)$session->getAttribute(\SiTech\Session\ATTR_STRICT), ':remote' => $remote));
+		$ret = $stmnt->execute(array(
+			':id' => $id,
+			':name' => $session->getAttribute(\SiTech\Session\ATTR_SESSION_NAME),
+			':data' => \serialize($data),
+			':remember' => (int)$session->getAttribute(\SiTech\Session\ATTR_REMEMBER),
+			':strict' => (int)$session->getAttribute(\SiTech\Session\ATTR_STRICT),
+			':remote' => $remote
+		));
         $this->db->setAttribute(\PDO::ATTR_ERRMODE, $old_mode);
 		return($ret);
 	}

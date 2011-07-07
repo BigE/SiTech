@@ -381,7 +381,7 @@ abstract class Base
 		if ($duplicateKeyUpdate) {
 			// Unique duplicate key maybe?
 			$sql .= ' ON DUPLICATE KEY UPDATE ';
-			$sql .= static::pk().' = LAST_INSERT_ID('.static::pk().')';
+			//$sql .= static::pk().' = LAST_INSERT_ID('.static::pk().')';
 			foreach ($fields as $field) {
 				$sql .= ' '.$field.' = :'.$field.',';
 			}

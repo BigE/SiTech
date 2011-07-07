@@ -4,12 +4,12 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -101,7 +101,7 @@ class Base extends \ArrayObject
 	 * @var SiTech\Session\Handler\IHandler
 	 */
 	protected $_handler;
-	
+
 	/**
 	 * Instance holder for the session object. This will be used when starting
 	 * the session and when using the singleton.
@@ -195,7 +195,7 @@ class Base extends \ArrayObject
 	 */
 	public function close()
 	{
-		if (static::$_state & STATE_STARTED) {
+		if (!(static::$_state & STATE_STARTED)) {
 			return(false);
 		}
 
@@ -228,7 +228,7 @@ class Base extends \ArrayObject
 		\output_reset_rewrite_vars();
 		return(true);
 	}
-	
+
 	/**
 	 * Get the value of an attribute that is set for the specific instance.
 	 *
@@ -237,7 +237,7 @@ class Base extends \ArrayObject
 	 */
 	public function getAttribute($attribute)
 	{
-		
+
 		$value = (isset($this->_attributes[$attribute]))? $this->_attributes[$attribute] : null;
 		switch ($attribute) {
 			case ATTR_COOKIE_DOMAIN:
@@ -319,7 +319,7 @@ class Base extends \ArrayObject
 	 * constructor will also assign the object to the $_SESSION variable so that
 	 * it can be accessed elsewhere. If session_start() is used, the features of
 	 * this class will not be available.
-	 * 
+	 *
 	 * @param SiTech\Session\Handler\IHandler $handler Handler interface object
 	 * @return SiTech\Session\Base
 	 */
