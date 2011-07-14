@@ -197,38 +197,48 @@ class Record extends Base
 	}
 
 	/**
-	 * Get records from the table tied to the model. If $only_one is false, an
-	 * array of models will be returned. In this case, it is better to use a
-	 * collection for easier manipulation.
+	 * Get records from the table tied to the model. If $only_one is set to false
+	 * the model will automatically initate a collection class and return that
+	 * for all the results that come from the query.
 	 *
 	 * @param string $where WHERE clause of the SQL query.
-	 * @param bool $only_one Set to true to only return a single record
+	 * @param bool $only_one When set to false, it will use the Collection class
 	 * @return mixed
 	 */
-	public static function find($where = null, $only_one = false)
+	public static function find($where = null, $only_one = true)
 	{
-		$sql = 'SELECT * FROM '.static::$_table;
-		$args = array();
+		$return = false;
 
-		if (!empty($where)) {
-			if (\is_int($where)) {
-				$sql .= ' WHERE '.static::pk().' = ?';
-				$args = array($where);
-			} else {
-				$sql .= static::_where($where);
-				$args = static::_whereArgs($where);
+		if ($only_one === true) {
+			$sql = 'SELECT * FROM '.static::$_table;
+			$args = array();
+
+			if (!empty($where)) {
+				if (\is_int($where)) {
+					$sql .= ' WHERE '.static::pk().' = ?';
+					$args = array($where);
+				} else {
+					$sql .= static::_where($where);
+					$args = static::_whereArgs($where);
+				}
 			}
-		}
 
-		$stmnt = static::db()->prepare($sql);
-		$stmnt->execute($args);
-		$stmnt->setFetchMode(\PDO::FETCH_CLASS, \get_called_class());
+			// Use LIMIT in our query if no LIMIT is already specified... we
+			// only want one record anyway.
+			if (!preg_match('#LIMIT [0-9]+#', $sql)) $sql .= ' LIMIT 1';
 
-		if ($only_one) {
-			return($stmnt->fetch());
+			$stmnt = static::db()->prepare($sql);
+			$stmnt->execute($args);
+			$stmnt->setFetchMode(\PDO::FETCH_CLASS, \get_called_class());
+			$return = $stmnt->fetch();
+			$stmnt->closeCursor();
 		} else {
-			return($stmnt->fetchAll());
+			require_once('SiTech/Model/Collection.php');
+			$collection = new Collection($where, array(Collection\ATTR_MODEL => get_called_class()));
+			$return = $collection;
 		}
+
+		return($return);
 	}
 
 	/**

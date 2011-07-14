@@ -15,6 +15,12 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+namespace SiTech\Model\Collection;
+
+const ATTR_MODEL = 1;
+const ATTR_DB = 2;
+const ATTR_COUNT_KEY = 3;
+
 namespace SiTech\Model;
 
 /**
@@ -23,17 +29,18 @@ namespace SiTech\Model;
 require_once('SiTech/Model/Base.php');
 
 /**
- * Once the collection is started
+ * Once the collection fetch from the DB is started
  */
 const STATE_STARTED = 1;
 
 /**
- * Once the collection is complete
+ * Once the collection fetch from the DB is complete
  */
 const STATE_COMPLETE = 2;
 
 /**
- * Description of Collection
+ * The collection model is a way to get a collection of models out of the
+ * database.
  *
  * @author Eric Gach <eric@php-oop.net>
  */
@@ -61,6 +68,8 @@ class Collection extends Base implements \Countable, \Iterator
 	 */
 	protected static $_model;
 
+	private $__model;
+
 	/**
 	 * Current position of the iterator in the items in the collection.
 	 *
@@ -68,6 +77,11 @@ class Collection extends Base implements \Countable, \Iterator
 	 */
 	protected $_position = 0;
 
+	/**
+	 * Bitwise variable that holds the current state of the collection.
+	 *
+	 * @var int
+	 */
 	protected $_state = 0;
 
 	/**
@@ -77,29 +91,46 @@ class Collection extends Base implements \Countable, \Iterator
 	 */
 	protected $_statement;
 
+	/**
+	 * The where clause that was passed in through the constructor.
+	 *
+	 * @var mixed
+	 */
 	protected $_where;
 
-	public function __construct($where = null, $countKey = '*', \PDO $db = null)
+	public function __construct($where = null, array $options = array())
 	{
-		if (empty($db) && !empty($this->_model)) {
+		$db = null;
+		$countKey = '*';
+		$this->__model = static::$_model;
+
+		if (!isset($options[Collection\ATTR_DB]) && !empty(static::$_model)) {
 			$db = call_user_func(array($this->_model, 'db'));
+		} elseif (isset($options[Collection\ATTR_DB])) {
+			$db = $options[Collection\ATTR_DB];
+		}
+
+		if (isset($options[Collection\ATTR_MODEL])) {
+			$this->__model = $options[Collection\ATTR_MODEL];
 		}
 
 		parent::__construct($db);
 		if (empty(static::$_table)) {
-			if (empty(static::$_model)) {
+			if (empty($this->__model)) {
 				require_once('SiTech/Model/Exception.php');
 				throw new Exception('You must set either the table or the model to query against.');
 			} else {
-				static::$_table = call_user_func(array(static::$_model, 'table'));
+				static::$_table = call_user_func(array($this->__model, 'table'));
 			}
 		}
 
-		if (!empty(static::$_model) && $countKey === '*') {
+		if (!empty($this->__model) && !isset($options[Collection\ATTR_COUNT_KEY])) {
 			try {
-				$pk = call_user_func(array(static::$_model, 'pk'));
+				$pk = call_user_func(array($this->__model, 'pk'));
 				$countKey = $pk;
 			} catch (Exception $e) {}
+		} elseif (isset($options[Collection\ATTR_COUNT_KEY])) {
+			$countKey = $options[Collection\ATTR_COUNT_KEY];
 		}
 
 		$this->_key = $countKey;
@@ -142,11 +173,10 @@ class Collection extends Base implements \Countable, \Iterator
 	public function count($cached = true)
 	{
 		if ($this->_count === false || $cached === false) {
-			$pk = (!empty(static::$_model))? call_user_func(array(static::$_model, 'pk')) : '*';
-			$sql = 'SELECT COUNT('.$pk.') FROM '.static::$_table.static::_where($this->_where);
+			$sql = 'SELECT COUNT('.$this->_key.') FROM '.static::$_table.static::_where($this->_where);
 
 			$stmnt = $this->_db->prepare($sql);
-			$stmnt->execute($this->_whereArgs());
+			$stmnt->execute(static::_whereArgs($this->_where));
 			$this->_count = (int)$stmnt->fetchColumn();
 			$stmnt->closeCursor();
 			unset($stmnt);
@@ -247,8 +277,8 @@ class Collection extends Base implements \Countable, \Iterator
 		$this->_statement = static::db()->prepare($sql);
 		$this->_statement->execute(static::_whereArgs($this->_where));
 
-		if (isset(static::$_model)) {
-			$this->_statement->setFetchMode(\PDO::FETCH_CLASS, static::$_model);
+		if (!empty($this->__model)) {
+			$this->_statement->setFetchMode(\PDO::FETCH_CLASS, $this->__model);
 		} else {
 			$this->_statement->setFetchMode(\PDO::FETCH_ASSOC);
 		}
