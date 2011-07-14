@@ -90,6 +90,7 @@ abstract class Base
 		if (empty(static::$_table)) static::$_table = \get_parent_class();
 
 		if (empty($db) && !is_a(static::$db, 'PDO')) {
+			require_once('SiTech/Model/Exception.php');
 			throw new Exception('The %s::$_db property is not set. Please use %s::db() to set the PDO connection.', array(\get_parent_class(), \get_parent_class()));
 		} elseif (empty($db)) {
 			return(static::$db);
@@ -107,6 +108,7 @@ abstract class Base
 	public static function pk($pk = null)
 	{
 		if (empty($pk) && empty(static::$_pk)) {
+			require_once('SiTech/Model/Exception.php');
 			throw new Exception('%s::$_pk is not set. Please use %s::pk() to set the primary key field.', array(get_parent_class(), get_parent_class()));
 		} elseif (!empty($pk)) {
 			static::$_pk = $pk;
@@ -153,13 +155,3 @@ abstract class Base
 		return($args);
 	}
 }
-
-require_once('SiTech/Exception.php');
-
-/**
- *
- * @author Eric Gach <eric@php-oop.net>
- * @package SiTech\Model
- * @version $Id$
- */
-class Exception extends \SiTech\Exception {}

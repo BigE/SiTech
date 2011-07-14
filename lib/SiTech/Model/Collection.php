@@ -88,7 +88,7 @@ class Collection extends Base implements \Countable, \Iterator
 		parent::__construct($db);
 		if (empty(static::$_table)) {
 			if (empty(static::$_model)) {
-				// TODO: Make a custom exception to suit this error
+				require_once('SiTech/Model/Exception.php');
 				throw new Exception('You must set either the table or the model to query against.');
 			} else {
 				static::$_table = call_user_func(array(static::$_model, 'table'));
