@@ -18,6 +18,11 @@
 namespace SiTech\Model;
 
 /**
+ * @see SiTech\Model\Base
+ */
+require_once('SiTech/Model/Base.php');
+
+/**
  * Description of Record
  *
  * @author Eric Gach <eric@php-oop.net>
@@ -203,16 +208,20 @@ class Record extends Base
 	public static function find($where = null, $only_one = false)
 	{
 		$sql = 'SELECT * FROM '.static::$_table;
+		$args = array();
 
 		if (!empty($where)) {
 			if (\is_int($where)) {
-				$sql .= ' WHERE '.static::pk().' = '.$where;
+				$sql .= ' WHERE '.static::pk().' = ?';
+				$args = array($where);
 			} else {
-				$sql .= ' WHERE '.$where;
+				$sql .= static::_where($where);
+				$args = static::_whereArgs($where);
 			}
 		}
 
-		$stmnt = static::db()->query($sql);
+		$stmnt = static::db()->prepare($sql);
+		$stmnt->execute($args);
 		$stmnt->setFetchMode(\PDO::FETCH_CLASS, \get_called_class());
 
 		if ($only_one) {
@@ -257,7 +266,16 @@ class Record extends Base
 	 */
 	public function toJson(array $fields = array())
 	{
-		return(\json_encode($this->_fields));
+		if (!empty($fields)) {
+			$array = array();
+			foreach ($fields as $field) {
+				$array[$field] = $this->_fields[$field];
+			}
+
+			return(\json_encode($array));
+		} else {
+			return(\json_encode($this->_fields));
+		}
 	}
 
 	/**

@@ -128,6 +128,30 @@ abstract class Base
 			return(static::$_table);
 		}
 	}
+
+	protected static function _where($where)
+	{
+		$ret = '';
+
+		if (is_array($where)) {
+			$ret = ' WHERE '.$where[0];
+		} elseif (!empty($where)) {
+			$ret = ' WHERE '.$where;
+		}
+
+		return($ret);
+	}
+
+	protected static function _whereArgs($where)
+	{
+		$args = array();
+
+		if (is_array($where) && isset($where[1])) {
+			$args = $where[1];
+		}
+
+		return($args);
+	}
 }
 
 require_once('SiTech/Exception.php');

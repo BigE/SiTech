@@ -125,7 +125,6 @@ class Collection extends Base implements \Countable, \Iterator
 
 	public function current()
 	{
-		var_dump(__METHOD__);
 		$offset = $this->_position;
 
 		// If we haven't fetched anything yet, grab the first row
@@ -142,10 +141,9 @@ class Collection extends Base implements \Countable, \Iterator
 	 */
 	public function count($cached = true)
 	{
-		var_dump(__METHOD__);
 		if ($this->_count === false || $cached === false) {
 			$pk = (!empty(static::$_model))? call_user_func(array(static::$_model, 'pk')) : '*';
-			$sql = 'SELECT COUNT('.$pk.') FROM '.static::$_table.$this->_where();
+			$sql = 'SELECT COUNT('.$pk.') FROM '.static::$_table.static::_where($this->_where);
 
 			$stmnt = $this->_db->prepare($sql);
 			$stmnt->execute($this->_whereArgs());
@@ -159,7 +157,6 @@ class Collection extends Base implements \Countable, \Iterator
 
 	public function fetch()
 	{
-		var_dump(__METHOD__);
 		if (!$this->isStarted()) {
 			$this->_start();
 		}
@@ -185,33 +182,58 @@ class Collection extends Base implements \Countable, \Iterator
 
 	public function key()
 	{
-		var_dump(__METHOD__);
 		return($this->_position);
 	}
 
 	public function next()
 	{
-		var_dump(__METHOD__);
 		++$this->_position;
-		if (!$this->isComplete()) $this->fetch();
+		if (!$this->isComplete() && !isset($this->_data[$this->_position])) $this->fetch();
 	}
 
 	public function rewind()
 	{
-		var_dump(__METHOD__);
 		$this->_position = 0;
 	}
 
-	public function toJSON(array $fields = array())
+	public function toJson(array $fields = array())
 	{
 		if (!$this->isStarted() || !$this->isComplete()) {
 			$this->all();
 		}
+
+		if (isset(static::$_model)) {
+			$json = '[';
+			$array = array();
+			foreach ($this->_data as $data) {
+				$array[] = $data->toJson($fields);
+			}
+
+			$json .= implode(',', $array);
+			$json .= ']';
+		} else {
+			$array = array();
+			foreach ($this->_data as $data) {
+				if (!empty($fields)) {
+					$record = array();
+					foreach ($fields as $field) {
+						$record[$field] = $data[$field];
+					}
+
+					$array[] = $record;
+				} else {
+					$array[] = $data;
+				}
+			}
+
+			$json = json_encode($array);
+		}
+
+		return($json);
 	}
 
 	public function valid()
 	{
-		var_dump(__METHOD__);
 		if ($this->isStarted()) {
 			return(!$this->isComplete() || $this->_position < count($this));
 		} else {
@@ -221,9 +243,9 @@ class Collection extends Base implements \Countable, \Iterator
 
 	protected function _start()
 	{
-		$sql = 'SELECT * FROM '.static::table().$this->_where();
+		$sql = 'SELECT * FROM '.static::table().static::_where($this->_where);
 		$this->_statement = static::db()->prepare($sql);
-		$this->_statement->execute($this->_whereArgs());
+		$this->_statement->execute(static::_whereArgs($this->_where));
 
 		if (isset(static::$_model)) {
 			$this->_statement->setFetchMode(\PDO::FETCH_CLASS, static::$_model);
@@ -232,29 +254,5 @@ class Collection extends Base implements \Countable, \Iterator
 		}
 
 		$this->_state = $this->_state | STATE_STARTED;
-	}
-
-	protected function _where()
-	{
-		$where = '';
-
-		if (is_array($this->_where)) {
-			$where = ' WHERE '.$this->_where[0];
-		} elseif (!empty($this->_where)) {
-			$where = ' WHERE '.$this->_where;
-		}
-
-		return($where);
-	}
-
-	protected function _whereArgs()
-	{
-		$args = array();
-
-		if (is_array($this->_where) && isset($this->_where[1])) {
-			$args = $this->_where[1];
-		}
-
-		return($args);
 	}
 }
