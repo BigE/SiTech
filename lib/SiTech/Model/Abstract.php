@@ -124,7 +124,7 @@ abstract class SiTech_Model_Abstract
 		if (isset($this->_fields[$name]) || isset($this->_hasOne[$name]) || isset($this->_hasMany[$name]) || isset($this->_belongsTo[$name])) {
 			$value = (isset($this->_fields[$name]))? $this->_fields[$name] : null;
 
-			if ((isset($this->_hasMany[$name]) || isset($this->_hasOne[$name]) || isset($this->_belongsTo[$name])) && (!is_object($value) && !is_array($value))) {
+			if ((isset($this->_hasMany[$name]) || isset($this->_hasOne[$name]) || isset($this->_belongsTo[$name])) && (!is_object($value) && !is_array($value) && (!isset($this->_fields[$name]) || !empty($value)))) {
 				// Initalize the class with the name of the variable
 				$class = $name;
 				$fk = null;
@@ -174,6 +174,10 @@ abstract class SiTech_Model_Abstract
 
 	public function __isset($name)
 	{
+		if (!isset($this->_fields[$name]) && (isset($this->_hasMany[$name]) || isset($this->_hasOne[$name]) || isset($this->_belongsTo[$name]))) {
+			$this->__get($name);
+		}
+		
 		if (isset($this->_fields[$name])) {
 			return(true);
 		} else {
@@ -346,7 +350,7 @@ abstract class SiTech_Model_Abstract
 		foreach ($this->_fields as $f => $v) {
 			if ($f == $pk) continue;
 			$fields[] = $f;
-			$values[$f] = $v;
+			$values[$f] = ($v instanceof SiTech_Model_Abstract)? $v->{$v::pk()} : $v;
 		}
 
 		$sql .= '('.implode(',', $fields).') VALUES(:'.implode(',:', $fields).')';
@@ -375,7 +379,7 @@ abstract class SiTech_Model_Abstract
 		foreach ($this->_fields as $f => $v) {
 			if ($f == $pk) continue; // We don't update the value of the pk
 			$fields[] = $f.' = ?';
-			$values[] = $v;
+			$values[] = ($v instanceof SiTech_Model_Abstract)? $v->{$v::pk()} : $v;
 		}
 
 		$sql .= implode(',', $fields);

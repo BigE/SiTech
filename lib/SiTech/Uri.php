@@ -125,7 +125,7 @@ class SiTech_Uri
 
 	public function getController()
 	{
-		return($this->_controller);
+		return(str_replace('\\', '/', $this->_controller));
 	}
 
 	public function getHost()
@@ -142,11 +142,11 @@ class SiTech_Uri
 		}
 
 		if ($flags & SiTech_Uri::FLAG_ACTION) {
-			$path = preg_replace('#^/'.$this->_controller.'/'.$this->_action.'#', '/'.$this->_controller, $path);
+			$path = preg_replace('#^'.preg_quote('/'.$this->_controller.'/'.$this->_action).'#', '/'.$this->_controller, $path);
 		}
 
 		if ($flags & SiTech_Uri::FLAG_CONTROLLER) {
-			$path = preg_replace('#^/('.$this->_controller.')#', '', $path);
+			$path = preg_replace('#^/('.preg_quote($this->_controller).')#', '', $path);
 		}
 
 		if ($flags & SiTech_Uri::FLAG_LTRIM) {
@@ -158,7 +158,7 @@ class SiTech_Uri
 
 	public function getPort()
 	{
-		return($this->_requestUri['port']);
+		return((isset($this->_requestUri['port']))? $this->_requestUri['port'] : null);
 	}
 
 	public function getQueryString()

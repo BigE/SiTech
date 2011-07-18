@@ -58,7 +58,15 @@ class SiTech_ConfigParser_Handler_INI implements SiTech_ConfigParser_Handler_Int
 		/* now loop through the config options and unserialize items */
 		foreach ($config as $section => $options) {
 			foreach ($options as $option => $value) {
-				$config[$section][$option] = urldecode($value);
+				if (is_array($value)) {
+					$config[$section][$option] = $this->_readArray($value);
+				} else {
+					$value = urldecode($value);
+					if (($sVal = @unserialize($value)) !== false) {
+						$value= $sVal;
+					}
+					$config[$section][$option] = $value;
+				}
 			}
 		}
 
@@ -96,5 +104,22 @@ class SiTech_ConfigParser_Handler_INI implements SiTech_ConfigParser_Handler_Int
 		}
 
 		return(true);
+	}
+
+	/**
+	 * Reads each element of an array and cleans the value using urldecode in
+	 * case it was encoded at some point.
+	 *
+	 * @param array $value
+	 * @return array
+	 */
+	private function _readArray(array $value)
+	{
+		foreach ($value as $key => $item) {
+			if (is_array($item)) $item = $this->_readArray($item);
+			$value[$key] = urldecode($item);
+		}
+
+		return($value);
 	}
 }

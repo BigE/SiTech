@@ -245,7 +245,7 @@ class SiTech_ConfigParser
 	 */
 	static public function load(array $options = array())
 	{
-		return(new self($options));
+		return(new static($options));
 	}
 
 	/**

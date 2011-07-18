@@ -154,6 +154,9 @@ class SiTech_Session_Handler_DB implements SiTech_Session_Handler_Interface
 	public function write ($id, $data)
 	{
         $old_mode = $this->db->getAttribute(SiTech_DB::ATTR_ERRMODE);
+		if ($this->db instanceof SiTech_DB_Proxy) {
+			$old_mode = $old_mode['writer'];
+		}
 		$this->db->setAttribute(SiTech_DB::ATTR_ERRMODE, SiTech_DB::ERR_NONE);
 		$stmnt = $this->db->prepare('SELECT Id FROM '.$this->table.' WHERE Name=:name AND Id=:id');
 		$session = SiTech_Session::singleton();
