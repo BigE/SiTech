@@ -56,6 +56,8 @@ namespace SiTech\Model;
  * database.
  *
  * @author Eric Gach <eric@php-oop.net>
+ * @package SiTech\Model
+ * @version $Id$
  */
 class Collection extends Base implements \Countable, \Iterator
 {
