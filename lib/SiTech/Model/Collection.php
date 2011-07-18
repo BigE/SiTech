@@ -15,18 +15,29 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-namespace SiTech\Model\Collection;
-
-const ATTR_MODEL = 1;
-const ATTR_DB = 2;
-const ATTR_COUNT_KEY = 3;
-
-namespace SiTech\Model;
-
 /**
  * @see SiTech\Model\Base
  */
 require_once('SiTech/Model/Base.php');
+
+namespace SiTech\Model\Collection;
+
+/**
+ * Model to use for each record. If no model is specified the results will be
+ * returned using PDO::FETCH_ASSOC
+ */
+const ATTR_MODEL = 1;
+
+/**
+ * Used to set the database object to be used in the collection. Must use PDO.
+ */
+const ATTR_DB = 2;
+
+/**
+ * Key to use when executing the COUNT() query. If no key is specified * will
+ * be used in the query.
+ */
+const ATTR_COUNT_KEY = 3;
 
 /**
  * Once the collection fetch from the DB is started
@@ -37,6 +48,8 @@ const STATE_STARTED = 1;
  * Once the collection fetch from the DB is complete
  */
 const STATE_COMPLETE = 2;
+
+namespace SiTech\Model;
 
 /**
  * The collection model is a way to get a collection of models out of the
@@ -98,6 +111,19 @@ class Collection extends Base implements \Countable, \Iterator
 	 */
 	protected $_where;
 
+	/**
+	 * When setting up the collection you can specify the WHERE clause used in
+	 * the query as a string or array. If sent as an array, the first element
+	 * will be the actual SQL code that support PDO style parameters. The second
+	 * element of the array would be an array of arguments. The options array
+	 * supports all of the ATTR_* options that can be passed in. Any options
+	 * passed in this way will override any statically set variables in the
+	 * class.
+	 *
+	 *
+	 * @param type $where Where statement for query to search against.
+	 * @param array $options Attributes should be passed through here.
+	 */
 	public function __construct($where = null, array $options = array())
 	{
 		$db = null;
@@ -154,6 +180,11 @@ class Collection extends Base implements \Countable, \Iterator
 		return($this->_data);
 	}
 
+	/**
+	 * Return the current record in the results.
+	 *
+	 * @return mixed
+	 */
 	public function current()
 	{
 		$offset = $this->_position;
@@ -165,6 +196,8 @@ class Collection extends Base implements \Countable, \Iterator
 	}
 
 	/**
+	 * Get a total count of records. This only performs a COUNT() query on the
+	 * database. This does not start the statement for grabbing results.
 	 *
 	 * @param bool $cached If set to false, the query will be run even if the
 	 *                     count has already been retreived.
@@ -185,6 +218,11 @@ class Collection extends Base implements \Countable, \Iterator
 		return($this->_count);
 	}
 
+	/**
+	 * Fetch the next record in the results.
+	 *
+	 * @return mixed
+	 */
 	public function fetch()
 	{
 		if (!$this->isStarted()) {
@@ -200,32 +238,60 @@ class Collection extends Base implements \Countable, \Iterator
 		return($record);
 	}
 
+	/**
+	 * Check if the fetch has started yet or not.
+	 *
+	 * @return bool
+	 */
 	public function isStarted()
 	{
 		return((bool)($this->_state & STATE_STARTED));
 	}
 
+	/**
+	 * Tell if the fetch of the results is complete yet or not.
+	 *
+	 * @return bool
+	 */
 	public function isComplete()
 	{
 		return((bool)($this->_state & STATE_COMPLETE));
 	}
 
+	/**
+	 * Return the current position in the results.
+	 *
+	 * @return int
+	 */
 	public function key()
 	{
 		return($this->_position);
 	}
 
+	/**
+	 * Fetch the next record in the results.
+	 */
 	public function next()
 	{
 		++$this->_position;
 		if (!$this->isComplete() && !isset($this->_data[$this->_position])) $this->fetch();
 	}
 
+	/**
+	 * Reset the position to the beginning of the results.
+	 */
 	public function rewind()
 	{
 		$this->_position = 0;
 	}
 
+	/**
+	 * Convert all the results to a JSON encoded string. If the fields are
+	 * specified then those fields are the only ones returned.
+	 *
+	 * @param array $fields Field names to use in the return json string.
+	 * @return string
+	 */
 	public function toJson(array $fields = array())
 	{
 		if (!$this->isStarted() || !$this->isComplete()) {
@@ -262,6 +328,12 @@ class Collection extends Base implements \Countable, \Iterator
 		return($json);
 	}
 
+	/**
+	 * Check if the current record is a valid record or not. The only way it
+	 * would not be valid is if we're at the end of the results.
+	 *
+	 * @return bool
+	 */
 	public function valid()
 	{
 		if ($this->isStarted()) {
@@ -271,6 +343,12 @@ class Collection extends Base implements \Countable, \Iterator
 		}
 	}
 
+	/**
+	 * Start the statement to be ready for fetching results from the database.
+	 * This is used internally only and is called by using find() or current()
+	 *
+	 * @see find, current
+	 */
 	protected function _start()
 	{
 		$sql = 'SELECT * FROM '.static::table().static::_where($this->_where);
