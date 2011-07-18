@@ -15,11 +15,6 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-/**
- * @see SiTech\Model\Base
- */
-require_once('SiTech/Model/Base.php');
-
 namespace SiTech\Model\Collection;
 
 /**
@@ -50,6 +45,11 @@ const STATE_STARTED = 1;
 const STATE_COMPLETE = 2;
 
 namespace SiTech\Model;
+
+/**
+ * @see SiTech\Model\Base
+ */
+require_once('SiTech/Model/Base.php');
 
 /**
  * The collection model is a way to get a collection of models out of the
@@ -232,7 +232,7 @@ class Collection extends Base implements \Countable, \Iterator
 		}
 
 		if (!($record = $this->_statement->fetch())) {
-			$this->_state = $this->_state | STATE_COMPLETE;
+			$this->_state = $this->_state | Collection\STATE_COMPLETE;
 		} else {
 			$this->_data[$this->_position] = $record;
 		}
@@ -247,7 +247,7 @@ class Collection extends Base implements \Countable, \Iterator
 	 */
 	public function isStarted()
 	{
-		return((bool)($this->_state & STATE_STARTED));
+		return((bool)($this->_state & Collection\STATE_STARTED));
 	}
 
 	/**
@@ -257,7 +257,7 @@ class Collection extends Base implements \Countable, \Iterator
 	 */
 	public function isComplete()
 	{
-		return((bool)($this->_state & STATE_COMPLETE));
+		return((bool)($this->_state & Collection\STATE_COMPLETE));
 	}
 
 	/**
@@ -363,6 +363,6 @@ class Collection extends Base implements \Countable, \Iterator
 			$this->_statement->setFetchMode(\PDO::FETCH_ASSOC);
 		}
 
-		$this->_state = $this->_state | STATE_STARTED;
+		$this->_state = $this->_state | Collection\STATE_STARTED;
 	}
 }
