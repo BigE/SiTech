@@ -121,7 +121,7 @@ class Record extends Base
 				require_once('SiTech/Loader.php');
 				\SiTech\Loader::loadModel($class);
 				$class .= 'Model';
-				$value = $class::get($fk, $one);
+				$value = $class::find($fk, $one);
 				$this->_fields[$name] = $value;
 			}
 
