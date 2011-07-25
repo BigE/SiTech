@@ -32,7 +32,7 @@ abstract class Base
 	 *
 	 * @var PDO
 	 */
-	protected static $db;
+	protected static $db = array('default' => null);
 
 	/**
 	 * Database holder once the object is created.
@@ -89,13 +89,18 @@ abstract class Base
 		 */
 		if (empty(static::$_table)) static::$_table = \get_parent_class();
 
-		if (empty($db) && !is_a(static::$db, 'PDO')) {
+		$class = get_called_class();
+		$key   = ($class == 'SiTech\Model\Base') ? 'default' : $class;
+
+		$ret = !isset(static::$db[$key]) ? static::$db['default'] : $db[$key];
+
+		if (empty($db) && !is_a($ret, 'PDO')) {
 			require_once('SiTech/Model/Exception.php');
 			throw new Exception('The %s::$_db property is not set. Please use %s::db() to set the PDO connection.', array(\get_parent_class(), \get_parent_class()));
 		} elseif (empty($db)) {
-			return(static::$db);
+			return($ret);
 		} else {
-			static::$db = $db;
+			static::$db[$key] = $db;
 		}
 	}
 
