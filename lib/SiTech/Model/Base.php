@@ -93,7 +93,10 @@ abstract class Base
 		$key   = ($class == 'SiTech\Model\Base') ? 'default' : $class;
 
 		if (empty($db)) {
-			$ret = !isset(static::$db[$key]) ? static::$db['default'] : $db[$key];
+			$ret = (!isset(static::$db[$key]))? static::$db['default'] : $db[$key];
+			while (empty($ret) && $key !== 'default' && ($key = get_parent_class($key)) !== false) {
+				$ret = (isset(static::$db))? static::$db[$key] : null;
+			}
 
 			if (!is_a($ret, 'PDO')) {
 				require_once('SiTech/Model/Exception.php');
