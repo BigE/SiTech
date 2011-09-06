@@ -92,13 +92,13 @@ abstract class Base
 		$class = get_called_class();
 		$key   = ($class == 'SiTech\Model\Base') ? 'default' : $class;
 
-		$ret = !isset(static::$db[$key]) ? static::$db['default'] : $db[$key];
+		if (empty($db)) {
+			$ret = !isset(static::$db[$key]) ? static::$db['default'] : $db[$key];
 
-		if (empty($db) && !is_a($ret, 'PDO')) {
-			require_once('SiTech/Model/Exception.php');
-			throw new Exception('The %s::$_db property is not set. Please use %s::db() to set the PDO connection.', array(\get_parent_class(), \get_parent_class()));
-		} elseif (empty($db)) {
-			return($ret);
+			if (!is_a($ret, 'PDO')) {
+				require_once('SiTech/Model/Exception.php');
+				throw new Exception('The %s::$_db property is not set. Please use %s::db() to set the PDO connection.', array(\get_parent_class(), \get_parent_class()));
+			} else return($ret);
 		} else {
 			static::$db[$key] = $db;
 		}
