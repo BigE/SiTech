@@ -177,7 +177,7 @@ abstract class SiTech_Model_Abstract
 		if (!isset($this->_fields[$name]) && (isset($this->_hasMany[$name]) || isset($this->_hasOne[$name]) || isset($this->_belongsTo[$name]))) {
 			$this->__get($name);
 		}
-		
+
 		if (isset($this->_fields[$name])) {
 			return(true);
 		} else {
@@ -233,9 +233,20 @@ abstract class SiTech_Model_Abstract
 	public function delete()
 	{
 		$pk = static::pk();
+		
+		if( !is_array( $pk ) ) {
+			$pk = array( $pk );
+		}
+		
+		$bindParams = array( );
+		foreach( $pk as $key ) {
+			$bindParams[$key] = $this->_fields[$key];
+		}
+		
+		$keyWhere = static::getKeyWhere( );
 
-		$stmnt = $this->_db->prepare('DELETE FROM '.static::$_table.' WHERE '.$pk.' = ?');
-		$stmnt->execute(array($this->_fields[$pk]));
+		$stmnt = $this->_db->prepare('DELETE FROM '.static::$_table.' WHERE '.$keyWhere);
+		$stmnt->execute( $bindParams );
 		return((bool)$stmnt->rowCount());
 	}
 
@@ -249,16 +260,35 @@ abstract class SiTech_Model_Abstract
 	public static function get($where = null, $only_one = false)
 	{
 		$sql = 'SELECT * FROM '.static::$_table;
-
+		
+		$bindParams = array( );
+		
+		$pk = static::pk( );
+		if( is_array( $where ) && !is_array( $pk ) ) {
+			$where = array_pop( $where );
+		}
+		
 		if (!empty($where)) {
-			if (is_int($where)) {
-				$sql .= ' WHERE '.static::pk().' = '.$where;
+			if( is_array( $pk ) ) {
+				if( !is_array( $where ) ) {
+					$where = array_combine( $pk, explode( '-', $where ) );
+				}
+		
+				if( count( $pk ) != count( $where ) ) {
+					throw new SiTech_Exception( 'Invalid primary key specification in getCount for ' . get_called_class( ) );
+				}
+		
+				$keyWhere = static::getKeyWhere( );
+				$sql .= ' WHERE ' . $keyWhere;
+				$bindParams = $where;
+			} elseif (is_int($where) ) {
+				$sql .= ' WHERE '.$pk.' = '.$where;
 			} else {
 				$sql .= ' WHERE '.$where;
 			}
 		}
 
-		$stmnt = static::db()->query($sql);
+		$stmnt = static::db()->query($sql, $bindParams);
 		$stmnt->setFetchMode(PDO::FETCH_CLASS, get_called_class());
 
 		if ($only_one) {
@@ -270,17 +300,36 @@ abstract class SiTech_Model_Abstract
 
 	public static function getCount($where = null)
 	{
-		$sql = 'SELECT COUNT('.static::pk().') FROM '.static::$_table;
-
+		$sql = 'SELECT COUNT(*) FROM '.static::$_table;
+		
+		$bindParams = array( );
+		
+		$pk = static::pk( );
+		if( is_array( $where ) && !is_array( $pk ) ) {
+			$where = array_pop( $where );
+		}
+		
 		if (!empty($where)) {
-			if (is_int($where)) {
-				$sql .= ' WHERE '.static::pk().' = '.$where;
+			if( is_array( $pk ) ) {
+				if( !is_array( $where ) ) {
+					$where = array_combine( $pk, explode( '-', $where ) );
+				}
+				
+				if( count( $pk ) != count( $where ) ) {
+					throw new SiTech_Exception( 'Invalid primary key specification in getCount for ' . get_called_class( ) );
+				}
+				
+				$keyWhere = static::getKeyWhere( );
+				$sql .= ' WHERE ' . $keyWhere;
+				$bindParams = $where;
+			} elseif (is_int($where) ) {
+				$sql .= ' WHERE '.$pk.' = '.$where;
 			} else {
 				$sql .= ' WHERE '.$where;
 			}
 		}
 
-		$stmnt = static::db()->query($sql);
+		$stmnt = static::db()->query($sql, $bindParams);
 		return((int)$stmnt->fetchColumn());
 	}
 
@@ -308,8 +357,11 @@ abstract class SiTech_Model_Abstract
 		if (!$this->validate()) {
 			return(false);
 		}
-
-		if (empty($this->_fields[static::pk()])) {
+		
+		$id = $this->getId( );
+		$insert = $id ? static::getCount( $id ) == 0 : true;
+		
+		if ($insert) {
 			return($this->_insert());
 		} else {
 			return($this->_update());
@@ -343,12 +395,16 @@ abstract class SiTech_Model_Abstract
 	private function _insert()
 	{
 		$pk = static::pk();
+		if( !is_array( $pk ) )
+			$pk = array( $pk );
+		
 		$sql = 'INSERT INTO '.static::$_table.' ';
 		$fields = array();
 		$values = array();
 
 		foreach ($this->_fields as $f => $v) {
-			if ($f == $pk) continue;
+			// allow for manually setting primary keys!!! -- rmp
+			if (in_array($f, $pk) && empty( $v )) continue;
 			$fields[] = $f;
 			$values[$f] = ($v instanceof SiTech_Model_Abstract)? $v->{$v::pk()} : $v;
 		}
@@ -357,7 +413,11 @@ abstract class SiTech_Model_Abstract
 		$stmnt = $this->_db->prepare($sql);
 		if ($stmnt->execute($values)) {
 			// Assign the PK once the row is inserted
-			$this->_fields[$pk] = $this->_db->lastInsertId();
+			foreach( $pk as $key ) {
+				if( !empty( $this->_fields[$key] ) )
+					continue;
+				$this->_fields[$key] = $this->_db->lastInsertId( );
+			}
 		}
 		return($stmnt->rowCount());
 	}
@@ -372,21 +432,74 @@ abstract class SiTech_Model_Abstract
 	private function _update()
 	{
 		$pk = static::pk();
+		if( !is_array( $pk ) )
+			$pk = array( $pk );
+		
 		$sql = 'UPDATE '.static::$_table.' SET ';
 		$fields = array();
 		$values = array();
 
 		foreach ($this->_fields as $f => $v) {
-			if ($f == $pk) continue; // We don't update the value of the pk
-			$fields[] = $f.' = ?';
-			$values[] = ($v instanceof SiTech_Model_Abstract)? $v->{$v::pk()} : $v;
+			if (in_array( $f, $pk)) continue; // We don't update the value of the pk
+			$fields[] = $f.' = :' . $f;
+			$values[$f] = ($v instanceof SiTech_Model_Abstract)? $v->{$v::pk()} : $v;
 		}
 
 		$sql .= implode(',', $fields);
-		$sql .= ' WHERE '.$pk.' = ?';
-		$values[] = $this->_fields[$pk];
+		$sql .= ' WHERE '.static::getKeyWhere( );
+		foreach( $pk as $key ) {
+			$values[$key] = $this->_fields[$key];
+		}
 		$stmnt = $this->_db->prepare($sql);
 		$stmnt->execute($values);
 		return(($stmnt->rowCount() === false)? false : true);
+	}
+	
+	protected static function getIdString( $tableName = '' ) {
+		if( empty( $tableName ) )
+			$tableName = static::$_table;
+	
+		if( is_array( static::$_pk ) ) {
+			$pks = array( );
+			foreach( static::$_pk as $pk ) {
+				$pks[] = '`' . $tableName . '`.`' . $pk . '`';
+			}
+			$idString = implode( ', "-", ', $pks );
+			$idString = 'CONCAT( ' . $idString . ' ) AS id';
+		} else {
+			$idString = '`' . $tableName . '`.`' . static::$_pk . '` AS id';
+		}
+	
+		return $idString;
+	}
+	
+	protected static function getKeyWhere( $tableName = '' ) {
+		if( empty( $tableName ) )
+			$tableName = static::$_table;
+	
+		if( is_array( static::$_pk ) ) {
+			$keyWhereArray = array( );
+			foreach( static::$_pk as $pk ) {
+				$keyWhereArray[] = '`' . $tableName . '`.`' . $pk . '` = :' . $pk;
+			}
+			$keyWhere = implode( "\n\t\tAND ", $keyWhereArray );
+		} else {
+			$keyWhere = '`' . $tableName . '`.`' . static::$_pk . '` = :' . static::$_pk;
+		}
+	
+		return $keyWhere;
+	}
+	
+	public function getId( ) {
+		if( is_array( static::$_pk ) ) {
+			$id = array( );
+			foreach( static::$_pk as $pk ) {
+				$id[] = $this->_fields[$pk];
+			}
+			$id = implode( '-', $id );
+			return $id;
+		} else {
+			return $this->_fields[static::$_pk];
+		}
 	}
 }
