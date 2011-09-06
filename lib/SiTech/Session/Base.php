@@ -221,7 +221,7 @@ class Base extends \ArrayObject
 		}
 
 		\session_destroy();
-		static::$_state = static::$_STATE | STATE_DESTROYED;
+		static::$_state = static::$_state | STATE_DESTROYED;
 		$cookie = \session_get_cookie_params();
 		\setcookie(\session_name(), false, 419666400, $cookie['path'], $cookie['domain'], $cookie['secure']);
 		// We call this in case the session.use_trans_sid is set
