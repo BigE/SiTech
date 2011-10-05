@@ -316,7 +316,7 @@ class SiTech_ConfigParser
 			if (!$bool) {
 				$this->_handleError('Unable to parse "%s" into the config', array($item));
 			} else {
-				$this->_config = array_merge($config, $this->_config);
+				$this->_config = $this->_array_merge_recursive($config, $this->_config);
 			}
 		}
 
@@ -458,6 +458,31 @@ class SiTech_ConfigParser
 	public function write($item)
 	{
 		return($this->_attributes[self::ATTR_HANDLER]->write($item, $this->_config));
+	}
+
+	protected function _array_merge_recursive(array $array1, array $array2)
+	{
+		$merged = array();
+		$arrays = func_get_args();
+		while ($arrays) {
+			$array = array_shift($arrays);
+			if (!$array) continue;
+			else {
+				foreach ($array as $k => $v) {
+					if (is_string($k)) {
+						if (is_array($v) && array_key_exists($k, $merged) && is_array($merged[$k])) {
+							$merged[$k] = $this->_array_merge_recursive($merged[$k], $v);
+						} else {
+							$merged[$k] = $v;
+						}
+					} else {
+						$merged[] = $v;
+					}
+				}
+			}
+		}
+
+		return($merged);
 	}
 
 	/**
