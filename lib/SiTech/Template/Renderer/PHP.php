@@ -60,8 +60,8 @@ class PHP implements IRenderer
 
 		\ob_start();
 		@include($_SiTech_file);
-		$error = \error_get_last();
-		if (!empty($error) && $error['type'] == E_WARNING && strstr($error['message'], 'Failed opening \''.$_SiTech_file.'\' for inclusion')) {
+		$_SiTech_error = \error_get_last();
+		if (!empty($_SiTech_error) && $_SiTech_error['type'] == E_WARNING && strstr($_SiTech_error['message'], 'Failed opening \''.$_SiTech_file.'\' for inclusion')) {
 			\ob_end_clean();
 			throw new Exception('Failed to open template file %s on path %s', array($_SiTech_file, $_SiTech_path));
 		}
