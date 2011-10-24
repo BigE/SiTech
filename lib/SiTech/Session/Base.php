@@ -60,6 +60,10 @@ const ATTR_REMEMBER = 5;
  */
 const ATTR_STRICT = 6;
 
+const FLASH_MESSAGE = 1;
+const FLASH_DEBUG = 2;
+const FLASH_ERROR = 3;
+
 /**
  * The session has entered the started state.
  */
@@ -229,6 +233,21 @@ class Base extends \ArrayObject
 		return(true);
 	}
 
+	public function flash($key, $msg = null, $type =  FLASH_MESSAGE)
+	{
+		if (empty($msg)) {
+			if (!empty($_SESSION['flash'][$type][$key])) {
+				$msg = $_SESSION['flash'][$type][$key];
+				$_SESSION['flash'][$type][$key] = null;
+				return($msg);
+			} else {
+				return(false);
+			}
+		} else {
+			$_SESSION['flash'][$type][$key] = $msg;
+		}
+	}
+
 	/**
 	 * Get the value of an attribute that is set for the specific instance.
 	 *
@@ -337,5 +356,20 @@ class Base extends \ArrayObject
 		new Base($handler);
 		self::$_internal = false;
 		return(static::$_instance);
+	}
+
+	protected function _typeToString($type) {
+		$string = 'Invalid Type';
+
+		switch ($type) {
+			case FLASH_MESSAGE:
+				$string = 'FLASH_MESSAGE';
+				break;
+			case FLASH_DEBUG:
+				$string = 'FLASH_DEBUG';
+				break;
+		}
+
+		return($string);
 	}
 }
