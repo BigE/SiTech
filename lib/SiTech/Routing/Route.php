@@ -129,6 +129,26 @@ class Route
 	}
 
 	/**
+	 * Get the action of the controller called by the route.
+	 *
+	 * @return string
+	 */
+	public function getAction()
+	{
+		return($this->_action);
+	}
+
+	/**
+	 * Get the controller name that is called by the route.
+	 *
+	 * @return string
+	 */
+	public function getController()
+	{
+		return($this->_controller);
+	}
+
+	/**
 	 * Match the path specified against the route defined.
 	 *
 	 * @param string $path If you pass \SiTech\Uri here we will take the path
@@ -152,13 +172,13 @@ class Route
 		if (\defined('SITECH_PATH_PREFIX') && \substr($path, 0, \strlen(\SITECH_PATH_PREFIX)) === \SITECH_PATH_PREFIX) $path = \substr($path, \strlen(\SITECH_PATH_PREFIX));
 		// Match the path against the route
 		if (\preg_match('#'.\str_replace('#', '\#', $this->_route).'#', $path, $m)) {
+			$this->_match = $m;
 			if (!empty($m['controller'])) $this->_controller = $m['controller'];
 			// Remove the controller from the path
 			unset($m['controller']);
 			if (!empty($m['action'])) $this->_action = $m['action'];
 			// Remove the action from the path
 			unset($m['action']);
-			$this->_match = $m;
 
 			// Get any unmapped arguments passed in the URL
 			$this->_args = explode('/', substr($path, strlen($m[0])+1));
