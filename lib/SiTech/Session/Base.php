@@ -236,7 +236,7 @@ class Base extends \ArrayObject
 	public function flash($key, $msg = null, $type =  FLASH_MESSAGE)
 	{
 		if (empty($msg)) {
-			if (!empty($_SESSION['flash'][$type][$key])) {
+			if (isset($_SESSION['flash']) && isset($_SESSION['flash'][$type]) && !empty($_SESSION['flash'][$type][$key])) {
 				$msg = $_SESSION['flash'][$type][$key];
 				$_SESSION['flash'][$type][$key] = null;
 				return($msg);
@@ -244,6 +244,9 @@ class Base extends \ArrayObject
 				return(false);
 			}
 		} else {
+			if (!isset($_SESSION['flash'])) $_SESSION['flash'] = array($type => array());
+			elseif (!isset($_SESSION['flash'][$type])) $_SESSION['flash'][$type] = array();
+
 			$_SESSION['flash'][$type][$key] = $msg;
 		}
 	}
