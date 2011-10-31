@@ -247,6 +247,12 @@ class Record extends Base
 	 */
 	public function replace()
 	{
+		$sql = 'REPLACE INTO '.static::$_table.' ';
+		$fields = array_keys($this->_fields);
+		$values = array_values($this->_fields);
+		$sql .= '('.implode(',', $fields).') ';
+		$sql .= 'VALUES('.implode(',', array_map(array(static::db(), 'quote'), $values)).')';
+		return(static::db()->exec($sql));
 	}
 
 	/**
