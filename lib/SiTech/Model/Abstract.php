@@ -494,11 +494,12 @@ abstract class SiTech_Model_Abstract
 		if( is_array( static::$_pk ) ) {
 			$id = array( );
 			foreach( static::$_pk as $pk ) {
+				if (!isset($this->_fields[$pk])) return;
 				$id[] = $this->_fields[$pk];
 			}
 			$id = implode( '-', $id );
 			return $id;
-		} else {
+		} elseif (isset($this->_fields[static::$_pk])) {
 			return $this->_fields[static::$_pk];
 		}
 	}
