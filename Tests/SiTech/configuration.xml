@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+
+<!-- see http://www.phpunit.de/wiki/Documentation -->
+<!--phpunit bootstrap="/path/to/bootstrap.php"
+         colors="false"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         stopOnFailure="true">
+</phpunit-->
+
+<phpunit
+	colors="false"
+	verbose="true">
+	<testsuites>
+		<testsuite name="SiTech ConfigParser">
+			<directory>ConfigParser</directory>
+		</testsuite>
+		<testsuite name="SiTech DB">
+			<directory>DB</directory>
+		</testsuite>
+	</testsuites>
+</phpunit>

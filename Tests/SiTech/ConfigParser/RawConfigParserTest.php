@@ -50,17 +50,24 @@ class RawConfigParserTest extends SiTech_PHPUnit_Base
 	/**
 	 * @depends testAddSection
 	 * @expectedException SiTech\ConfigParser\DuplicateSectionException
+	 * @expectedExceptionMessage The section main already exists.
 	 */
 	public function testAddDuplicateSection()
 	{
 		self::$_config->addSection('main');
 	}
 
+	/**
+	 * @depends testAddSection
+	 */
 	public function testSet()
 	{
 		$this->assertTrue(self::$_config->set('main', 'foo', 'bar'));
 	}
 
+	/**
+	 * @depends testSet
+	 */
 	public function testWrite()
 	{
 		$this->assertTrue(self::$_config->write(SITECH_TEST_FILES.DIRECTORY_SEPARATOR.'config.ini'));
