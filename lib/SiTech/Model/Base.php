@@ -90,12 +90,12 @@ abstract class Base
 		if (empty(static::$_table)) static::$_table = \get_parent_class();
 
 		$class = get_called_class();
-		$key   = ($class == 'SiTech\Model\Base') ? 'default' : $class;
+		$key   = (in_array($class, array('SiTech\Model\Base', 'SiTech\Model\Record'))) ? 'default' : $class;
 
 		if (empty($db)) {
-			$ret = (!isset(static::$db[$key]))? static::$db['default'] : $db[$key];
+			$ret = (!isset(static::$db[$key]))? static::$db['default'] : static::$db[$key];
 			while (empty($ret) && $key !== 'default' && ($key = get_parent_class($key)) !== false) {
-				$ret = (isset(static::$db))? static::$db[$key] : null;
+				$ret = (isset(static::$db[$key]))? static::$db[$key] : null;
 			}
 
 			if (!is_a($ret, 'PDO')) {

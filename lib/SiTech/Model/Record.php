@@ -278,9 +278,25 @@ class Record extends Base
 	/**
 	 * Take the data from the current model and encode it into a JSON string.
 	 *
+	 * @param array $fields List of fields to export. If left blank, all fields
+	 *                      will be exported.
 	 * @return string
+	 * @see toArray
 	 */
 	public function toJson(array $fields = array())
+	{
+		return(json_encode($this->toArray($fields)));
+	}
+
+	/**
+	 * Take the data from the current model and export it as an array in the
+	 * format of field => value.
+	 *
+	 * @param array $fields List of fields to export. If left blank, all fields
+	 *                      will be exported.
+	 * @return array
+	 */
+	public function toArray(array $fields = array())
 	{
 		if (!empty($fields)) {
 			$array = array();
@@ -288,9 +304,9 @@ class Record extends Base
 				$array[$field] = $this->_fields[$field];
 			}
 
-			return(\json_encode($array));
+			return($array);
 		} else {
-			return(\json_encode($this->_fields));
+			return($this->_fields);
 		}
 	}
 

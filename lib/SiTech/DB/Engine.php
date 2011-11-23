@@ -68,6 +68,7 @@ class Engine extends \PDO
 	public function __construct(array $config, $driver = 'SiTech\DB\Driver\MySQL', array $options = array())
 	{
 		if (empty($config['dsn'])) {
+			require_once('SiTech/DB/Exception.php');
 			throw new Exception('Missing required DSN from config');
 		}
 
