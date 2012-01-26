@@ -128,7 +128,10 @@ abstract class SiTech_Model_Abstract
 				// Initalize the class with the name of the variable
 				$class = $name;
 				$fk = null;
+				// If this is set to true, only one record will be returned.
 				$one = false;
+				// If ths is set to false, we will not try to load the model from here.
+				$autoload = true;
 				// Now check for override settings
 				if (isset($this->_hasMany[$name])) {
 					if (isset($this->_hasMany[$name]['class'])) {
@@ -138,6 +141,10 @@ abstract class SiTech_Model_Abstract
 					if (isset($this->_hasMany[$name]['foreignKey'])) {
 						$fk = $this->_hasMany[$name]['foreignKey'].'='.$this->_fields[static::pk()];
 					}
+
+					if (isset($this->_hasMany[$name]['autoload'])) {
+						$autoload = (bool)$this->_hasMany[$name]['autoload'];
+					}
 				} elseif (isset($this->_hasOne[$name])) {
 					if (isset($this->_hasOne[$name]['class'])) {
 						$class = $this->_hasOne[$name]['class'];
@@ -145,6 +152,10 @@ abstract class SiTech_Model_Abstract
 
 					if (isset($this->_hasOne[$name]['foreignKey'])) {
 						$fk = $this->_hasOne[$name]['foreignKey'].'='.$this->_fields[static::pk()];
+					}
+
+					if (isset($this->_hasOne[$name]['autoload'])) {
+						$autoload = (bool)$this->_hasOne[$name]['autoload'];
 					}
 
 					$one = true;
@@ -157,11 +168,18 @@ abstract class SiTech_Model_Abstract
 						$fk = $this->_belongsTo[$name]['foreignKey'].'='.$this->_fields[$name];
 					}
 
+					if (isset($this->_belongsTo[$name]['autoload'])) {
+						$autoload = (bool)$this->_belongsTo[$name]['autoload'];
+					}
+
 					$one = true;
 				}
 
-				SiTech_Loader::loadModel($class);
-				$class .= 'Model';
+				if ($autoload) {
+					SiTech_Loader::loadModel($class);
+					$class .= 'Model';
+				}
+
 				$value = $class::get($fk, $one);
 				$this->_fields[$name] = $value;
 			}
