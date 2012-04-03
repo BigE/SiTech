@@ -5,12 +5,12 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -19,9 +19,9 @@
 /**
  * This is to help generate documentation for the SiTech library. Currently it
  * supports generation for
- * 
- * phpDocumentor (not compatible with 5.3 but still produces readable results)
- * Doxygen
+ *
+ * phpDocumentor - v1 works, but does not support 5.3 features. v2 is previously
+ *                 known as "docblox" and is the prefered method.
  * DocBlox - http://www.docblox-project.org/
  */
 
@@ -33,12 +33,12 @@ function rrmdir($dir)
 		$objects = scandir($dir);
 		foreach ($objects as $object) {
 			if ($object != "." && $object != "..") {
-				if (filetype($dir."/".$object) == "dir") rrmdir($dir."/".$object); else unlink($dir."/".$object); 
+				if (filetype($dir."/".$object) == "dir") rrmdir($dir."/".$object); else unlink($dir."/".$object);
 			}
 		}
-		reset($objects); 
-		rmdir($dir); 
-	} 
+		reset($objects);
+		rmdir($dir);
+	}
 }
 
 function _mkdir($dir)
@@ -63,10 +63,10 @@ $opts->addOption(array(
 	'long' => 'verbose',
 	'short' => 'v'
 ));
-$opts->addOption(array(
+/*$opts->addOption(array(
 	'long' => 'docblox',
 	'desc' => 'Generate documentation using DocBlox.'
-));
+));*/
 $opts->addOption(array(
 	'long' => 'doxygen',
 	'desc' => 'Generate documentation using doxygen. This uses the config file in '.SITECH_BASE.'/Docs/SiTech.doxygen'
@@ -134,7 +134,8 @@ if (isset($options['phpdoc'])) {
 	echo 'Running phpDocumentor... ';
 	ob_start();
 	echo PHP_EOL;
-	echo shell_exec('phpdoc -d '.SITECH_BASE.'/lib/SiTech -t '.SITECH_BASE.'/Docs/phpDocs -o HTML:frames:earthli -s on -ti \'SiTech Documentation\' -dn SiTech -dc SiTech');
+	// This command should support phpDocumentor 1.x and 2.x
+	echo shell_exec('phpdoc -d '.SITECH_BASE.'/lib/SiTech -t '.SITECH_BASE.'/Docs/phpDocs --sourcecode --title SiTech');
 	echo PHP_EOL;
 	if (DOCS_VERBOSE) {
 		ob_end_flush();
