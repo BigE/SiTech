@@ -30,7 +30,7 @@ require_once('SiTech/Routing/Exception.php');
  * @author Eric Gach <eric@php-oop.net>
  * @package SiTech\Routing
  * @see preg_match
- * @version $Id$
+ * @version $Id: e690ca5dada57b3635407b8a60b18f9132c6f40d $
  */
 class Router
 {
@@ -117,6 +117,8 @@ class Router
 	 */
 	public static function matchRoute($path = null)
 	{
+		$match = false;
+
 		if (empty($path)) $path = $_SERVER['REQUEST_URI'];
 		if ($path instanceof \SiTech\Uri) $path = $path->getPath();
 
