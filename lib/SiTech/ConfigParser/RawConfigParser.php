@@ -40,18 +40,32 @@ class RawConfigParser
 	 */
 	const ATTR_STRICT = 0;
 
-	// Depricated ... all errors are now handled through specific exceptions
-	//const ATTR_ERRMODE = 1;
+	/**
+	 * This used to control the output mode of errors thrown through the config
+	 * parser. Now all errors are exceptions and must be caught.
+	 *
+	 * @depricated All errors are now handled through specific exceptions
+	 */
+	const ATTR_ERRMODE = 1;
 
 	/**
 	 * This attribute is the backend handler for the config parser. The default
 	 * is the INI handler. To use a different one, initate an instance of the
 	 * handler and pass the object as the attribute. The instance must implement
 	 * SiTech\ConfigParser\Handler\IHandler
-	 * 
+	 *
 	 * @see SiTech\ConfigParser\Handler\IHandler
 	 */
 	const ATTR_HANDLER = 2;
+
+	/**
+	 * This attribute is for the environment that the code is running in. It can
+	 * be set directly or through the SITECH_ENV constant. This will cause the
+	 * configuration to try to read sections as "$env:$section" but still
+	 * default to reading "$section" if no "$env:$section" is found. The default
+	 * environment is "production"
+	 */
+	const ATTR_ENV = 3;
 
 	/**
 	 * Array of attributes set on the configuration parser. The getAttribute and
@@ -86,6 +100,14 @@ class RawConfigParser
 			require_once('SiTech/ConfigParser/Handler/INI.php');
 			$this->setAttribute(self::ATTR_HANDLER, new Handler\INI());
 		}
+
+		if (empty($this->_attributes[self::ATTR_ENV])) {
+			if (defined('SITECH_ENV')) {
+				$this->setAttribute(self::ATTR_ENV, SITECH_ENV);
+			} else {
+				$this->setAttribute(self::ATTR_ENV, 'production');
+			}
+		}
 	}
 
 	/**
@@ -118,7 +140,7 @@ class RawConfigParser
 	 */
 	public function addSection($section)
 	{
-		if (!$this->hasSection($section)) {
+		if (($section = $this->hasSection($section)) !== false) {
 			$this->_config[$section] = array();
 			return(true);
 		} else {
@@ -137,7 +159,7 @@ class RawConfigParser
 	 */
 	public function get($section, $option)
 	{
-		if ($this->hasSection($section)) {
+		if (($section = $this->hasSection($section)) !== false) {
 			if ($this->hasOption($section, $option)) {
 				return($this->_config[$section][$option]);
 			} else {
@@ -221,7 +243,7 @@ class RawConfigParser
 	 */
 	public function hasOption($section, $option)
 	{
-		if ($this->hasSection($section) && isset($this->_config[$section][$option])) {
+		if (($section = $this->hasSection($section)) !== false && isset($this->_config[$section][$option])) {
 			return(true);
 		} else {
 			return(false);
@@ -236,8 +258,13 @@ class RawConfigParser
 	 */
 	public function hasSection($section)
 	{
-		if (isset($this->_config[$section])) {
-			return(true);
+		if (($env = $this->getAttribute(self::ATTR_ENV)) !== null)
+			$env_section = $env.':'.$section;
+
+		if (isset($env_section) && isset($this->_config[$env_section])) {
+			return($env_section);
+		} elseif (isset($this->_config[$section])) {
+			return($section);
 		} else {
 			return(false);
 		}
@@ -252,7 +279,7 @@ class RawConfigParser
 	 */
 	public function items($section)
 	{
-		if ($this->hasSection($section)) {
+		if (($section = $this->hasSection($section)) !== false) {
 			return($this->_config[$section]);
 		} else {
 			throw new NoSectionException('Cannot retreive items because section "%s" does not exist', array($section));
@@ -273,7 +300,7 @@ class RawConfigParser
 	{
 		$reference = (bool) $reference;
 
-		if ($this->hasSection($section)) {
+		if (($section = $this->hasSection($section)) !== false) {
 			if (!empty($option)) {
 				if ($this->hasOption($section, $option)) {
 					if ($reference) {
@@ -309,7 +336,7 @@ class RawConfigParser
 	 */
 	public function options($section)
 	{
-		if ($this->hasSection($section)) {
+		if (($section = $this->hasSection($section)) !== false) {
 			return(array_keys($this->_config[$section]));
 		} else {
 			throw new NoSectionException('Cannot retreive options because section "%s" does not exist', array($section));
@@ -342,8 +369,8 @@ class RawConfigParser
 	 */
 	public function removeOption($section, $option)
 	{
-		if ($this->hasSection($section)) {
-			if ($this->hasOption($option)) {
+		if (($section = $this->hasSection($section)) !== false) {
+			if ($this->hasOption($section, $option)) {
 				unset($this->_config[$section][$option]);
 				return(true);
 			} else {
@@ -362,7 +389,7 @@ class RawConfigParser
 	 */
 	public function removeSection($section)
 	{
-		if ($this->hasSection($section)) {
+		if (($section = $this->hasSection($section)) !== false) {
 			unset($this->_config[$section]);
 			return(true);
 		} else {
@@ -391,7 +418,7 @@ class RawConfigParser
 	 */
 	public function set($section, $option, $value)
 	{
-		if ($this->hasSection($section)) {
+		if (($section = $this->hasSection($section)) !== false) {
 			if ($this->hasOption($section, $option) && $this->getAttribute(self::ATTR_STRICT) === true) {
 				throw new Exception('Strict mode in effect - Cannot overwrite option "%s" in section "%s"', array($option, $section));
 			}
@@ -430,8 +457,8 @@ class RawConfigParser
 				}
 				break;
 
-			/*case self::ATTR_ERRMODE:
-				switch ($value) {
+			case self::ATTR_ERRMODE:
+				/*switch ($value) {
 					case self::ERRMODE_EXCEPTION:
 					case self::ERRMODE_SILENT:
 					case self::ERRMODE_WARNING:
@@ -441,8 +468,14 @@ class RawConfigParser
 					default:
 						throw new Exception('Invalid error mode setting for %s::ATTR_ERRMODE', array(__CLASS__));
 						break;
-				}
-				break;*/
+				}*/
+				require_once('SiTech/Exception.php');
+				throw new \SiTech\DepricatedException('%s::ATTR_ERRMODE is now depricated. All errors are now exceptions that are thrown.', array(__CLASS__));
+				break;
+
+			case self::ATTR_ENV:
+				$this->_attributes[$attr] = $value;
+				return;
 
 			default:
 				$ret = false;

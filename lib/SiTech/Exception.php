@@ -49,9 +49,18 @@ class Exception extends \Exception
 
 /**
  * Exception for features that are not implemented yet.
- * 
+ *
  * @author Eric Gach <eric@php-oop.net>
  * @package SiTech
  * @version $Id$
  */
 class NotImplementedException extends Exception {}
+
+/**
+ * Exception for features that are depricated and no longer in use.
+ *
+ * @author Eric Gach <eric@php-oop.net>
+ * @package SiTech
+ * @version $Id$
+ */
+class DepricatedException extends Exception {}
