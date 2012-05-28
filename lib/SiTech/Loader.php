@@ -29,6 +29,32 @@ namespace SiTech;
 class Loader
 {
 	/**
+	 * Add a vendor directory to the include path. You can specify the entire
+	 * path by the parameters avaialble.
+	 *
+	 * @param string $vendor Vendor name to add to the include path.
+	 * @param string $lib_path Library path inside the vendor to use. Default: /lib
+	 * @param string $path_prefix Path prefix to the vendor folder. Default: SITECH_APP_PATH/../vendors/
+	 * @return string
+	 * @static
+	 */
+	public static function addVendor($vendor, $lib_path = '/lib', $path_prefix = null, $strict_as_hell = false)
+	{
+		if (empty($path_prefix))
+			$path_prefix = \dirname(\SITECH_APP_PATH).\DIRECTORY_SEPARATOR.'vendors';
+
+		$vendor_path = $path_prefix.\DIRECTORY_SEPARATOR.$vendor.\DIRECTORY_SEPARATOR.$lib_path;
+
+		// Bahaha, thanks Tim ;)
+		if ($strict_as_hell && \strpos(\get_include_path(), $vendor_path)) {
+			throw new Loader\VendorAlreadyPresent('The vendor include path (%s) is already in the include_path', array($vendor_path));
+		}
+
+		\set_include_path($vendor_path.\PATH_SEPARATOR.\get_include_path());
+		return($vendor_path);
+	}
+
+	/**
 	 * Auto load the class by calling the loadClass method. This method detects
 	 * the last part of a class name and loads appropriately. If the class ends
 	 * in "Model" it calls ::loadModel() If it ends in "Controller" it calls
@@ -39,10 +65,10 @@ class Loader
 	 */
 	public static function autoload($class)
 	{
-		if (substr($class, -5) == 'Model') {
-			self::loadModel(substr($class, 0, -5));
-		} elseif (substr($class, -10) == 'Controller') {
-			self::loadController(substr($class, 0, -10));
+		if (\substr($class, -5) == 'Model') {
+			self::loadModel(\substr($class, 0, -5));
+		} elseif (\substr($class, -10) == 'Controller') {
+			self::loadController(\substr($class, 0, -10));
 		} else {
 			self::loadClass($class);
 		}
@@ -216,3 +242,13 @@ require_once('Exception.php');
  * @version $Id$
  */
 class Exception extends \SiTech\Exception {}
+
+/**
+ * Exception for adding vendors to the include path. If strict_as_hell is true
+ * this exception will be thrown if the vendor already exists.
+ *
+ * @author Eric Gach <eric at php-oop.net>
+ * @package SiTech\Loader
+ * @version $Id$
+ */
+class VendorAlreadyPresent extends Exception {}
