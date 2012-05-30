@@ -30,7 +30,7 @@ require_once('SiTech/Routing/Exception.php');
  * @author Eric Gach <eric@php-oop.net>
  * @package SiTech\Routing
  * @see preg_match
- * @version $Id: e690ca5dada57b3635407b8a60b18f9132c6f40d $
+ * @version $Id$
  */
 class Router
 {

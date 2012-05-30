@@ -35,7 +35,7 @@ require_once('SiTech/Routing/Exception.php');
  * @author Eric Gach <eric@php-oop.net>
  * @package SiTech\Routing
  * @see preg_match
- * @version $Id: 422d6e33568f34802fd67cdcb6c6bca9ecd1a133 $
+ * @version $Id$
  */
 class Route
 {
@@ -89,7 +89,7 @@ class Route
 	{
 		$this->_route = $route;
 		// If we have no deafult values, fill them in.
-		$this->_controller = (isset($options[self::OPT_CONTROLLER]))? $options[self::OPT_CONTROLLER] : (\defined('SITECH_CONTROLLER_DEFAULT'))? \SITECH_CONTROLLER_DEFAULT : 'default';
+		$this->_controller = (isset($options[self::OPT_CONTROLLER]))? $options[self::OPT_CONTROLLER] : ((\defined('SITECH_CONTROLLER_DEFAULT'))? \SITECH_CONTROLLER_DEFAULT : 'default');
 		$this->_action = (isset($options[self::OPT_ACTION]))? $options[self::OPT_ACTION] : 'index';
 	}
 
