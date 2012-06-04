@@ -89,6 +89,14 @@ abstract class SiTech_Model_Abstract
 	protected $_hasOne = array();
 
 	/**
+	 * This contains all of the fields that have changed in the model. After the
+	 * save method is complete, it will clear this array and start fresh.
+	 *
+	 * @var array
+	 */
+	protected $_modified = array();
+
+	/**
 	 * Primary key for the table. This must be set for the model to be accessed
 	 * by any of the methods.
 	 *
@@ -121,8 +129,8 @@ abstract class SiTech_Model_Abstract
 	 */
 	public function __get($name)
 	{
-		if (isset($this->_fields[$name]) || isset($this->_hasOne[$name]) || isset($this->_hasMany[$name]) || isset($this->_belongsTo[$name])) {
-			$value = (isset($this->_fields[$name]))? $this->_fields[$name] : null;
+		if (isset($this->_fields[$name]) || isset($this->_hasOne[$name]) || isset($this->_hasMany[$name]) || isset($this->_belongsTo[$name]) || isset($this->_modified[$name])) {
+			$value = (isset($this->_modified[$name]))? $this->_modified[$name] : ((isset($this->_fields[$name]))? $this->_fields[$name] : null);
 
 			if ((isset($this->_hasMany[$name]) || isset($this->_hasOne[$name]) || isset($this->_belongsTo[$name])) && (!is_object($value) && !is_array($value) && (!isset($this->_fields[$name]) || !empty($value)))) {
 				// Initalize the class with the name of the variable
@@ -196,7 +204,7 @@ abstract class SiTech_Model_Abstract
 			$this->__get($name);
 		}
 
-		if (isset($this->_fields[$name])) {
+		if (isset($this->_fields[$name]) || isset($this->_modified[$name])) {
 			return(true);
 		} else {
 			return(false);
@@ -211,7 +219,11 @@ abstract class SiTech_Model_Abstract
 	 */
 	public function __set($name, $value)
 	{
-		$this->_fields[$name] = $value;
+		if ($this->_fields[$name] === $value && isset($this->_modified[$name])) {
+			unset($this->_modified[$name]);
+		} else {
+			$this->_modified[$name] = $value;
+		}
 	}
 
 	/**
@@ -379,11 +391,16 @@ abstract class SiTech_Model_Abstract
 		$id = $this->getId( );
 		$insert = $id ? static::getCount( $id ) == 0 : true;
 
+		$save = false;
 		if ($insert) {
-			return($this->_insert());
+			$save = $this->_insert();
 		} else {
-			return($this->_update());
+			$save = $this->_update();
 		}
+
+		$this->_fields = array_merge($this->_fields, $this->_modified);
+		$this->_modified = array();
+		return($save);
 	}
 
 	public function toJson()
@@ -420,7 +437,7 @@ abstract class SiTech_Model_Abstract
 		$fields = array();
 		$values = array();
 
-		foreach ($this->_fields as $f => $v) {
+		foreach ($this->_modified as $f => $v) {
 			// allow for manually setting primary keys!!! -- rmp
 			if (in_array($f, $pk) && empty( $v )) continue;
 			$fields[] = $f;
@@ -457,7 +474,7 @@ abstract class SiTech_Model_Abstract
 		$fields = array();
 		$values = array();
 
-		foreach ($this->_fields as $f => $v) {
+		foreach ($this->_modified as $f => $v) {
 			if (in_array( $f, $pk)) continue; // We don't update the value of the pk
 			$fields[] = $f.' = :' . $f;
 			$values[$f] = ($v instanceof SiTech_Model_Abstract)? $v->{$v::pk()} : $v;
