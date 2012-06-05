@@ -219,8 +219,10 @@ abstract class SiTech_Model_Abstract
 	 */
 	public function __set($name, $value)
 	{
-		if ($this->_fields[$name] === $value && isset($this->_modified[$name])) {
+		if (isset($this->_fields[$name]) && $this->_fields[$name] === $value && isset($this->_modified[$name])) {
 			unset($this->_modified[$name]);
+		} elseif (!isset($this->_fields[$name])) {
+			$this->_fields[$name] = $value;
 		} else {
 			$this->_modified[$name] = $value;
 		}
@@ -437,7 +439,7 @@ abstract class SiTech_Model_Abstract
 		$fields = array();
 		$values = array();
 
-		foreach ($this->_modified as $f => $v) {
+		foreach ($this->_fields as $f => $v) {
 			// allow for manually setting primary keys!!! -- rmp
 			if (in_array($f, $pk) && empty( $v )) continue;
 			$fields[] = $f;
