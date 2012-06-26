@@ -179,7 +179,7 @@ abstract class SiTech_Controller_Abstract
 		 * not found) so we want to relay this to our application for a chance
 		 * to handle the error.
 		 */
-		if (!method_exists($this, $this->_action)) {
+		if (!is_callable(array($this, $this->_action))) {
 			throw new SiTech_Exception('Method '.get_class($this).'::'.$this->_action.'() not found', null, 404);
 		}
 

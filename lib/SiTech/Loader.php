@@ -40,7 +40,7 @@ class SiTech_Loader
 		if (substr($class, -5) == 'Model' && substr($class, -6, 1) !== '_') {
 			self::loadModel(substr($class, 0, -5));
 		} elseif (substr($class, -10) == 'Controller' && substr($class, -11, 1) !== '_') {
-			self::loadController(substr($class, 0, -10));
+			self::loadController(str_replace('_', DIRECTORY_SEPARATOR, substr($class, 0, -10)), null);
 		} else {
 			self::loadClass($class);
 		}
@@ -108,7 +108,7 @@ class SiTech_Loader
 	 * @static
 	 * @throws SiTech_Exception
 	 */
-	public static function loadController($name, SiTech_Uri $uri)
+	public static function loadController($name, SiTech_Uri $uri = null)
 	{
 		$name = strtolower($name);
 		$class = null;
@@ -134,8 +134,9 @@ class SiTech_Loader
 			require_once('SiTech/Exception.php');
 			throw new SiTech_Exception('The controller "%s" failed to load', array($class), 500);
 		}
-
-		return(new $class($uri));
+		
+		if( $uri !== null )
+			return(new $class($uri));
 	}
 
 	/**
