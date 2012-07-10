@@ -24,7 +24,7 @@ namespace SiTech;
  *
  * @author Eric Gach <eric at php-oop.net>
  * @package SiTech
- * @version $Id$
+ * @version $Id: 914b55fe4f7733128bb16768940e4cd59a63d73a $
  */
 class Loader
 {
@@ -33,17 +33,17 @@ class Loader
 	 * path by the parameters avaialble.
 	 *
 	 * @param string $vendor Vendor name to add to the include path.
-	 * @param string $lib_path Library path inside the vendor to use. Default: /lib
+	 * @param string $lib_path Library path inside the vendor to use. Default: lib
 	 * @param string $path_prefix Path prefix to the vendor folder. Default: SITECH_APP_PATH/../vendors/
 	 * @return string
 	 * @static
 	 */
-	public static function addVendor($vendor, $lib_path = '/lib', $path_prefix = null, $strict_as_hell = false)
+	public static function addVendor($vendor, $lib_path = 'lib', $path_prefix = null, $strict_as_hell = false)
 	{
 		if (empty($path_prefix))
 			$path_prefix = \dirname(\SITECH_APP_PATH).\DIRECTORY_SEPARATOR.'vendors';
 
-		$vendor_path = $path_prefix.\DIRECTORY_SEPARATOR.$vendor.\DIRECTORY_SEPARATOR.$lib_path;
+		$vendor_path = $path_prefix.\DIRECTORY_SEPARATOR.$vendor.\DIRECTORY_SEPARATOR.ltrim($lib_path, '/\\');
 
 		// Bahaha, thanks Tim ;)
 		if ($strict_as_hell && \strpos(\get_include_path(), $vendor_path)) {
@@ -239,7 +239,7 @@ require_once('Exception.php');
  *
  * @author Eric Gach <eric at php-oop.net>
  * @package SiTech\Loader
- * @version $Id$
+ * @version $Id: 914b55fe4f7733128bb16768940e4cd59a63d73a $
  */
 class Exception extends \SiTech\Exception {}
 
@@ -249,6 +249,6 @@ class Exception extends \SiTech\Exception {}
  *
  * @author Eric Gach <eric at php-oop.net>
  * @package SiTech\Loader
- * @version $Id$
+ * @version $Id: 914b55fe4f7733128bb16768940e4cd59a63d73a $
  */
 class VendorAlreadyPresent extends Exception {}
