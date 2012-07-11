@@ -62,6 +62,16 @@ class Router
 		static::$_routes[] = $route;
 	}
 
+	public static function addNamespace($namespace)
+	{
+		static::$_routes[] = new Route('^/(?P<controller>[^/]+)?/?(?P<action>[^/]+)?', array(Route::OPT_NAMESPACE => $namespace));
+	}
+	
+	public static function addRoot()
+	{
+		static::$_routes[] = new Route('^/(?P<controller>[^/]+)?/?(?P<action>[^/]+)?');
+	}
+
 	/**
 	 * Dispatch a route. If no route is specified, we look for the route based
 	 * on the current path of the application. The route that gets dispached will

@@ -50,6 +50,11 @@ class Route
 	const OPT_ACTION = 1;
 
 	/**
+	 * This is the namespace in which the routes controller.
+	 */
+	const OPT_NAMESPACE = 2;
+
+	/**
 	 * Action of router to call
 	 *
 	 * @var string
@@ -69,6 +74,15 @@ class Route
 	 * @var array
 	 */
 	protected $_match = array();
+
+	/**
+	 * This is the namespace for the route. Namespaced routes are for controllers
+	 * that are nested into sub directories for easier organization of the
+	 * controller files.
+	 *
+	 * @var string
+	 */
+	protected $_namespace;
 
 	/**
 	 * The route that we're looking for
@@ -91,6 +105,10 @@ class Route
 		// If we have no deafult values, fill them in.
 		$this->_controller = (isset($options[self::OPT_CONTROLLER]))? $options[self::OPT_CONTROLLER] : ((\defined('SITECH_CONTROLLER_DEFAULT'))? \SITECH_CONTROLLER_DEFAULT : 'default');
 		$this->_action = (isset($options[self::OPT_ACTION]))? $options[self::OPT_ACTION] : 'index';
+		
+		if (isset($options[self::OPT_NAMESPACE])) {
+			$this->_namespace = $options[self::OPT_NAMESPACE];
+		}
 	}
 
 	public function __get($name)
@@ -149,6 +167,11 @@ class Route
 		return($this->_controller);
 	}
 
+	public function getNamespace()
+	{
+		return(ltrim($this->_namespace, '/'));
+	}
+
 	/**
 	 * Match the path specified against the route defined.
 	 *
@@ -171,10 +194,14 @@ class Route
 		// Trim the path prefix if defined. We do this here instead of the router
 		// because this can be directly called.
 		if (\defined('SITECH_PATH_PREFIX') && \substr($path, 0, \strlen(\SITECH_PATH_PREFIX)) === \SITECH_PATH_PREFIX) $path = \substr($path, \strlen(\SITECH_PATH_PREFIX));
+		// If we have a namespace, pull it off the URI before matching. It will
+		// be placed into the controller name later.
+		if (isset($this->_namespace) && \strpos($path, '/'.$this->_namespace) === 0) $path = substr($path, \strlen($this->_namespace)+1);
 		// Match the path against the route
 		if (\preg_match('#'.\str_replace('#', '\#', $this->_route).'#', $path, $m)) {
 			$this->_match = $m;
 			if (!empty($m['controller'])) $this->_controller = $m['controller'];
+			if (!empty($this->_namespace)) $this->_controller = $this->_namespace.'/'.$this->_controller;
 			// Remove the controller from the path
 			unset($m['controller']);
 			if (!empty($m['action'])) $this->_action = $m['action'];
