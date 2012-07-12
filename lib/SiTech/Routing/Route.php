@@ -35,7 +35,7 @@ require_once('SiTech/Routing/Exception.php');
  * @author Eric Gach <eric@php-oop.net>
  * @package SiTech\Routing
  * @see preg_match
- * @version $Id$
+ * @version $Id: e20fd8a8d00a8dc80534fef6de77a996fa78f1f9 $
  */
 class Route
 {
@@ -196,7 +196,13 @@ class Route
 		if (\defined('SITECH_PATH_PREFIX') && \substr($path, 0, \strlen(\SITECH_PATH_PREFIX)) === \SITECH_PATH_PREFIX) $path = \substr($path, \strlen(\SITECH_PATH_PREFIX));
 		// If we have a namespace, pull it off the URI before matching. It will
 		// be placed into the controller name later.
-		if (isset($this->_namespace) && \strpos($path, '/'.$this->_namespace) === 0) $path = substr($path, \strlen($this->_namespace)+1);
+		if (isset($this->_namespace)) {
+			if (\strpos($path, '/'.$this->_namespace) === 0) {
+				$path = substr($path, \strlen($this->_namespace)+1);
+			} else {
+				return(false);
+			}
+		}
 		// Match the path against the route
 		if (\preg_match('#'.\str_replace('#', '\#', $this->_route).'#', $path, $m)) {
 			$this->_match = $m;
