@@ -24,7 +24,7 @@ namespace SiTech;
  *
  * @author Eric Gach <eric at php-oop.net>
  * @package SiTech
- * @version $Id: 914b55fe4f7733128bb16768940e4cd59a63d73a $
+ * @version $Id$
  */
 class Loader
 {
@@ -137,16 +137,18 @@ class Loader
 	{
 		$name = \strtolower($name);
 		$class = null;
+		$nclass = null;
 
 		if (\strstr($name, '/') !== false) {
 			$parts = \explode('/', $name);
 			$parts = \array_map('ucfirst', $parts);
+			$nclass = '\\'.\implode('\\', $parts).'Controller';
 			$class = \implode('_', $parts).'Controller';
 		} else {
 			$class = \ucfirst($name).'Controller';
 		}
 
-		if (\class_exists($class, false)) return;
+		if (\class_exists($class, false) || \class_exists($nclass, false)) return;
 
 		if (\is_readable(\SITECH_APP_PATH.'/controllers/'.$name.'.php')) {
 			include_once(\SITECH_APP_PATH.'/controllers/'.$name.'.php');
@@ -154,11 +156,11 @@ class Loader
 			throw new Loader\Exception('The controller "%s" failed to load', array($class), 404);
 		}
 
-		if (!\class_exists($class, false)) {
+		if (!\class_exists($class, false) && !\class_exists($nclass, false)) {
 			throw new Loader\Exception('The controller "%s" failed to load', array($class), 500);
 		}
 
-		return(new $class());
+		return((class_exists($nclass, false))? new $nclass() : new $class());
 	}
 
 	/**
@@ -239,7 +241,7 @@ require_once('Exception.php');
  *
  * @author Eric Gach <eric at php-oop.net>
  * @package SiTech\Loader
- * @version $Id: 914b55fe4f7733128bb16768940e4cd59a63d73a $
+ * @version $Id$
  */
 class Exception extends \SiTech\Exception {}
 
@@ -249,6 +251,6 @@ class Exception extends \SiTech\Exception {}
  *
  * @author Eric Gach <eric at php-oop.net>
  * @package SiTech\Loader
- * @version $Id: 914b55fe4f7733128bb16768940e4cd59a63d73a $
+ * @version $Id$
  */
 class VendorAlreadyPresent extends Exception {}
