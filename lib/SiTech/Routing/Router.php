@@ -64,7 +64,7 @@ class Router
 
 	public static function addNamespace($namespace)
 	{
-		static::$_routes[] = new Route('^/(?P<controller>[^/]+)?/?(?P<action>[^/]+)?', array(Route::OPT_NAMESPACE => $namespace));
+		static::$_routes[] = new Route('^(?P<controller>[^/]+)?/?(?P<action>[^/]+)?', array(Route::OPT_NAMESPACE => $namespace));
 	}
 	
 	public static function addRoot()
