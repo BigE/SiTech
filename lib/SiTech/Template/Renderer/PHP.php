@@ -63,14 +63,18 @@ class PHP implements IRenderer
 		$_SiTech_error = \error_get_last();
 		if (!empty($_SiTech_error) && $_SiTech_error['type'] == E_WARNING && strstr($_SiTech_error['message'], 'Failed opening \''.$_SiTech_file.'\' for inclusion')) {
 			\ob_end_clean();
-			throw new Exception('Failed to open template file %s on path %s', array($_SiTech_file, $_SiTech_path));
+			throw new TemplateException('Failed to open template file %s on path %s', array($_SiTech_file, $_SiTech_path));
 		}
 		$content = \ob_get_clean();
 		\ob_start();
 		if ($tpl->getLayout() == null) {
 			echo $content;
 		} else {
-			include($tpl->getLayout());
+			@include($tpl->getLayout());
+			$_SiTech_error = \error_get_last();
+			if (!empty($_SiTech_error) && $_SiTech_error['type'] == E_WARNING && strstr($_SiTech_error['message'], 'Failed opening \''.$tpl->getLayout().'\' for inclusion')) {
+				throw new LayoutException('Failed to open layout file %s', array($tpl->getLayout()));
+			}
 		}
 		$rendered = \ob_get_clean();
 

@@ -32,3 +32,23 @@ require_once('SiTech/Template/Exception.php');
  */
 class Exception extends \SiTech\Template\Exception {}
 
+/**
+ * Layout exception for the renderer. If anything bad happens with the layout,
+ * throw this exception back to the user.
+ * 
+ * @author Eric Gach <eric@php-oop.net>
+ * @package SiTech\Template
+ * @subpackage SiTech\Template\Renderer
+ * @version $Id$
+ */
+class LayoutException extends Exception {}
+
+/**
+ * Template exception for the renderer.
+ * 
+ * @author Eric Gach <eric@php-oop.net>
+ * @package SiTech\Template
+ * @subpackage SiTech\Template\Renderer
+ * @version $Id$
+ */
+class TemplateException extends Exception {}
