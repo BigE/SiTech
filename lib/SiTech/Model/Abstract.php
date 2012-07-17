@@ -222,7 +222,7 @@ abstract class SiTech_Model_Abstract
 		if (isset($this->_fields[$name]) && $this->_fields[$name] === $value && isset($this->_modified[$name])) {
 			unset($this->_modified[$name]);
 		} elseif (!isset($this->_fields[$name])) {
-			$this->_fields[$name] = $value;
+			$this->_modified[$name] = $this->_fields[$name] = $value;
 		} else {
 			$this->_modified[$name] = $value;
 		}
