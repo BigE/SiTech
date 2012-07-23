@@ -219,7 +219,12 @@ abstract class SiTech_Model_Abstract
 	 */
 	public function __set($name, $value)
 	{
-		if (isset($this->_fields[$name]) && $this->_fields[$name] === $value && isset($this->_modified[$name])) {
+		if (
+			( is_array( static::$_pk ) && in_array( $name, static::$_pk ) )
+			|| $name == static::$_pk
+		) {
+			$this->_fields[$name] = $value;
+		} elseif (isset($this->_fields[$name]) && $this->_fields[$name] === $value && isset($this->_modified[$name])) {
 			unset($this->_modified[$name]);
 		} elseif (!isset($this->_fields[$name])) {
 			$this->_modified[$name] = $this->_fields[$name] = $value;
@@ -439,7 +444,8 @@ abstract class SiTech_Model_Abstract
 		$fields = array();
 		$values = array();
 
-		foreach ($this->_fields as $f => $v) {
+		$tmp_fields = array_merge( $this->_fields, $this->_modified );
+		foreach ($tmp_fields as $f => $v) {
 			// allow for manually setting primary keys!!! -- rmp
 			if (in_array($f, $pk) && empty( $v )) continue;
 			$fields[] = $f;
@@ -449,6 +455,7 @@ abstract class SiTech_Model_Abstract
 		$sql .= '('.implode(',', $fields).') VALUES(:'.implode(',:', $fields).')';
 		$stmnt = $this->_db->prepare($sql);
 		if ($stmnt->execute($values)) {
+			$this->_fields = $tmp_fields;
 			// Assign the PK once the row is inserted
 			foreach( $pk as $key ) {
 				if( !empty( $this->_fields[$key] ) )
