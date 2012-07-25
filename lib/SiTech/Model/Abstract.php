@@ -173,7 +173,7 @@ abstract class SiTech_Model_Abstract
 					}
 
 					if (isset($this->_belongsTo[$name]['foreignKey'])) {
-						$fk = $this->_belongsTo[$name]['foreignKey'].'='.$this->_fields[$name];
+						$fk = $this->_belongsTo[$name]['foreignKey'].'='.$value;
 					}
 
 					if (isset($this->_belongsTo[$name]['autoload'])) {
