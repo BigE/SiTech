@@ -219,17 +219,19 @@ abstract class SiTech_Model_Abstract
 	 */
 	public function __set($name, $value)
 	{
-		if (
-			( is_array( static::$_pk ) && in_array( $name, static::$_pk ) )
-			|| $name == static::$_pk
-		) {
-			$this->_fields[$name] = $value;
-		} elseif (isset($this->_fields[$name]) && $this->_fields[$name] === $value && isset($this->_modified[$name])) {
+		if (isset($this->_fields[$name]) && $this->_fields[$name] === $value && isset($this->_modified[$name])) {
 			unset($this->_modified[$name]);
 		} elseif (!isset($this->_fields[$name])) {
 			$this->_modified[$name] = $this->_fields[$name] = $value;
 		} else {
 			$this->_modified[$name] = $value;
+		}
+		# in order to handle data copying
+		if (
+			( is_array( static::$_pk ) && in_array( $name, static::$_pk ) )
+			|| $name == static::$_pk
+		) {
+			$this->_modified = array_merge( $this->_fields, $this->_modified );
 		}
 	}
 
@@ -277,7 +279,7 @@ abstract class SiTech_Model_Abstract
 
 		$bindParams = array( );
 		foreach( $pk as $key ) {
-			$bindParams[$key] = $this->_fields[$key];
+			$bindParams[$key] = $this->{$key};
 		}
 
 		$keyWhere = static::getKeyWhere( );
@@ -395,7 +397,7 @@ abstract class SiTech_Model_Abstract
 			return(false);
 		}
 
-		$id = $this->getId( );
+		$id = $this->getId();
 		$insert = $id ? static::getCount( $id ) == 0 : true;
 
 		$save = false;
@@ -434,33 +436,35 @@ abstract class SiTech_Model_Abstract
 	 *
 	 * @return bool
 	 */
-	private function _insert()
+	protected function _insert()
 	{
 		$pk = static::pk();
-		if( !is_array( $pk ) )
+		if ( !is_array( $pk ) ) {
 			$pk = array( $pk );
+		}
 
 		$sql = 'INSERT INTO '.static::$_table.' ';
 		$fields = array();
 		$values = array();
 
-		$tmp_fields = array_merge( $this->_fields, $this->_modified );
+#		$tmp_fields = array_merge( $this->_fields, $this->_modified );
+		$tmp_fields = ( $this->_modified ?: $this->_fields );
 		foreach ($tmp_fields as $f => $v) {
 			// allow for manually setting primary keys!!! -- rmp
 			if (in_array($f, $pk) && empty( $v )) continue;
 			$fields[] = $f;
+			// TODO what happens if $v is an array (i.e. has many)?
 			$values[$f] = ($v instanceof SiTech_Model_Abstract)? $v->{$v::pk()} : $v;
 		}
 
 		$sql .= '('.implode(',', $fields).') VALUES(:'.implode(',:', $fields).')';
 		$stmnt = $this->_db->prepare($sql);
 		if ($stmnt->execute($values)) {
-			$this->_fields = $tmp_fields;
 			// Assign the PK once the row is inserted
 			foreach( $pk as $key ) {
-				if( !empty( $this->_fields[$key] ) )
+				if( !empty( $tmp_fields[$key] ) )
 					continue;
-				$this->_fields[$key] = $this->_db->lastInsertId( );
+				$this->_modified[$key] = $this->_db->lastInsertId();
 			}
 		}
 		return($stmnt->rowCount());
@@ -473,17 +477,20 @@ abstract class SiTech_Model_Abstract
 	 *
 	 * @return bool
 	 */
-	private function _update()
+	protected function _update()
 	{
 		$pk = static::pk();
-		if( !is_array( $pk ) )
+		if ( !is_array( $pk ) ) {
 			$pk = array( $pk );
+		}
 
 		$sql = 'UPDATE '.static::$_table.' SET ';
 		$fields = array();
 		$values = array();
 
-		foreach ($this->_modified as $f => $v) {
+		$tmp_fields = ( $this->_modified ?: $this->_fields );
+#		foreach ($this->_modified as $f => $v) {
+		foreach ($tmp_fields as $f => $v) {
 			if (in_array( $f, $pk)) continue; // We don't update the value of the pk
 			$fields[] = $f.' = :' . $f;
 			$values[$f] = ($v instanceof SiTech_Model_Abstract)? $v->{$v::pk()} : $v;
@@ -492,7 +499,8 @@ abstract class SiTech_Model_Abstract
 		$sql .= implode(',', $fields);
 		$sql .= ' WHERE '.static::getKeyWhere( );
 		foreach( $pk as $key ) {
-			$values[$key] = $this->_fields[$key];
+#			$values[$key] = $this->_fields[$key];
+			$values[$key] = $this->{$key};
 		}
 		$stmnt = $this->_db->prepare($sql);
 		$stmnt->execute($values);
@@ -534,17 +542,17 @@ abstract class SiTech_Model_Abstract
 		return $keyWhere;
 	}
 
-	public function getId( ) {
+	public function getId() {
 		if( is_array( static::$_pk ) ) {
-			$id = array( );
+			$id = array();
 			foreach( static::$_pk as $pk ) {
-				if (!isset($this->_fields[$pk])) return;
-				$id[] = $this->_fields[$pk];
+				if ( !isset($this->{$pk}) ) { return; }
+				$id[] = $this->{$pk};
 			}
 			$id = implode( '-', $id );
 			return $id;
-		} elseif (isset($this->_fields[static::$_pk])) {
-			return $this->_fields[static::$_pk];
+		} elseif ( isset($this->{static::$_pk}) ) {
+			return $this->{static::$_pk};
 		}
 	}
 }
