@@ -97,6 +97,13 @@ abstract class SiTech_Model_Abstract
 	protected $_modified = array();
 
 	/**
+	 * This keeps track of whether the primary key has been reset
+	 *
+	 * @var boolean
+	 */
+	protected $_pk_reset = false;
+
+	/**
 	 * Primary key for the table. This must be set for the model to be accessed
 	 * by any of the methods.
 	 *
@@ -219,19 +226,27 @@ abstract class SiTech_Model_Abstract
 	 */
 	public function __set($name, $value)
 	{
-		if (isset($this->_fields[$name]) && $this->_fields[$name] === $value && isset($this->_modified[$name])) {
+		$watch_pk = true;
+		if ( !$this->_pk_reset && isset($this->_fields[$name]) && $this->_fields[$name] === $value && isset($this->_modified[$name])) {
 			unset($this->_modified[$name]);
 		} elseif (!isset($this->_fields[$name])) {
 			$this->_modified[$name] = $this->_fields[$name] = $value;
+			// this is more likely due to the object initially being loaded
+			// so we shouldn't need to array_merge() if this is the case
+			$watch_pk = false;
 		} else {
 			$this->_modified[$name] = $value;
 		}
 		# in order to handle data copying
 		if (
-			( is_array( static::$_pk ) && in_array( $name, static::$_pk ) )
-			|| $name == static::$_pk
+			$watch_pk
+			&& (
+				( is_array( static::$_pk ) && in_array( $name, static::$_pk ) )
+				|| $name == static::$_pk
+			)
 		) {
 			$this->_modified = array_merge( $this->_fields, $this->_modified );
+			$this->_pk_reset = true;
 		}
 	}
 
@@ -407,8 +422,11 @@ abstract class SiTech_Model_Abstract
 			$save = $this->_update();
 		}
 
-		$this->_fields = array_merge($this->_fields, $this->_modified);
-		$this->_modified = array();
+		if ( $save ) {
+			$this->_fields = array_merge($this->_fields, $this->_modified);
+			$this->_modified = array();
+			$this->_pk_reset = false;
+		}
 		return($save);
 	}
 
