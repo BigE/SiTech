@@ -559,9 +559,18 @@ abstract class SiTech_Model_Abstract
 
 		return $keyWhere;
 	}
+	
+	/**
+	 * If attempting to get a string value for the model, return the model id
+	 *
+	 * @return string id
+	 */
+	public function __toString( ) {
+		return $this->getId( );
+	}
 
 	public function getId() {
-		if( is_array( static::$_pk ) ) {
+		if( is_array( static::$_pk ) ) {	// primary key is composite
 			$id = array();
 			foreach( static::$_pk as $pk ) {
 				if ( !isset($this->{$pk}) ) { return; }
