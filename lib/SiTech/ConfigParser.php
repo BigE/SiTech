@@ -316,7 +316,7 @@ class SiTech_ConfigParser
 			if (!$bool) {
 				$this->_handleError('Unable to parse "%s" into the config', array($item));
 			} else {
-				$this->_config = $this->_array_merge_recursive($config, $this->_config);
+				$this->_config = $this->_array_merge_recursive($this->_config, $config);
 			}
 		}
 
