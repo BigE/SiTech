@@ -38,11 +38,11 @@ class SiTech_Loader
 	public static function autoload($class)
 	{
 		if (substr($class, -5) == 'Model' && substr($class, -6, 1) !== '_') {
-			self::loadModel(substr($class, 0, -5));
+			static::loadModel(substr($class, 0, -5));
 		} elseif (substr($class, -10) == 'Controller' && substr($class, -11, 1) !== '_') {
-			self::loadController(str_replace('_', DIRECTORY_SEPARATOR, substr($class, 0, -10)), null);
+			static::loadController(str_replace('_', DIRECTORY_SEPARATOR, substr($class, 0, -10)), null);
 		} else {
-			self::loadClass($class);
+			static::loadClass($class);
 		}
 	}
 
@@ -89,7 +89,7 @@ class SiTech_Loader
 			return;
 		}
 
-		$file = str_replace('_', DIRECTORY_SEPARATOR, $class).'.php';
+		$file = str_replace(array('_', '\\'), DIRECTORY_SEPARATOR, $class).'.php';
 		include_once($file);
 
 		if (!class_exists($class, false) && !interface_exists($class, false)) {
