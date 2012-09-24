@@ -113,8 +113,8 @@ class SiTech_Loader
 		$name = strtolower($name);
 		$class = null;
 
-		if (strstr($name, DIRECTORY_SEPARATOR) !== false) {
-			$parts = explode(DIRECTORY_SEPARATOR, $name);
+		if (strpos($name, '/') !== false || strpos($name, '\\') !== false) {
+			$parts = preg_split('|[\\\/]|', $name);
 			$parts = array_map('ucfirst', $parts);
 			$class = implode('_', $parts).'Controller';
 		} else {
