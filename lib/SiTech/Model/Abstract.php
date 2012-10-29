@@ -510,7 +510,7 @@ abstract class SiTech_Model_Abstract
 #		foreach ($this->_modified as $f => $v) {
 		foreach ($tmp_fields as $f => $v) {
 			if (in_array( $f, $pk)) continue; // We don't update the value of the pk
-			$fields[] = '`'.$f.'` = :' . $f;
+			$fields[] = '`' . $f.'` = :' . $f;
 			$values[$f] = ($v instanceof SiTech_Model_Abstract)? $v->{$v::pk()} : $v;
 		}
 
