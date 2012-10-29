@@ -470,12 +470,12 @@ abstract class SiTech_Model_Abstract
 		foreach ($tmp_fields as $f => $v) {
 			// allow for manually setting primary keys!!! -- rmp
 			if (in_array($f, $pk) && empty( $v )) continue;
-			$fields[] = '`' . $f . '`';
+			$fields[] = $f;
 			// TODO what happens if $v is an array (i.e. has many)?
 			$values[$f] = ($v instanceof SiTech_Model_Abstract)? $v->{$v::pk()} : $v;
 		}
 
-		$sql .= '('.implode(',', $fields).') VALUES(:'.implode(',:', $fields).')';
+		$sql .= '(`'.implode('`,`', $fields).'`) VALUES(:'.implode(',:', $fields).')';
 		$stmnt = $this->_db->prepare($sql);
 		if ($stmnt->execute($values)) {
 			// Assign the PK once the row is inserted
@@ -510,7 +510,7 @@ abstract class SiTech_Model_Abstract
 #		foreach ($this->_modified as $f => $v) {
 		foreach ($tmp_fields as $f => $v) {
 			if (in_array( $f, $pk)) continue; // We don't update the value of the pk
-			$fields[] = '`' . $f.'` = :' . $f;
+			$fields[] = '`' . $f . '` = :' . $f;
 			$values[$f] = ($v instanceof SiTech_Model_Abstract)? $v->{$v::pk()} : $v;
 		}
 
