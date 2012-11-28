@@ -269,7 +269,7 @@ class SiTech_DB_Proxy extends SiTech_DB
 		$ret = false;
 
 		if (!$this->_inTransaction && $this->getAttribute(SiTech_DB_Proxy::ATTR_WRITEONLY) !== true && !empty($this->_readConn)) {
-			list($type,) = preg_split('#\s#s', $statement, 1);
+			list($type,) = preg_split('#\s#s', $statement, 2);
 
 			switch (ltrim($type, '(')) {
 				case 'DESC':
