@@ -559,7 +559,7 @@ abstract class SiTech_Model_Abstract
 
 		return $keyWhere;
 	}
-	
+
 	/**
 	 * If attempting to get a string value for the model, return the model id
 	 *
@@ -579,7 +579,13 @@ abstract class SiTech_Model_Abstract
 			$id = implode( '-', $id );
 			return $id;
 		} elseif ( isset($this->{static::$_pk}) ) {
-			return $this->{static::$_pk};
+			// typecast to an int
+			$id = $this->{static::$_pk};
+			if (ctype_digit($id)) {
+				$id = (int)$id;
+			}
+
+			return($id);
 		}
 	}
 }
