@@ -566,7 +566,7 @@ abstract class SiTech_Model_Abstract
 	 * @return string id
 	 */
 	public function __toString( ) {
-		return $this->getId( );
+		return((string)$this->getId());
 	}
 
 	public function getId() {
