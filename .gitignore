@@ -1,0 +1,20 @@
+# generic ignores
+*.bak
+*.swp
+
+# specific ignores
+composer.lock
+composer.phar
+.idea/
+nbproject/private/
+.settings/
+vendor/
+
+# OS Files #
+
+# Windows
+Desktop.ini
+Thumbs.db
+
+# OSX
+.DS_Store
