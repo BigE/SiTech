@@ -23,7 +23,7 @@
  * @author Eric Gach <eric@php-oop.net>
  * @copyright Copyright (c) 2014 Eric Gach <eric@php-oop.net>
  * @license MIT
- * @package SiTech\DB
+ * @package SiTech\Database
  */
 
 namespace SiTech\Database\Dsn

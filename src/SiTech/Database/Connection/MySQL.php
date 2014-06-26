@@ -23,13 +23,13 @@
  * @author Eric Gach <eric@php-oop.net>
  * @copyright Copyright (c) 2014 Eric Gach <eric@php-oop.net>
  * @license MIT
- * @package SiTech\DB
+ * @package SiTech\Database
  */
 
-namespace SiTech\DB\Connection
+namespace SiTech\Database\Connection
 {
-	use SiTech\DB\Connection;
-	use SiTech\DB\Dsn\Mysql as Dsn;
+	use SiTech\Database\Connection;
+	use SiTech\Database\Dsn\Mysql as Dsn;
 
 	class MySQL extends Connection
 	{

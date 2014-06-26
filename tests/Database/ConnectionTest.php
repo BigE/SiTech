@@ -2,6 +2,9 @@
 
 class DatabaseConnectionTest extends PHPUnit_Framework_TestCase
 {
+	/**
+	 * @covers \SiTech\Database\Connection::__construct
+	 */
 	public function testConstructor()
 	{
 		$conn = new MockConnection(['dsn' => 'sqlite::memory:']);
