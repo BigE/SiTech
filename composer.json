@@ -16,12 +16,6 @@
 		"framework",
 		"sitech"
 	],
-	"repositories": [
-		{
-			"type": "vcs",
-			"url": "https://github.com/BigE/SiTech.git"
-		}
-	],
 	"license": "MIT",
 	"autoload": {
 		"psr-0": {
