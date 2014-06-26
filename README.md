@@ -1,5 +1,7 @@
 # SiTech
 
+![develop build status](https://travis-ci.org/BigE/SiTech.svg?branch=develop)
+
 ## Introduction
 
 The SiTech framework is written in PHP and was built to be a very modular framework. Each component can be used by
