@@ -57,6 +57,17 @@ namespace SiTech\Helper
 		}
 
 		/**
+		 * @param $name
+		 * @param $params
+		 * @return $this
+		 */
+		public function __call($name, $params)
+		{
+			$this->attributes[$name] = (count($params) > 0)? $params[0] : true;
+			return $this;
+		}
+
+		/**
 		 * Allows access to attributes as properties of the object.
 		 *
 		 * The DSN object should return all configuration settings through this
@@ -168,7 +179,11 @@ namespace SiTech\Helper
 			}
 
 			if ($this->offsetExists($offset)) {
-				$value = $prefix.$this->attributes[$offset];
+				$value = $this->attributes[$offset];
+
+				if ($prefix) {
+					$value = $prefix.$value;
+				}
 			} elseif ($required) {
 				throw new \Exception();
 			}
