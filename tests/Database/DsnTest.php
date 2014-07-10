@@ -12,8 +12,8 @@ class DBDsnTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * @covers \SiTech\Database\Dsn::getDsn
-	 * @covers \SiTech\Database\Dsn::__toString
+	 * @covers \SiTech\Database\Dsn\Dsn::getDsn
+	 * @covers \SiTech\Database\Dsn\Dsn::__toString
 	 */
 	public function testGetDsn()
 	{
@@ -23,7 +23,7 @@ class DBDsnTest extends PHPUnit_Framework_TestCase
 	}
 }
 
-class DBDsnTestMockDsn extends \SiTech\Database\Dsn
+class DBDsnTestMockDsn extends \SiTech\Database\Dsn\Dsn
 {
 	public function _generateDsn()
 	{

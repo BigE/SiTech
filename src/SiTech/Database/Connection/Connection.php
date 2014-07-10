@@ -26,7 +26,7 @@
  * @package SiTech\DB
  */
 
-namespace SiTech\Database
+namespace SiTech\Database\Connection
 {
 	/**
 	 * Class Connection
@@ -36,6 +36,8 @@ namespace SiTech\Database
 	abstract class Connection extends \PDO
 	{
 		/**
+		 * Initalize the conection to the database.
+		 *
 		 * @param array $config
 		 * @param array $options
 		 */

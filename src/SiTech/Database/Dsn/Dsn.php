@@ -24,9 +24,10 @@
  * @copyright Copyright (c) 2014 Eric Gach <eric@php-oop.net>
  * @license MIT
  * @package SiTech\Database
+ * @subpackage SiTech\Database\Dsn
  */
 
-namespace SiTech\Database
+namespace SiTech\Database\Dsn
 {
 	/**
 	 * Create a new DSN object with the config settings passed in.
@@ -36,7 +37,9 @@ namespace SiTech\Database
 	 * read the PDO Drivers documentation to see what options are available
 	 * for your driver.
 	 *
+	 * @package SiTech\Database
 	 * @see http://php.net/pdo.drivers
+	 * @subpackage SiTech\Database\Dsn
 	 */
 	abstract class Dsn
 	{

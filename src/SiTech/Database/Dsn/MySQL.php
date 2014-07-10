@@ -28,8 +28,6 @@
 
 namespace SiTech\Database\Dsn
 {
-	use SiTech\Database\Dsn;
-
 	/**
 	 * MySQL DSN generator
 	 *

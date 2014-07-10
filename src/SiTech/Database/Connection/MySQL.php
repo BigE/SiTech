@@ -28,7 +28,6 @@
 
 namespace SiTech\Database\Connection
 {
-	use SiTech\Database\Connection;
 	use SiTech\Database\Dsn\Mysql as Dsn;
 
 	class MySQL extends Connection
