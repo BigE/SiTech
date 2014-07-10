@@ -33,7 +33,11 @@ PHPUnit is used to perform unit tests on the SiTech framework. There is a phpuni
 SiTech repository that can be used. To run the tests, simply run the command `phpunit -c /path/to/SiTech/phpunit.xml`.
 All tests are stored in the tests folder of the repository.
 
+If you are writing unit tests for the code, you must provide the @covers deceleration for each method tested, on each
+declared test method. This will help ensure that we truly have code coverage with unit tests.
+
 ## Documentation
 
 Currently we do not have any documentation written up as it is all source code documentation. Until there is official
-documentation for SiTech, the simplest way to generate it is to use phpdocumentor.
+documentation for SiTech, the simplest way to generate the source code documentation is to use
+[phpdocumentor](http://www.phpdoc.org/).
