@@ -107,6 +107,17 @@ class ContainerTest extends PHPUnit_Framework_TestCase
 		$this->assertTrue(isset($this->_container->foo));
 		$this->assertFalse(isset($this->_container->iamnotset));
 	}
+
+	/**
+	 * @covers \SiTech\Helper\Container::__call
+	 */
+	public function testMagicCall()
+	{
+		$this->_container->emptyValue();
+		$this->assertTrue($this->_container->emptyValue);
+		$this->_container->stringValue('hello');
+		$this->assertEquals('hello', $this->_container->stringValue);
+	}
 }
 
 class Container {
