@@ -18,7 +18,7 @@ class ContainerTest extends PHPUnit_Framework_TestCase
 	{
 		$container = new Container(['foo' => 'bar']);
 		$this->assertInstanceOf('Container', $container);
-		$this->assertArrayHasKey('foo', $this->readAttribute($container, 'attributes'));
+		$this->assertArrayHasKey('foo', $this->readAttribute($container, 'container'));
 	}
 
 	/**
@@ -96,7 +96,7 @@ class ContainerTest extends PHPUnit_Framework_TestCase
 	public function testMagicSet()
 	{
 		$this->_container->bar = 'baz';
-		$this->assertEquals('baz', $this->readAttribute($this->_container, 'attributes')['bar']);
+		$this->assertEquals('baz', $this->readAttribute($this->_container, 'container')['bar']);
 	}
 
 	/**

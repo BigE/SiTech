@@ -40,7 +40,7 @@ namespace SiTech\Helper
 		 *
 		 * @var array
 		 */
-		protected $attributes = [];
+		protected $container = [];
 
 		/**
 		 * Create the attributes array that is to be used for the container.
@@ -53,7 +53,7 @@ namespace SiTech\Helper
 		 */
 		public function __construct(array $attributes = [])
 		{
-			$this->attributes = $attributes;
+			$this->container = $attributes;
 		}
 
 		/**
@@ -63,7 +63,7 @@ namespace SiTech\Helper
 		 */
 		public function __call($name, $params)
 		{
-			$this->attributes[$name] = (count($params) > 0)? $params[0] : true;
+			$this->container[$name] = (count($params) > 0)? $params[0] : true;
 			return $this;
 		}
 
@@ -121,7 +121,7 @@ namespace SiTech\Helper
 		 */
 		public function count()
 		{
-			return count($this->attributes);
+			return count($this->container);
 		}
 
 		public function get($key, $default = null)
@@ -143,7 +143,7 @@ namespace SiTech\Helper
 		 */
 		public function offsetExists($offset)
 		{
-			return isset($this->attributes[$offset]);
+			return isset($this->container[$offset]);
 		}
 
 		/**
@@ -179,7 +179,7 @@ namespace SiTech\Helper
 			}
 
 			if ($this->offsetExists($offset)) {
-				$value = $this->attributes[$offset];
+				$value = $this->container[$offset];
 
 				if ($prefix) {
 					$value = $prefix.$value;
@@ -199,7 +199,7 @@ namespace SiTech\Helper
 		 */
 		public function offsetSet($offset, $value)
 		{
-			$this->attributes[$offset] = $value;
+			$this->container[$offset] = $value;
 		}
 
 		/**
@@ -209,7 +209,7 @@ namespace SiTech\Helper
 		 */
 		public function offsetUnset($offset)
 		{
-			unset($this->attributes[$offset]);
+			unset($this->container[$offset]);
 		}
 	}
 }
