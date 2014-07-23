@@ -5,6 +5,7 @@
 # specific ignores
 composer.lock
 composer.phar
+docs/api/
 .idea/
 nbproject/private/
 .settings/
