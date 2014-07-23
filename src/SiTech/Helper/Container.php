@@ -31,6 +31,8 @@ namespace SiTech\Helper
 	/**
 	 * The container trait implements \ArrayAccess and \Countable
 	 *
+	 * @link http://php.net/arrayaccess
+	 * @link http://php.net/countable
 	 * @package SiTech\Helper
 	 */
 	trait Container
@@ -111,19 +113,28 @@ namespace SiTech\Helper
 		}
 
 		/**
-		 * (PHP 5 &gt;= 5.1.0)<br/>
-		 * Count elements of an object
-		 * @link http://php.net/manual/en/countable.count.php
-		 * @return int The custom count as an integer.
-		 * </p>
-		 * <p>
-		 * The return value is cast to an integer.
+		 * Count elements in the container.
+		 *
+		 * @link http://php.net/countable.count
+		 * @return int
 		 */
 		public function count()
 		{
 			return count($this->container);
 		}
 
+		/**
+		 * Simple wrapper for offsetGet that simply provides a default value
+		 *
+		 * Calling offsetGet for a non-existent value will simply return an
+		 * empty string. By using the get() method, you can provide a default
+		 * expected value if the key is not set.
+		 *
+		 * @param mixed $key
+		 * @param mixed $default
+		 * @return mixed
+		 * @see offsetGet
+		 */
 		public function get($key, $default = null)
 		{
 			if ($this->offsetExists($key)) {
@@ -138,6 +149,7 @@ namespace SiTech\Helper
 		 *
 		 * This simply checks if a configuration option exists by using isset().
 		 *
+		 * @link http://php.net/arrayaccess.offsetexists
 		 * @param mixed $offset
 		 * @return bool
 		 */
@@ -153,6 +165,7 @@ namespace SiTech\Helper
 		 * to the value as "name=value". If $required is set to true and the
 		 * offset is not set, an exception will be thrown.
 		 *
+		 * @link http://php.net/arrayaccess.offsetget
 		 * @param mixed $offset
 		 * @param bool $prefix
 		 * @param bool $required
@@ -194,6 +207,7 @@ namespace SiTech\Helper
 		/**
 		 * Set a value to the config name.
 		 *
+		 * @link http://php.net/arrayaccess.offsetset
 		 * @param mixed $offset
 		 * @param mixed $value
 		 */
@@ -205,6 +219,7 @@ namespace SiTech\Helper
 		/**
 		 * Unset the offset from the config.
 		 *
+		 * @link http://php.net/arrayaccess.offsetunset
 		 * @param mixed $offset
 		 */
 		public function offsetUnset($offset)
