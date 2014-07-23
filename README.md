@@ -1,6 +1,6 @@
 # SiTech
 
-![develop build status](https://travis-ci.org/BigE/SiTech.svg?branch=develop)
+[![develop build status](https://travis-ci.org/BigE/SiTech.svg?branch=develop)](https://travis-ci.org/BigE/SiTech)
 
 ## Introduction
 
