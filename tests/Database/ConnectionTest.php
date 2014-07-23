@@ -1,21 +1,25 @@
 <?php
-
-class DatabaseConnectionTest extends PHPUnit_Framework_TestCase
-{
+namespace Database {
 	/**
-	 * @covers \SiTech\Database\Connection\Connection::__construct
+	 * @group Database
 	 */
-	public function testConstructor()
+	class ConnectionTest extends \PHPUnit_Framework_TestCase
 	{
-		$conn = new MockConnection(['dsn' => 'sqlite::memory:']);
-		$this->assertInstanceOf('\SiTech\Database\Connection\Connection', $conn);
+		/**
+		 * @covers \SiTech\Database\Connection\Connection::__construct
+		 */
+		public function testConstructor()
+		{
+			$conn = new MockConnection(['dsn' => 'sqlite::memory:']);
+			$this->assertInstanceOf('\SiTech\Database\Connection\Connection', $conn);
+		}
 	}
-}
 
-class MockConnection extends \SiTech\Database\Connection\Connection
-{
-	protected function _generateDsn(array $config)
+	class MockConnection extends \SiTech\Database\Connection\Connection
 	{
-		// TODO: Implement _generateDsn() method.
+		protected function _generateDsn(array $config)
+		{
+			// TODO: Implement _generateDsn() method.
+		}
 	}
 }

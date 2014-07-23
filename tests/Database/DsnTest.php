@@ -1,32 +1,37 @@
 <?php
-class DBDsnTest extends PHPUnit_Framework_TestCase
-{
+namespace Database {
 	/**
-	 * @var DBDsnTestMockDsn
+	 * @group Database
 	 */
-	protected $_dsn;
-
-	public function setUp()
+	class DBDsnTest extends \PHPUnit_Framework_TestCase
 	{
-		$this->_dsn = new DBDsnTestMockDsn(['foo' => 'bar']);
+		/**
+		 * @var DBDsnTestMockDsn
+		 */
+		protected $_dsn;
+
+		public function setUp()
+		{
+			$this->_dsn = new DBDsnTestMockDsn(['foo' => 'bar']);
+		}
+
+		/**
+		 * @covers \SiTech\Database\Dsn\Dsn::getDsn
+		 * @covers \SiTech\Database\Dsn\Dsn::__toString
+		 */
+		public function testGetDsn()
+		{
+			$this->assertEquals('dsn', $this->_dsn->getDsn());
+			// this returns a call to getDsn, so if the previous fails, this will to... meh
+			$this->assertEquals('dsn', (string)$this->_dsn);
+		}
 	}
 
-	/**
-	 * @covers \SiTech\Database\Dsn\Dsn::getDsn
-	 * @covers \SiTech\Database\Dsn\Dsn::__toString
-	 */
-	public function testGetDsn()
+	class DBDsnTestMockDsn extends \SiTech\Database\Dsn\Dsn
 	{
-		$this->assertEquals('dsn', $this->_dsn->getDsn());
-		// this returns a call to getDsn, so if the previous fails, this will to... meh
-		$this->assertEquals('dsn', (string)$this->_dsn);
-	}
-}
-
-class DBDsnTestMockDsn extends \SiTech\Database\Dsn\Dsn
-{
-	public function _generateDsn()
-	{
-		$this->_dsn = 'dsn';
+		public function _generateDsn()
+		{
+			$this->_dsn = 'dsn';
+		}
 	}
 }
