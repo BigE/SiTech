@@ -35,7 +35,7 @@ namespace Helper
 
 		/**
 		 * @covers \SiTech\Helper\Container::offsetGet
-		 * @expectedException \Exception
+		 * @covers \SiTech\Helper\Container\OffsetMissing
 		 */
 		public function testOffsetGet()
 		{
@@ -44,6 +44,7 @@ namespace Helper
 			$this->assertEquals('foo=bar', $this->_container->offsetGet('foo', true));
 			$this->assertEquals('foo=bar', $this->_container->offsetGet(['foo', 'fooey'], true));
 			$this->assertEmpty($this->_container->offsetGet('bar'));
+			$this->setExpectedException('\SiTech\Helper\Container\OffsetMissing', 'The offset bar does not exist in the container');
 			$this->_container->offsetGet('bar', false, true);
 		}
 

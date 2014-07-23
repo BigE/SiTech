@@ -1,9 +1,19 @@
 <?php
-namespace SiTech\Config
+namespace SiTech\Config\Registry
 {
+	/**
+	 * Class Exception
+	 *
+	 * @package SiTech\Config
+	 */
 	abstract class Exception extends \SiTech\Helper\Exception
 	{}
 
+	/**
+	 * Class DuplicateKey
+	 *
+	 * @package SiTech\Config
+	 */
 	class DuplicateKey extends Exception
 	{
 		public function __construct($key, $code = null, $inner = null)
@@ -12,6 +22,11 @@ namespace SiTech\Config
 		}
 	}
 
+	/**
+	 * Class MissingKey
+	 *
+	 * @package SiTech\Config
+	 */
 	class MissingKey extends Exception
 	{
 		public function __construct($key, $code = null, $inner = null)

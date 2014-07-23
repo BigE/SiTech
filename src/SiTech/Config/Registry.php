@@ -28,6 +28,11 @@
 
 namespace SiTech\Config
 {
+	/**
+	 * Class Registry
+	 *
+	 * @package SiTech\Config
+	 */
 	class Registry
 	{
 		use \SiTech\Helper\Container {
@@ -36,13 +41,25 @@ namespace SiTech\Config
 
 		use \SiTech\Helper\Singleton;
 
+		/**
+		 * Get a key from the registry
+		 *
+		 * This overrides the default container behavior by forcing the required
+		 * flag to offsetGet and throwing an exception if a key in the registry
+		 * does not exist. To get around this, simply use one of the other
+		 * methods available.
+		 *
+		 * @param mixed $key
+		 * @return mixed
+		 * @throws \SiTech\Config\Registry\MissingKey
+		 */
 		public function get($key)
 		{
 			try {
 				return $this->offsetGet($key, false, true);
 			} catch (\Exception $inner) {
-				require_once __DIR__.'/Exception.php';
-				throw new MissingKey($key, null, $inner);
+				require_once __DIR__.'/Registry/Exception.php';
+				throw new Registry\MissingKey($key, null, $inner);
 			}
 		}
 
@@ -53,7 +70,7 @@ namespace SiTech\Config
 		 * (string/int) the value will be interpreted as true otherwise false
 		 * is assumed and returned.
 		 *
-		 * @param $key
+		 * @param mixed $key
 		 * @return bool
 		 */
 		public function getBoolean($key)
@@ -68,7 +85,7 @@ namespace SiTech\Config
 		/**
 		 * Return a float value for the settings key specified.
 		 *
-		 * @param string $key
+		 * @param mixed $key
 		 * @return float
 		 */
 		public function getFloat($key)
@@ -79,7 +96,7 @@ namespace SiTech\Config
 		/**
 		 * Return an integer value for the settings key specified.
 		 *
-		 * @param string $key
+		 * @param mixed $key
 		 * @return int
 		 */
 		public function getInteger($key)
@@ -90,7 +107,7 @@ namespace SiTech\Config
 		/**
 		 * Simple wrapper function to check if a key exists.
 		 *
-		 * @param string $key
+		 * @param mixed $key
 		 * @return bool
 		 * @see \SiTech\Helper\Container::offsetExists
 		 */
@@ -111,11 +128,11 @@ namespace SiTech\Config
 		 * This does a simple check to see if the key is already set. If it is
 		 * set and strict is true, a DuplicateKey exception will be thrown.
 		 *
-		 * @param string $key
+		 * @param mixed $key
 		 * @param mixed $value
 		 * @param bool $strict
 		 * @return Registry
-		 * @throws DuplicateKey
+		 * @throws \SiTech\Config\Registry\DuplicateKey
 		 */
 		public function set($key, $value, $strict = false)
 		{
@@ -124,8 +141,8 @@ namespace SiTech\Config
 				return $this;
 			}
 
-			require_once __DIR__.'/Exception.php';
-			throw new DuplicateKey($key);
+			require_once __DIR__.'/Registry/Exception.php';
+			throw new Registry\DuplicateKey($key);
 		}
 	}
 }

@@ -17,7 +17,7 @@ namespace Config
 
 		/**
 		 * @covers \SiTech\Config\Registry::set
-		 * @covers \SiTech\Config\DuplicateKey
+		 * @covers \SiTech\Config\Registry\DuplicateKey
 		 */
 		public function testSet()
 		{
@@ -26,20 +26,20 @@ namespace Config
 			$this->assertEquals('bar', $config->get('foo'));
 			$config->set('foo', 'baz');
 			$this->assertEquals('baz', $config->get('foo'));
-			$this->setExpectedException('\SiTech\Config\DuplicateKey', 'The key foo already exists in the configuration');
+			$this->setExpectedException('\SiTech\Config\Registry\DuplicateKey', 'The key foo already exists in the configuration');
 			$config->set('foo', 'duplicate key with strict mode', true);
 		}
 
 		/**
 		 * @covers \SiTech\Config\Registry::get
-		 * @covers \SiTech\Config\MissingKey
+		 * @covers \SiTech\Config\Registry\MissingKey
 		 */
 		public function testGet()
 		{
 			$c = new \SiTech\Config\Registry();
 			$c->set('my.existing.key', 'whee');
 			$this->assertEquals('whee', $c->get('my.existing.key'));
-			$this->setExpectedException('\SiTech\Config\MissingKey', 'The key my.missing.key is not currently present in the configuration');
+			$this->setExpectedException('\SiTech\Config\Registry\MissingKey', 'The key my.missing.key is not currently present in the configuration');
 			$c->get('my.missing.key');
 		}
 

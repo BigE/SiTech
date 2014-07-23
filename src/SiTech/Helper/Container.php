@@ -170,7 +170,7 @@ namespace SiTech\Helper
 		 * @param bool $prefix
 		 * @param bool $required
 		 * @return mixed|string
-		 * @throws \Exception
+		 * @throws \SiTech\Helper\Container\OffsetMissing
 		 */
 		public function offsetGet($offset, $prefix = false, $required = false)
 		{
@@ -198,7 +198,7 @@ namespace SiTech\Helper
 					$value = $prefix.$value;
 				}
 			} elseif ($required) {
-				throw new \Exception();
+				throw new Container\OffsetMissing($offset);
 			}
 
 			return $value;
@@ -225,6 +225,21 @@ namespace SiTech\Helper
 		public function offsetUnset($offset)
 		{
 			unset($this->container[$offset]);
+		}
+	}
+}
+
+namespace SiTech\Helper\Container {
+	/**
+	 * Class OffsetMissing
+	 *
+	 * @package SiTech\Helper
+	 */
+	class OffsetMissing extends \SiTech\Helper\Exception
+	{
+		public function __construct($offset, $code = null, \Exception $inner = null)
+		{
+			parent::__construct('The offset %s does not exist in the container', [$offset], $code, $inner);
 		}
 	}
 }
