@@ -1,21 +1,21 @@
-# generic ignores
+# generic ignores #
 *.bak
 *.swp
 
-# specific ignores
+# specific ignores #
 composer.lock
 composer.phar
 docs/api/
 .idea/
 nbproject/private/
+# usually defined by the developer, should use phpdoc.dist.xml when not present
+phpdoc.xml
 .settings/
 vendor/
 
 # OS Files #
-
 # Windows
 Desktop.ini
 Thumbs.db
-
 # OSX
 .DS_Store
