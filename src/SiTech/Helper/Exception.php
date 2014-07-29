@@ -8,4 +8,11 @@ namespace SiTech\Helper
 			parent::__construct(vsprintf($message, $args), $code, $inner);
 		}
 	}
+}
+
+namespace SiTech\Helper\Exception
+{
+	use \SiTech\Helper\Exception;
+
+	class UnexpectedValue extends Exception {}
 } 

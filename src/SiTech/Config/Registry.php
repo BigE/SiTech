@@ -28,6 +28,10 @@
 
 namespace SiTech\Config
 {
+	use SiTech\Config\Handler\Handler;
+	use SiTech\Config\Handler\NamedArgs;
+	use SiTech\Config\Registry\Exception;
+
 	/**
 	 * Class Registry
 	 *
@@ -35,114 +39,194 @@ namespace SiTech\Config
 	 */
 	class Registry
 	{
-		use \SiTech\Helper\Container {
-			get as containerGet;
-		}
-
+		use \SiTech\Helper\Env;
 		use \SiTech\Helper\Singleton;
 
-		/**
-		 * Get a key from the registry
-		 *
-		 * This overrides the default container behavior by forcing the required
-		 * flag to offsetGet and throwing an exception if a key in the registry
-		 * does not exist. To get around this, simply use one of the other
-		 * methods available.
-		 *
-		 * @param mixed $key
-		 * @return mixed
-		 * @throws \SiTech\Config\Registry\MissingKey
-		 */
-		public function get($key)
+		protected $interpolation = true;
+		protected $registry = [];
+
+		public function __construct($interpolation = true)
 		{
-			try {
-				return $this->offsetGet($key, false, true);
-			} catch (\Exception $inner) {
-				require_once __DIR__.'/Registry/Exception.php';
-				throw new Registry\MissingKey($key, null, $inner);
+			$this->interpolation = $interpolation;
+		}
+
+		public function addSection($section)
+		{
+			if (!$this->hasSection($section)) {
+				$this->registry[$this->prependEnv($section)] = [];
+				return $this;
 			}
+
+			throw new Exception\DuplicateSection($section);
 		}
 
 		/**
-		 * Return either true or false based on the value of the key
+		 * Get a value from the configuration.
 		 *
-		 * If the value of the key is 'true' (string/bool), 'yes', 'on' or '1'
-		 * (string/int) the value will be interpreted as true otherwise false
-		 * is assumed and returned.
-		 *
-		 * @param mixed $key
-		 * @return bool
+		 * @param $section
+		 * @param $option
+		 * @param bool $raw
+		 * @param array $vars
+		 * @param mixed $default
+		 * @return mixed|string
+		 * @throws Exception\MissingOption
+		 * @throws Exception\MissingSection
 		 */
-		public function getBoolean($key)
+		public function get($section, $option, $raw = false, array $vars = [])
 		{
-			if (($v = $this->get($key, false)) && in_array($v, [true, 'true', 'yes', 'on', '1', 1], true)) {
+			if (func_num_args() > 4) {
+				$default = func_get_arg(5);
+			}
+
+			if (($s = $this->section($section))) {
+				if ($this->hasOption($section, $option)) {
+					return $this->interpolate($this->registry[$s][$option], $vars, $raw);
+				} elseif (isset($default)) {
+					return $this->interpolate($default, $vars, $raw);
+				}
+			}
+
+			if ($s === false) {
+				throw new Exception\MissingSection($section);
+			}
+
+			throw new Exception\MissingOption($section, $option);
+		}
+
+		public function getBoolean($section, $option, $raw = false, array $vars = [])
+		{
+			$v = call_user_func_array([$this, 'get'], func_get_args());
+
+			if (is_string($v)) {
+				$v = strtolower($v);
+			}
+
+			if (in_array($v, ['1', 'yes', 'on', 'true', 1, true], true)) {
+				return true;
+			} elseif (in_array($v, ['0', 'no', 'off', 'false', 0, false], true)) {
+				return false;
+			}
+
+			throw new Exception\UnexpectedValue('Expecting boolean value, got %s', [$v]);
+		}
+
+		public function getFloat($section, $option, $raw = false, array $vars = [])
+		{
+			return (float)call_user_func_array([$this, 'get'], func_get_args());
+		}
+
+		public function getInt($section, $option)
+		{
+			return (int)call_user_func_array([$this, 'get'], func_get_args());
+		}
+
+		public function getInterpolation()
+		{
+			return $this->interpolation;
+		}
+
+		public function hasOption($section, $option)
+		{
+			return (($section = $this->section($section)) && isset($this->registry[$section][$option]));
+		}
+
+		public function hasSection($section)
+		{
+			return (bool)$this->section($section);
+		}
+
+		public function items($section = null)
+		{
+			if (empty($section)) {
+				return $this->registry;
+			}
+
+			if (($s = $this->section($section))) {
+				return $this->registry[$s];
+			}
+
+			throw new Exception\MissingSection($section);
+		}
+
+		public function options($section)
+		{
+			if (($s = $this->section($section))) {
+				return array_keys($this->registry[$s]);
+			}
+
+			throw new Exception\MissingSection($section);
+		}
+
+		public function read(Handler $handler, NamedArgs $args)
+		{
+			$this->registry = $handler->read($args);
+			return $this;
+		}
+
+		public function removeOption($section, $option)
+		{
+			if (($s = $this->section($section))) {
+				if (isset($this->registry[$s][$option])) {
+					unset($this->registry[$s][$option]);
+					return true;
+				}
+
+				return false;
+			}
+
+			throw new Exception\MissingSection($section);
+		}
+
+		public function removeSection($section)
+		{
+			if (($s = $this->section($section))) {
+				unset($this->registry[$s]);
 				return true;
 			}
 
 			return false;
 		}
 
-		/**
-		 * Return a float value for the settings key specified.
-		 *
-		 * @param mixed $key
-		 * @return float
-		 */
-		public function getFloat($key)
+		public function sections()
 		{
-			return (float)$this->get($key);
+			return array_keys($this->registry);
 		}
 
-		/**
-		 * Return an integer value for the settings key specified.
-		 *
-		 * @param mixed $key
-		 * @return int
-		 */
-		public function getInteger($key)
+		public function set($section, $option, $value)
 		{
-			return (int)$this->get($key);
-		}
-
-		/**
-		 * Simple wrapper function to check if a key exists.
-		 *
-		 * @param mixed $key
-		 * @return bool
-		 * @see \SiTech\Helper\Container::offsetExists
-		 */
-		public function hasKey($key)
-		{
-			return $this->offsetExists($key);
-		}
-
-		public function load()
-		{}
-
-		public function save()
-		{}
-
-		/**
-		 * Set a value to the key specified.
-		 *
-		 * This does a simple check to see if the key is already set. If it is
-		 * set and strict is true, a DuplicateKey exception will be thrown.
-		 *
-		 * @param mixed $key
-		 * @param mixed $value
-		 * @param bool $strict
-		 * @return Registry
-		 * @throws \SiTech\Config\Registry\DuplicateKey
-		 */
-		public function set($key, $value, $strict = false)
-		{
-			if (!$this->offsetExists($key) || $strict === false) {
-				$this->offsetSet($key, $value);
+			if (($s = $this->section($section))) {
+				$this->registry[$s][$option] = $value;
 				return $this;
 			}
 
-			require_once __DIR__.'/Registry/Exception.php';
-			throw new Registry\DuplicateKey($key);
+			throw new Exception\MissingSection($section);
+		}
+
+		public function write(Handler $handler, NamedArgs $args)
+		{
+			$handler->write($args);
+			return $this;
+		}
+
+		protected function interpolate($value, array $vars, $raw)
+		{
+			if (is_string($value) && ($this->interpolation === false || ($this->interpolation === true && $raw !== true))) {
+				return vsprintf($value, $vars);
+			}
+
+			return $value;
+		}
+
+		protected function section($section)
+		{
+			$envSection = $this->prependEnv($section);
+			if (isset($this->registry[$envSection])) {
+				return $envSection;
+			} elseif (isset($this->registry[$section])) {
+				return $section;
+			}
+
+			return false;
 		}
 	}
 }
