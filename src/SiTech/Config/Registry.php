@@ -75,7 +75,8 @@ namespace SiTech\Config
 		public function get($section, $option, $raw = false, array $vars = [])
 		{
 			if (func_num_args() > 4) {
-				$default = func_get_arg(5);
+				// *sigh* starts from 0, I should know this
+				$default = func_get_arg(4);
 			}
 
 			if (($s = $this->section($section))) {
