@@ -1,22 +1,55 @@
 <?php
 namespace Config
 {
+	use SiTech\Config\Handler\NamedArgs;
+
 	/**
 	 * @group Config
 	 */
 	class RegistryTest extends \PHPUnit_Framework_TestCase
 	{
 		/**
+		 * @covers \SiTech\Config\Registry::__construct
+		 * @covers \SiTech\Config\Registry::getInterpolation
+		 */
+		public function testGetInterpolation()
+		{
+			$c = new \SiTech\Config\Registry(true);
+			$this->assertTrue($this->readAttribute($c, 'interpolation'));
+			$this->assertTrue($c->getInterpolation());
+			$c = new \SiTech\Config\Registry(false);
+			$this->assertFalse($this->readAttribute($c, 'interpolation'));
+			$this->assertFalse($c->getInterpolation());
+		}
+
+		/**
 		 * @covers \SiTech\Config\Registry::addSection
-		 * @covers \SiTech\Config\Registry\Exception\DuplicateSection
+		 * @covers \SiTech\Config\Registry::section
 		 */
 		public function testAddSection()
 		{
 			$c = new \SiTech\Config\Registry();
 			$this->assertEquals($c, $c->addSection('phpunit'));
 			$this->assertArrayHasKey('phpunit', $this->readAttribute($c, 'registry'));
-			$this->setExpectedException('\SiTech\Config\Registry\Exception\DuplicateSection', 'The section phpunit already exists in the configuration');
-			$c->addSection('phpunit');
+			$env = uniqid('phpunit', true);
+			$c->setEnv($env);
+			$section = uniqid('section', true);
+			$c->addSection($section);
+			$this->assertArrayHasKey($env.':'.$section, $this->readAttribute($c, 'registry'));
+		}
+
+		/**
+		 * @covers \SiTech\Config\Registry::addSection
+		 * @covers \SiTech\Config\Registry::section
+		 * @covers \SiTech\Config\Registry\Exception\DuplicateSection
+		 */
+		public function testAddSectionDuplicateSection()
+		{
+			$c = new \SiTech\Config\Registry();
+			$section = uniqid('section', true);
+			$c->addSection($section);
+			$this->setExpectedException('\SiTech\Config\Registry\Exception\DuplicateSection', 'The section '.$section.' already exists in the configuration');
+			$c->addSection($section);
 		}
 
 		/**
@@ -34,6 +67,7 @@ namespace Config
 
 		/**
 		 * @covers \SiTech\Config\Registry::hasSection
+		 * @covers \SiTech\Config\Registry::section
 		 */
 		public function testHasSection()
 		{
@@ -64,9 +98,9 @@ namespace Config
 			$config = new \SiTech\Config\Registry();
 			$config->addSection('section');
 			$config->set('section', 'foo', 'bar');
-			$this->assertEquals('bar', $config->get('section', 'foo'));
+			$this->assertEquals('bar', $this->readAttribute($config, 'registry')['section']['foo']);
 			$config->set('section', 'foo', 'baz');
-			$this->assertEquals('baz', $config->get('section', 'foo'));
+			$this->assertEquals('baz', $this->readAttribute($config, 'registry')['section']['foo']);
 		}
 
 		/**
@@ -109,14 +143,22 @@ namespace Config
 
 		/**
 		 * @covers \SiTech\Config\Registry::get
+		 * @covers \SiTech\Config\Registry::interpolate
 		 */
 		public function testGet()
 		{
 			$c = new \SiTech\Config\Registry();
-			$c->addSection('phpunit');
-			$c->set('phpunit', 'existing_key', 'whee');
-			$this->assertEquals('whee', $c->get('phpunit', 'existing_key'));
-			$this->assertEquals('default value', $c->get('phpunit', 'missing_key_default', false, [], 'default value'));
+			$section = uniqid('section', true);
+			$c->addSection($section);
+			$c->set($section, 'existing_key', 'whee');
+			$this->assertEquals('whee', $c->get($section, 'existing_key'));
+			$this->assertEquals('default value', $c->get($section, 'missing_key_default', false, [], 'default value'));
+			// test interpolation
+			$option = uniqid('option', true);
+			$value = 'interpolate mah %s up';
+			$args = [gettype(uniqid('string', true))];
+			$c->set($section, $option, $value);
+			$this->assertEquals(vsprintf($value, $args), $c->get($section, $option, false, $args));
 		}
 
 		/**
@@ -276,6 +318,36 @@ namespace Config
 			$c->addSection('foo');
 			$c->addSection('bar');
 			$this->assertEquals(['phpunit', 'foo', 'bar'], $c->sections());
+		}
+
+		/**
+		 * @covers \SiTech\Config\Registry::read
+		 */
+		public function testRead()
+		{
+			$c = new \SiTech\Config\Registry();
+			$this->assertEquals($c, $c->read(new MockHandler()));
+		}
+
+		/**
+		 * @covers \SiTech\Config\Registry::write
+		 */
+		public function testWrite()
+		{
+			$c = new \SiTech\Config\Registry();
+			$this->assertEquals($c, $c->write(new MockHandler()));
+		}
+	}
+
+	class MockHandler implements \SiTech\Config\Handler\Handler
+	{
+		public function read(NamedArgs $args = null)
+		{
+			return ['mock' => ['registry' => 'for phpunit']];
+		}
+
+		public function write(NamedArgs $args = null)
+		{
 		}
 	}
 }

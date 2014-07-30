@@ -52,8 +52,11 @@ namespace SiTech\Config
 
 		public function addSection($section)
 		{
-			if (!$this->hasSection($section)) {
-				$this->registry[$this->prependEnv($section)] = [];
+			$s = $this->section($section, true);
+
+			if (($s === $section && !isset($this->registry[$section])) || ($s !== $section && !isset($this->registry[$s]))) {
+				$section = $s;
+				$this->registry[$section] = [];
 				return $this;
 			}
 
@@ -158,7 +161,7 @@ namespace SiTech\Config
 			throw new Exception\MissingSection($section);
 		}
 
-		public function read(Handler $handler, NamedArgs $args)
+		public function read(Handler $handler, NamedArgs $args = null)
 		{
 			$this->registry = $handler->read($args);
 			return $this;
@@ -203,7 +206,7 @@ namespace SiTech\Config
 			throw new Exception\MissingSection($section);
 		}
 
-		public function write(Handler $handler, NamedArgs $args)
+		public function write(Handler $handler, NamedArgs $args = null)
 		{
 			$handler->write($args);
 			return $this;
@@ -211,19 +214,19 @@ namespace SiTech\Config
 
 		protected function interpolate($value, array $vars, $raw)
 		{
-			if (is_string($value) && ($this->interpolation === false || ($this->interpolation === true && $raw !== true))) {
+			if (is_string($value) && !empty($vars) && $this->interpolation === true && $raw !== true) {
 				return vsprintf($value, $vars);
 			}
 
 			return $value;
 		}
 
-		protected function section($section)
+		protected function section($section, $force_return = false)
 		{
 			$envSection = $this->prependEnv($section);
-			if (isset($this->registry[$envSection])) {
+			if (isset($this->registry[$envSection]) || ($section !== $envSection && $force_return === true)) {
 				return $envSection;
-			} elseif (isset($this->registry[$section])) {
+			} elseif (isset($this->registry[$section]) || $force_return === true) {
 				return $section;
 			}
 
