@@ -326,7 +326,7 @@ namespace Config
 		public function testRead()
 		{
 			$c = new \SiTech\Config\Registry();
-			$this->assertEquals($c, $c->read(new MockHandler()));
+			$this->assertEquals($c, $c->read(new MockHandler(), new NamedArgs()));
 		}
 
 		/**
@@ -335,18 +335,18 @@ namespace Config
 		public function testWrite()
 		{
 			$c = new \SiTech\Config\Registry();
-			$this->assertEquals($c, $c->write(new MockHandler()));
+			$this->assertEquals($c, $c->write(new MockHandler(), new NamedArgs()));
 		}
 	}
 
 	class MockHandler implements \SiTech\Config\Handler\Handler
 	{
-		public function read(NamedArgs $args = null)
+		public function read(NamedArgs $args)
 		{
 			return ['mock' => ['registry' => 'for phpunit']];
 		}
 
-		public function write(NamedArgs $args = null)
+		public function write(NamedArgs $args)
 		{
 		}
 	}

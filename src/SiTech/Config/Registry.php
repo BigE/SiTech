@@ -161,7 +161,7 @@ namespace SiTech\Config
 			throw new Exception\MissingSection($section);
 		}
 
-		public function read(Handler $handler, NamedArgs $args = null)
+		public function read(Handler $handler, NamedArgs $args)
 		{
 			$this->registry = $handler->read($args);
 			return $this;
@@ -206,7 +206,7 @@ namespace SiTech\Config
 			throw new Exception\MissingSection($section);
 		}
 
-		public function write(Handler $handler, NamedArgs $args = null)
+		public function write(Handler $handler, NamedArgs $args)
 		{
 			$handler->write($args);
 			return $this;
