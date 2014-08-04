@@ -30,6 +30,7 @@ namespace SiTech\Config\Handler\File
 {
 	use SiTech\Config\Handler\NamedArgs;
 	use SiTech\Config\Handler\File\Exception as FileException;
+	use SiTech\Config\Handler\File\Ini\Exception;
 
 	/**
 	 * Class INI
@@ -37,14 +38,16 @@ namespace SiTech\Config\Handler\File
 	 * @package SiTech\Config
 	 * @subpackage SiTech\Config\Handler
 	 */
-	class INI extends Base
+	class Ini extends Base
 	{
 		/**
+		 * Read an ini formatted config file.
+		 *
 		 * @param NamedArgs $args
 		 * @return array
-		 * @throws Exception\FileNotReadable
-		 * @throws Exception\FileNotFound
-		 * @todo Needs more error handling...
+		 * @throws \SiTech\Config\Handler\File\Exception\FileNotReadable
+		 * @throws \SiTech\Config\Handler\File\Ini\Exception\ParsingError
+		 * @throws \SiTech\Config\Handler\File\Exception\FileNotFound
 		 */
 		public function read(NamedArgs $args)
 		{
@@ -59,11 +62,13 @@ namespace SiTech\Config\Handler\File
 			} elseif (!is_readable($filename)) {
 				throw new FileException\FileNotReadable($filename);
 			}
+
+			throw new Exception\ParsingError($filename);
 		}
 
 		/**
 		 * @param NamedArgs $args
-		 * @throws Exception\FileNotWritable
+		 * @throws \SiTech\Config\Handler\File\Exception\FileNotWritable
 		 * @todo Needs more error handling...
 		 */
 		public function write(NamedArgs $args)

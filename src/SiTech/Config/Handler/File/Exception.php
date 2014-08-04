@@ -53,4 +53,17 @@ namespace SiTech\Config\Handler\File\Exception
 			parent::__construct('The configuration file %s exists but is not writable', [$filename], $code, $inner);
 		}
 	}
-} 
+}
+
+namespace SiTech\Config\Handler\File\Ini\Exception
+{
+	abstract class Exception extends \SiTech\Config\Handler\File\Exception\Exception {}
+
+	class ParsingError extends Exception
+	{
+		public function __construct($filename, $code = null, \Exception $inner = null)
+		{
+			parent::__construct('There was a problem parsing the ini file %s', [$filename], $code, $inner);
+		}
+	}
+}
