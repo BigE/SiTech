@@ -159,6 +159,7 @@ namespace Config
 			$args = [gettype(uniqid('string', true))];
 			$c->set($section, $option, $value);
 			$this->assertEquals(vsprintf($value, $args), $c->get($section, $option, false, $args));
+			$this->assertEquals($value, $c->get($section, $option, true, $args));
 		}
 
 		/**
