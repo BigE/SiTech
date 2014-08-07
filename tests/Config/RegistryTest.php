@@ -144,6 +144,7 @@ namespace Config
 		/**
 		 * @covers \SiTech\Config\Registry::get
 		 * @covers \SiTech\Config\Registry::interpolate
+		 * @todo Separate out interpolation tests for better coverage
 		 */
 		public function testGet()
 		{

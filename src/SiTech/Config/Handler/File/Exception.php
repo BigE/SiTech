@@ -24,30 +24,62 @@
  * @copyright Copyright (c) 2014 Eric Gach <eric@php-oop.net>
  * @license MIT
  * @package SiTech\Config
+ * @subpackage SiTech\Config\Handler
  */
 
 namespace SiTech\Config\Handler\File\Exception
 {
+	/**
+	 * Base exception class for file handlers.
+	 *
+	 * @package SiTech\Config\Handler\File\Exception
+	 */
 	abstract class Exception extends \SiTech\Helper\Exception {}
 
+	/**
+	 * Exception for files that are not found.
+	 *
+	 * @package SiTech\Config\Handler\File\Exception
+	 */
 	class FileNotFound extends Exception
 	{
+		/**
+		 * @param string $filename
+		 * @param int $code
+		 * @param \Exception $inner
+		 */
 		public function __construct($filename, $code = null, \Exception $inner = null)
 		{
 			parent::__construct('The configuration file %s was not found', [$filename], $code, $inner);
 		}
 	}
 
+	/**
+	 * @package SiTech\Config\Handler\File\Exception
+	 */
 	class FileNotReadable extends Exception
 	{
+		/**
+		 * @param string $filename
+		 * @param int $code
+		 * @param \Exception $inner
+		 */
 		public function __construct($filename, $code = null, \Exception $inner = null)
 		{
 			parent::__construct('The configuration file %s exists but is not readable', [$filename], $code, $inner);
 		}
 	}
 
+	/**
+	 * @package SiTech\Config\Handler\File\Exception
+	 */
 	class FileNotWritable extends Exception
 	{
+		/**
+		 * @param string $filename
+		 * @param int $code
+		 * @param \Exception $inner
+		 */
 		public function __construct($filename, $code = null, \Exception $inner = null)
 		{
 			parent::__construct('The configuration file %s exists but is not writable', [$filename], $code, $inner);
@@ -57,10 +89,21 @@ namespace SiTech\Config\Handler\File\Exception
 
 namespace SiTech\Config\Handler\File\Ini\Exception
 {
+	/**
+	 * @package SiTech\Config\Handler\File\Ini\Exception
+	 */
 	abstract class Exception extends \SiTech\Config\Handler\File\Exception\Exception {}
 
+	/**
+	 * @package SiTech\Config\Handler\File\Ini\Exception
+	 */
 	class ParsingError extends Exception
 	{
+		/**
+		 * @param string $filename
+		 * @param int $code
+		 * @param \Exception $inner
+		 */
 		public function __construct($filename, $code = null, \Exception $inner = null)
 		{
 			parent::__construct('There was a problem parsing the ini file %s', [$filename], $code, $inner);

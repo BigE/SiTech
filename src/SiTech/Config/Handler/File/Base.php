@@ -30,5 +30,10 @@ namespace SiTech\Config\Handler\File
 {
 	use SiTech\Config\Handler\Handler;
 
+	/**
+	 * Base class for file handlers.
+	 *
+	 * @package SiTech\Config
+	 */
 	abstract class Base implements Handler {}
 } 

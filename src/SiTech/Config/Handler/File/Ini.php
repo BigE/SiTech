@@ -33,7 +33,7 @@ namespace SiTech\Config\Handler\File
 	use SiTech\Config\Handler\File\Ini\Exception;
 
 	/**
-	 * Class INI
+	 * This is the ini file formatted handler for the config.
 	 *
 	 * @package SiTech\Config
 	 * @subpackage SiTech\Config\Handler
@@ -43,11 +43,16 @@ namespace SiTech\Config\Handler\File
 		/**
 		 * Read an ini formatted config file.
 		 *
-		 * @param NamedArgs $args
+		 * This is a simple wrapper call to parse_ini_file for loading the
+		 * configuration from an ini file. We send INI_SCANNER_RAW to the
+		 * function call since we handle all boolean values ourselves in the
+		 * registry.
+		 *
+		 * @param NamedArgs $args required: filename
 		 * @return array
 		 * @throws \SiTech\Config\Handler\File\Exception\FileNotReadable
-		 * @throws \SiTech\Config\Handler\File\Ini\Exception\ParsingError
 		 * @throws \SiTech\Config\Handler\File\Exception\FileNotFound
+		 * @throws \SiTech\Config\Handler\File\Ini\Exception\ParsingError
 		 */
 		public function read(NamedArgs $args)
 		{
@@ -67,7 +72,13 @@ namespace SiTech\Config\Handler\File
 		}
 
 		/**
-		 * @param NamedArgs $args
+		 * Write an ini formatted config file.
+		 *
+		 * Simply use the file functions to write the ini formatted file. All
+		 * values should be broken down accordingly to be written out to a file
+		 * so when reading it can all be parsed into an array properly.
+		 *
+		 * @param NamedArgs $args required: filename, config
 		 * @throws \SiTech\Config\Handler\File\Exception\FileNotWritable
 		 * @todo Needs more error handling...
 		 */

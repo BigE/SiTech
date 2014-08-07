@@ -24,13 +24,32 @@
  * @copyright Copyright (c) 2014 Eric Gach <eric@php-oop.net>
  * @license MIT
  * @package SiTech\Config
+ * @subpackage SiTech\Config\Handler
  */
 
 namespace SiTech\Config\Handler
 {
+	/**
+	 * Interface Handler
+	 *
+	 * @package SiTech\Config
+	 * @subpackage SiTech\Config\Handler
+	 */
 	interface Handler
 	{
+		/**
+		 * This will define how the handler reads the configuration.
+		 *
+		 * @param NamedArgs $args
+		 * @return array
+		 */
 		public function read(NamedArgs $args);
+
+		/**
+		 * This will define how the handler writes the configuration.
+		 *
+		 * @param NamedArgs $args
+		 */
 		public function write(NamedArgs $args);
 	}
 } 

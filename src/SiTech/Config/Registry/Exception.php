@@ -49,6 +49,11 @@ namespace SiTech\Config\Registry\Exception
 		}
 	}
 
+	/**
+	 * Class MissingOption
+	 *
+	 * @package SiTech\Config
+	 */
 	class MissingOption extends Exception
 	{
 		public function __construct($section, $option, $code = null, $inner = null)
@@ -70,5 +75,10 @@ namespace SiTech\Config\Registry\Exception
 		}
 	}
 
+	/**
+	 * Class UnexpectedValue
+	 *
+	 * @package SiTech\Config\Registry\Exception
+	 */
 	class UnexpectedValue extends \SiTech\Helper\Exception\UnexpectedValue {}
 }
