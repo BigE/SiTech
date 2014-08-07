@@ -24,61 +24,23 @@
  * @copyright Copyright (c) 2014 Eric Gach <eric@php-oop.net>
  * @license MIT
  * @package SiTech\Config
+ * @subpackage SiTech\Config\Handler
  */
 
-namespace SiTech\Config\Registry\Exception
+namespace SiTech\Config\Handler
 {
 	/**
-	 * Class Exception
+	 * This is a helper class for named arguments.
+	 *
+	 * The way we pass arguments into the handler classes to tell the handler
+	 * what it needs to do. Please see each handler to identify what arguments
+	 * it requires.
 	 *
 	 * @package SiTech\Config
+	 * @subpackage SiTech\Config\Handler
 	 */
-	abstract class Exception extends \SiTech\Helper\Exception
-	{}
-
-	/**
-	 * Class DuplicateSection
-	 *
-	 * @package SiTech\Config
-	 */
-	class DuplicateSection extends Exception
+	class NamedArgs
 	{
-		public function __construct($section, $code = null, $inner = null)
-		{
-			parent::__construct('The section %s already exists in the configuration', [$section], $code, $inner);
-		}
+		use \SiTech\Helper\Container;
 	}
-
-	/**
-	 * Class MissingOption
-	 *
-	 * @package SiTech\Config
-	 */
-	class MissingOption extends Exception
-	{
-		public function __construct($section, $option, $code = null, $inner = null)
-		{
-			parent::__construct('The option %s is not currently set in the section %s of the configuration', [$option, $section], $code, $inner);
-		}
-	}
-
-	/**
-	 * Class MissingSection
-	 *
-	 * @package SiTech\Config
-	 */
-	class MissingSection extends Exception
-	{
-		public function __construct($section, $code = null, $inner = null)
-		{
-			parent::__construct('The section %s is not currently present in the configuration', [$section], $code, $inner);
-		}
-	}
-
-	/**
-	 * Class UnexpectedValue
-	 *
-	 * @package SiTech\Config\Registry\Exception
-	 */
-	class UnexpectedValue extends \SiTech\Helper\Exception\UnexpectedValue {}
-}
+} 

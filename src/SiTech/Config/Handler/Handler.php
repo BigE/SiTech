@@ -24,61 +24,32 @@
  * @copyright Copyright (c) 2014 Eric Gach <eric@php-oop.net>
  * @license MIT
  * @package SiTech\Config
+ * @subpackage SiTech\Config\Handler
  */
 
-namespace SiTech\Config\Registry\Exception
+namespace SiTech\Config\Handler
 {
 	/**
-	 * Class Exception
+	 * Interface Handler
 	 *
 	 * @package SiTech\Config
+	 * @subpackage SiTech\Config\Handler
 	 */
-	abstract class Exception extends \SiTech\Helper\Exception
-	{}
-
-	/**
-	 * Class DuplicateSection
-	 *
-	 * @package SiTech\Config
-	 */
-	class DuplicateSection extends Exception
+	interface Handler
 	{
-		public function __construct($section, $code = null, $inner = null)
-		{
-			parent::__construct('The section %s already exists in the configuration', [$section], $code, $inner);
-		}
-	}
+		/**
+		 * This will define how the handler reads the configuration.
+		 *
+		 * @param NamedArgs $args
+		 * @return array
+		 */
+		public function read(NamedArgs $args);
 
-	/**
-	 * Class MissingOption
-	 *
-	 * @package SiTech\Config
-	 */
-	class MissingOption extends Exception
-	{
-		public function __construct($section, $option, $code = null, $inner = null)
-		{
-			parent::__construct('The option %s is not currently set in the section %s of the configuration', [$option, $section], $code, $inner);
-		}
+		/**
+		 * This will define how the handler writes the configuration.
+		 *
+		 * @param NamedArgs $args
+		 */
+		public function write(NamedArgs $args);
 	}
-
-	/**
-	 * Class MissingSection
-	 *
-	 * @package SiTech\Config
-	 */
-	class MissingSection extends Exception
-	{
-		public function __construct($section, $code = null, $inner = null)
-		{
-			parent::__construct('The section %s is not currently present in the configuration', [$section], $code, $inner);
-		}
-	}
-
-	/**
-	 * Class UnexpectedValue
-	 *
-	 * @package SiTech\Config\Registry\Exception
-	 */
-	class UnexpectedValue extends \SiTech\Helper\Exception\UnexpectedValue {}
-}
+} 
