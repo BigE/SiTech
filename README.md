@@ -1,6 +1,6 @@
 # SiTech
 
-[![develop build status](https://travis-ci.org/BigE/SiTech.svg?branch=feature/config-registry-rewrite)](https://travis-ci.org/BigE/SiTech)
+[![develop build status](https://travis-ci.org/BigE/SiTech.svg)](https://travis-ci.org/BigE/SiTech)
 
 ## Introduction
 
