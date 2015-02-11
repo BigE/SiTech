@@ -130,7 +130,19 @@ class SiTech_Uri
 
 	public function getHost()
 	{
-		return((empty($this->_requestUri['host']))? $_SERVER['HOST_NAME'] : $this->_requestUri['host']);
+		return(
+			(empty($this->_requestUri['host']))
+			? (
+				isset( $_SERVER['HOST_NAME'] )
+				? $_SERVER['HOST_NAME']
+				: (
+					isset( $_SERVER['HTTP_HOST'] )
+					? $_SERVER['HTTP_HOST']
+					: $_SERVER['SERVER_NAME']
+				)
+			)
+			: $this->_requestUri['host']
+		);
 	}
 
 	public function getPath($flags = 0)
