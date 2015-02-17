@@ -1,0 +1,49 @@
+{
+	"name": "bige/sitech",
+	"description": "SiTech is a PHP framework that is built to be very modular and extensible",
+	"version": "1.2.0-dev",
+	"homepage": "https://github.com/BigE/SiTech",
+	"authors": [
+		{
+			"name": "Eric Gach",
+			"email": "eric@php-oop.net",
+			"role": "Lead Developer"
+		}
+	],
+	"keywords": [
+		"php",
+		"library",
+		"framework",
+		"sitech"
+	],
+	"license": "MIT",
+	"autoload": {
+		"classmap": [
+			"lib/"
+		],
+		"psr-0": {
+			"SiTech_": "lib/"
+		}
+	},
+	"autoload-dev":{
+		"classmap":[
+			"Tests/",
+			"Tools/"
+		]
+	},
+	"include-path": [
+		"lib/"
+	],
+	"require": {
+		"php": "~5.3"
+	},
+	"require-dev": {
+		"phpunit/phpunit": "~4.1",
+		"mikey179/vfsStream": "~1.3"
+	},
+	"suggest": {
+		"phpdocumentor/phpdocumentor": "Install to generate source documentation"
+	},
+	"minimum-stability": "dev",
+	"prefer-stable": true
+}
