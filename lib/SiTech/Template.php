@@ -226,6 +226,15 @@ class SiTech_Template
 	}
 
 	/**
+	 * Get the path of where to load the template file from.
+	 * return string
+	 */
+	public function getPath()
+	{
+		return $this->path;
+	}
+
+	/**
 	 * This calls the rendering engine to parse the template file and return
 	 * the complete output.
 	 *
