@@ -88,11 +88,14 @@ namespace SiTech\Config\Handler\File
 			$config = $args->offsetGet('config', false, true);
 
 			if (($fp = @fopen($filename, 'w')) !== false) {
+				$first = true;
 				foreach ($config as $section => $options) {
-					fwrite($fp, '['.$section.']'.PHP_EOL);
+					if (!$first) fwrite($fp, PHP_EOL);
+					fwrite($fp, '['.$section.']');
 					foreach ($options as $option => $value) {
-						fwrite($fp, $option.'='.$value.PHP_EOL);
+						fwrite($fp, PHP_EOL.$option.'='.$value);
 					}
+					$first = false;
 				}
 				fclose($fp);
 				return;

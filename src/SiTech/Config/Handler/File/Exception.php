@@ -110,3 +110,35 @@ namespace SiTech\Config\Handler\File\Ini\Exception
 		}
 	}
 }
+
+namespace SiTech\Config\Handler\File\Xml\Exception
+{
+	/**
+	 * @package SiTech\Config\Handler\File\Ini\Exception
+	 */
+	abstract class Exception extends \SiTech\Config\Handler\File\Exception\Exception {}
+
+	/**
+	 * @package SiTech\Config\Handler\File\Xml\Exception
+	 */
+	class ParsingError extends Exception
+	{
+		/**
+		 * @param string $filename
+     * @param string $error
+     * @param int $line
+     * @param int $column
+     * @param int $pos
+		 * @param int $code
+		 * @param \Exception $inner
+		 */
+		public function __construct($filename, $error, $line, $column, $pos, $code = null, \Exception $inner = null)
+		{
+			parent::__construct(
+        'XML Error: "%s" File: %s Line: %d Col: %d Pos: %d',
+        [$error, $filename, $line, $column, $pos],
+        $code, $inner
+      );
+		}
+	}
+}
