@@ -26,8 +26,8 @@
  * @package SiTech\Config
  */
 
-namespace SiTech\Config\Handler\File
-{
+namespace SiTech\Config\Handler\File {
+
 	use SiTech\Config\Handler\NamedArgs;
 	use SiTech\Config\Handler\File\Exception as FileException;
 	use SiTech\Config\Handler\File\Xml\Exception;
@@ -42,10 +42,9 @@ namespace SiTech\Config\Handler\File
 	{
 		private $_config = array();
 
-    /**
-     * @var Stack
-     */
-		private $_stack;
+		private $_key;
+
+		private $_section;
 
 		public function __construct()
 		{
@@ -78,11 +77,10 @@ namespace SiTech\Config\Handler\File
 		public function read(NamedArgs $args)
 		{
 			$filename = $args->offsetGet('filename', false, true);
-      $this->_stack = new Stack();
 
 			if (($config = @file_get_contents($filename)) !== false
-        && xml_parse($this->sax, $config, true) === 1
-      ) {
+				&& xml_parse($this->sax, $config, true) === 1
+			) {
 				return $this->_config;
 			}
 
@@ -93,12 +91,12 @@ namespace SiTech\Config\Handler\File
 			}
 
 			throw new Exception\ParsingError(
-        $filename,
-        xml_error_string(xml_get_error_code($this->sax)),
-        xml_get_current_line_number($this->sax),
-        xml_get_current_column_number($this->sax),
-        xml_get_current_byte_index($this->sax)
-      );
+				$filename,
+				xml_error_string(xml_get_error_code($this->sax)),
+				xml_get_current_line_number($this->sax),
+				xml_get_current_column_number($this->sax),
+				xml_get_current_byte_index($this->sax)
+			);
 		}
 
 		public function write(NamedArgs $args)
@@ -107,14 +105,14 @@ namespace SiTech\Config\Handler\File
 			$config = $args->offsetGet('config', false, true);
 
 			if (($fp = @fopen($filename, 'w')) !== false) {
-				fwrite($fp, '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL);
-				fwrite($fp, '<config>'.PHP_EOL);
+				fwrite($fp, '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL);
+				fwrite($fp, '<config>' . PHP_EOL);
 				foreach ($config as $section => $value) {
-					fwrite($fp, '<section name="'.$section.'">'.PHP_EOL);
+					fwrite($fp, '<section name="' . $section . '">' . PHP_EOL);
 					foreach ($value as $k => $v) {
-						fwrite($fp, '<key name="'.$k.'">'.$v.'</key>'.PHP_EOL);
+						fwrite($fp, '<key name="' . $k . '">' . $v . '</key>' . PHP_EOL);
 					}
-					fwrite($fp, '</section>'.PHP_EOL);
+					fwrite($fp, '</section>' . PHP_EOL);
 				}
 				fwrite($fp, '</config>');
 				fclose($fp);
@@ -128,43 +126,37 @@ namespace SiTech\Config\Handler\File
 
 		private function content_element($data)
 		{
-      if (isset($this->_stack->section) && isset($this->_stack->key)) {
-        if (!isset($this->_config[$this->_stack->section])) {
-          $this->_config[$this->_stack->section] = [];
-        }
+			if (isset($this->_section) && isset($this->_key)) {
+				if (!isset($this->_config[$this->_section])) {
+					$this->_config[$this->_section] = [];
+				}
 
-        $this->_config[$this->_stack->section][$this->_stack->key] = $data;
-      }
+				$this->_config[$this->_section][$this->_key] = $data;
+			}
 		}
 
 		private function end_element($tag)
 		{
-      switch ($tag) {
-        case 'section':
-          unset($this->_stack->section);
-          break;
-        case 'key':
-          unset($this->_stack->key);
-          break;
-      }
+			switch ($tag) {
+				case 'section':
+					unset($this->_section);
+					break;
+				case 'key':
+					unset($this->_key);
+					break;
+			}
 		}
 
 		private function start_element($tag, $attribute)
 		{
-      switch($tag) {
-        case 'section':
-          $this->_stack->section = $attribute['name'];
-          break;
-        case 'key':
-          $this->_stack->key = $attribute['name'];
-          break;
-      }
+			switch ($tag) {
+				case 'section':
+					$this->_section = $attribute['name'];
+					break;
+				case 'key':
+					$this->_key = $attribute['name'];
+					break;
+			}
 		}
 	}
-
-  final class Stack
-  {
-    public $section;
-    public $key;
-  }
 }
