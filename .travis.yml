@@ -18,3 +18,5 @@ script: vendor/bin/phpunit --verbose
 
 notifications:
   irc: "irc.freenode.net#sitech"
+
+sudo: false
