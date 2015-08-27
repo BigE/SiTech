@@ -26,8 +26,8 @@
  * @package SiTech\Config
  */
 
-namespace SiTech\Config\Handler\File {
-
+namespace SiTech\Config\Handler\File
+{
 	use SiTech\Config\Handler\NamedArgs;
 	use SiTech\Config\Handler\File\Exception as FileException;
 	use SiTech\Config\Handler\File\Xml\Exception;
