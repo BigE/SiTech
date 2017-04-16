@@ -116,6 +116,10 @@ class SiTech_Template
 			return(null);
 		}
 	}
+	
+	public function getPath( ) {
+		return $this->path . DIRECTORY_SEPARATOR . $this->uri;
+	}
 
 	/**
 	 * Assign a variable to the current template file.
